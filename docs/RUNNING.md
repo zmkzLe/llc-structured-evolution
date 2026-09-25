@@ -26,7 +26,7 @@ cd ~/chia_loop
 - Driver options go last. The ones the runs used:
   - `--ensemble MODEL=WEIGHT,...`: the proposers, one drawn per proposal;
   - `--max-tokens N`, `--llm-timeout S`: the proposer's output cap and timeout;
-  - `--traces a,b --warmup N --sim N --iterations N`: for dry runs.
+  - `--traces a,b --warmup N --sim N --iterations N`: other traces, run lengths or a cap on proposals.
 
   The launchers already pass temperature 0.7 with no model seed, 2 retries, 2 candidates at a
   time, 2 islands with migration every 50, and a 3-hour cap per candidate.
@@ -38,6 +38,10 @@ A launch starts, detached, each with a `.pid` file and a log in the run folder:
 3. with `ADAPT_EVERY` set, the guidance writer;
 4. the orphan guard, which ends simulations the search leaves behind when it stops;
 5. the hourly copy to the bucket.
+
+Stop a run with `./stop_arm.sh <run>` once its validator is done (`--kill-validation` ends a
+validation in flight). At the stop time the search stops proposing but does not always exit,
+and the script ends every process of the run cleanly and makes the final copy.
 
 ## 2. Settings in the environment
 
@@ -54,7 +58,7 @@ A launch starts, detached, each with a `.pid` file and a log in the run folder:
 | `A3_MAX_LINES` | three times the seed (582) | the most canonical lines a design may have |
 | `CHIA_WORKERS` | cores − 2 | simulations at once per candidate |
 | `EVALUATOR` | `yaml` | `launch_arm.sh` only: `ae` runs the comparison arm where the model writes the C++ itself |
-| `VALIDATOR_EXTRA` | empty | extra validator options, for dry runs |
+| `VALIDATOR_EXTRA` | empty | extra options for the validator |
 
 The drivers set `A3_RUN_DIR`, `A3_TRACES`, `A3_WARMUP`, `A3_SIM`, `A3_MAX_CHANGE` and `A3_RESULT`
 for the evaluator's workers themselves.
@@ -98,42 +102,3 @@ A3_VERTEX_REGION=global A3_CPP_MODEL=gemini-3.1-pro-preview \
   ./launch_native.sh adaevolve my_ada 600 <stop> <deadline> gs://<bucket> \
   --ensemble gemini-3.1-pro-preview=0.7,gemini-3.8-flash=0.3 --max-tokens 64000 --llm-timeout 900
 ```
-
-## 4. Watch and stop
-
-```
-O=~/oe_out/<run>
-tail -f $O/search.log                        # the search
-tail -f $O/validator.log                     # started / validated / superseded / deferred
-wc -l < $O/yaml_run/records.jsonl            # candidates so far; the seed is the first
-tail -3 $O/adapt.log                         # guidance versions, with ADAPT_EVERY
-tail -3 $O/copy.log                          # "copied <time>" every hour
-python3 <this repository>/results/summarize.py $O   # every table, from the files so far
-```
-
-Stop a run with `./stop_arm.sh <run>`; it refuses while a validation is running, unless given
-`--kill-validation`. It stops the search, lets the orphan guard end what the search left, stops
-the guidance writer and the validator with its simulations, waits for the copy loop's final copy,
-checks that nothing of the run is left, and removes leftover `/tmp/chia_run_*` binaries.
-
-At its stop time the search stops proposing but may not exit: the drivers wait for candidates
-still being evaluated. Run `stop_arm.sh` once the validator is done.
-
-## 5. A dry run
-
-The whole launch at toy length (2 traces, 1M + 5M instructions, 3 proposals), for plumbing only;
-the scores mean nothing at this length:
-
-```
-VALIDATOR_EXTRA='--traces 429.mcf-192B,483.xalancbmk-127B --warmup 1000000 --sim 5000000 --expect-seconds 300' \
-ADAPT_EVERY=3 ./launch_arm.sh dry1 600 <20 minutes from now> <35 minutes from now> gs://<bucket> \
-  --traces 429.mcf-192B,483.xalancbmk-127B --warmup 1000000 --sim 5000000 --iterations 3 \
-  --ensemble gemini-2.5-pro=0.7,gemini-2.5-flash=0.3
-```
-
-`--expect-seconds 300` tells the validator a validation takes about 5 minutes at this length.
-Without it, the validator assumes the full length's 3.2 hours and defers everything, the seed
-included, past the short deadline.
-
-Never run a dry run on a machine where a real run is live: its orphan guard ends every simulation
-that is not its own validator's once its search stops.

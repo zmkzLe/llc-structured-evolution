@@ -94,4 +94,3 @@ With `cd ~/chia_loop && PY=~/miniconda3/envs/chia_env/bin/python`:
     A3_TRACES=429.mcf-192B,483.xalancbmk-127B A3_WARMUP=1000000 A3_SIM=5000000 \
     $PY -u design_evaluator.py ~/seed.txt
   ```
-- **A dry run of the whole launch** at toy length, as in `docs/RUNNING.md` §5.
