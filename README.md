@@ -95,5 +95,4 @@ and to finish every trace.
 `candidate.py`, `ae_evaluator.py`, `build_baseline.py`, `fidelity_probe.py` and `data/` began in
 her repository, and `run_native.py`, `launch_native.sh` and `check_native.py` are hers. ChampSim is used under its own license (`champsim/LICENSE`) and is
 modified here. The Mockingjay policy is ported from its authors' code. The searches use
-OpenEvolve 0.3.2 and SkyDiscover. Everything else is released under the Apache License 2.0
-([`LICENSE`](LICENSE)).
+OpenEvolve 0.3.2 and SkyDiscover. The rest of this repository does not carry a license yet.
