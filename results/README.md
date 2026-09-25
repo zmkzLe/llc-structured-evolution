@@ -1,6 +1,6 @@
 # Results
 
-`runs/` holds ten runs, all from September 21–23, 2026, one Google Cloud VM each. Every file each
+`runs/` holds ten runs, one Google Cloud VM each. Every file each
 run wrote is included except the `.pid` files and simulation leftovers; `docs/OUTPUTS.md` says
 what each file is. `summarize.py` recomputes every table from these files, and `SUMMARY.md` is its
 output.
@@ -12,7 +12,7 @@ their length, so no two rows are a controlled comparison.
 
 | Folder | Search | Models (proposers) | Code | Notes |
 |---|---|---|---|---|
-| `arm_adaptive` | OpenEvolve + guidance | Gemini 2.5 Pro / Flash | an earlier version (September 21) | Stopped after 12.5 h to fix the issues listed below. It was scored against LRU, not Mockingjay; that ranks designs identically, since the two differ by a constant factor. `summarize.py` re-expresses it against Mockingjay. |
+| `arm_adaptive` | OpenEvolve + guidance | Gemini 2.5 Pro / Flash | an earlier version of `loop/` | Stopped after 12.5 h to fix the issues listed below. It was scored against LRU, not Mockingjay; that ranks designs identically, since the two differ by a constant factor. `summarize.py` re-expresses it against Mockingjay. |
 | `arm_adaptive_v3` | OpenEvolve + guidance | Gemini 2.5 Pro / Flash | `loop/` before two later fixes | Proposer cap 32,000 tokens. Its best design, `311521127a79`, has the highest held-out score of all runs. |
 | `arm_A2_gemini25` | OpenEvolve + guidance | Gemini 2.5 Pro / Flash | `loop/`, with the C++ writer at 64,000 tokens / 900 s | matched with B2: only the models differ |
 | `arm_B2_gemini3` | OpenEvolve + guidance | Gemini 3.1 Pro / 3.8 Flash | the same as A2 | 16 of 69 proposer calls rate-limited: several runs shared the project's quota |

@@ -14,7 +14,7 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parent / "runs"
 SEED = "c41837327dd0"
 # folder, label, framework, models
-RUNS = [("arm_adaptive", "OE-2.5 Sep21", "OpenEvolve + guidance", "2.5 Pro / 2.5 Flash"),
+RUNS = [("arm_adaptive", "OE-2.5 early", "OpenEvolve + guidance", "2.5 Pro / 2.5 Flash"),
         ("arm_adaptive_v3", "OE-2.5 v3", "OpenEvolve + guidance", "2.5 Pro / 2.5 Flash"),
         ("arm_A2_gemini25", "OE-2.5 A2", "OpenEvolve + guidance", "2.5 Pro / 2.5 Flash"),
         ("arm_B2_gemini3", "OE-3.x B2", "OpenEvolve + guidance", "3.1 Pro / 3.8 Flash"),

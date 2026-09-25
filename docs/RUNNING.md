@@ -19,7 +19,7 @@ cd ~/chia_loop
 - `<run>`: a new name; everything goes to `~/oe_out/<run>`. An existing name is refused.
 - `<max-change>`: the most canonical lines a design may change against its closest earlier
   design. `600` switches the limit off in effect, since a whole design may have at most 582.
-- `<search stop>`, `<deadline>`: UTC times such as `2026-10-01T22:00:00Z`. The search stops
+- `<search stop>`, `<deadline>`: UTC times written as `YYYY-MM-DDThh:mm:ssZ`. The search stops
   proposing at the first. The validator keeps going, two designs at a time from the stop on, never
   starts one it cannot finish by the deadline, and is killed ten minutes after it.
 - `gs://<bucket>`: the run is copied there every hour and once more at the end.
@@ -76,13 +76,13 @@ for the evaluator's workers themselves.
 
 All ten used `<max-change>` 600. These settings are read from each run's `search.log`,
 `adapt.log` and call logs; "—" means the copy of the run does not record it. The C++ writer's cap
-is not recorded in the run files: A2 and B2 used 64,000 tokens and 900 s, and v3 and the Sep 21
-run used 32,000 and 300 s.
+is not recorded in the run files: A2 and B2 used 64,000 tokens and 900 s, and `arm_adaptive_v3` and
+`arm_adaptive` used 32,000 and 300 s.
 
-\* The Sep 21 run predates several fixes and a change of score (`results/README.md`); today's
-code does not reproduce it exactly.
+\* `arm_adaptive` predates several fixes and a change of score (`results/README.md`); the code
+in `loop/` does not reproduce it exactly.
 
-For example, run A2 again with today's code:
+For example, run A2 again with the code in `loop/`:
 
 ```
 A3_VERTEX_REGION=global A3_CPP_MODEL=gemini-2.5-pro A3_GUIDANCE_MODEL=gemini-2.5-pro \

@@ -10,7 +10,7 @@ scored as it did, not only a score. Optionally, the search rewrites part of its 
 The same evaluator runs under several search algorithms: OpenEvolve, and SkyDiscover's native
 AdaEvolve, EvoX, GEPA, OpenEvolve, Best-of-N, Top-K and beam search.
 
-Submitted to the 1st A3 Workshop CHIA Hackathon 2026. Authors: Khoi Le, Sayanti Jana, Matthew
+Submitted to the 1st A3 Workshop CHIA Hackathon. Authors: Khoi Le, Sayanti Jana, Matthew
 DeLorenzo, Jeyavijayan Rajendran, Paul Gratz (Texas A&M University).
 
 ## How it works
@@ -46,12 +46,12 @@ docs/       SETUP.md, RUNNING.md, OUTPUTS.md, GATE.md
 2. **Launch a run** as in [`docs/RUNNING.md`](docs/RUNNING.md). OpenEvolve with adaptive guidance:
    ```
    cd ~/chia_loop
-   ADAPT_EVERY=10 ./launch_arm.sh my_run 600 2026-10-01T22:00:00Z 2026-10-02T04:00:00Z gs://my-bucket \
+   ADAPT_EVERY=10 ./launch_arm.sh my_run 600 <search stop> <deadline> gs://my-bucket \
        --ensemble gemini-2.5-pro=0.7,gemini-2.5-flash=0.3
    ```
    A SkyDiscover algorithm instead, for example AdaEvolve:
    ```
-   ./launch_native.sh adaevolve my_run 600 2026-10-01T22:00:00Z 2026-10-02T04:00:00Z gs://my-bucket \
+   ./launch_native.sh adaevolve my_run 600 <search stop> <deadline> gs://my-bucket \
        --ensemble gemini-2.5-pro=0.7,gemini-2.5-flash=0.3
    ```
 3. **Stop it** with `./stop_arm.sh my_run`.

@@ -2,7 +2,7 @@
 
 | Run | Folder | Search | Proposer models | C++ writer | Hours* | Candidates | Refused | Distinct designs scored | Best on training |
 |---|---|---|---|---|---|---|---|---|---|
-| OE-2.5 Sep21 | `arm_adaptive` | OpenEvolve + guidance | 2.5 Pro / 2.5 Flash | gemini-2.5-pro | 12.5 | 89 | 44 | 34 | +0.40% `2e5680038f4e` |
+| OE-2.5 early | `arm_adaptive` | OpenEvolve + guidance | 2.5 Pro / 2.5 Flash | gemini-2.5-pro | 12.5 | 89 | 44 | 34 | +0.40% `2e5680038f4e` |
 | OE-2.5 v3 | `arm_adaptive_v3` | OpenEvolve + guidance | 2.5 Pro / 2.5 Flash | gemini-2.5-pro | 20.6 | 176 | 111 | 55 | +0.40% `311521127a79` |
 | OE-2.5 A2 | `arm_A2_gemini25` | OpenEvolve + guidance | 2.5 Pro / 2.5 Flash | gemini-2.5-pro | 15.4 | 113 | 57 | 40 | +0.54% `ea244a758864` |
 | OE-3.x B2 | `arm_B2_gemini3` | OpenEvolve + guidance | 3.1 Pro / 3.8 Flash | gemini-3.1-pro-preview | 15.4 | 52 | 3 | 43 | +0.08% `d743d8dd1193` |
@@ -17,7 +17,7 @@
 
 ## Refusals by reason
 
-| Reason | OE-2.5 Sep21 | OE-2.5 v3 | OE-2.5 A2 | OE-3.x B2 | Ada-3.x | Ada+g-3.x | EvoX-2.5 | EvoX-3.x | GEPA-2.5 | GEPA-3.x |
+| Reason | OE-2.5 early | OE-2.5 v3 | OE-2.5 A2 | OE-3.x B2 | Ada-3.x | Ada+g-3.x | EvoX-2.5 | EvoX-3.x | GEPA-2.5 | GEPA-3.x |
 |---|---|---|---|---|---|---|---|---|---|---|
 | design section is not YAML (e.g. a copied placeholder) | 0 | 0 | 0 | 0 | 7 | 54 | 216 | 21 | 148 | 29 |
 | reply missing a section | 1 | 0 | 0 | 0 | 18 | 36 | 168 | 38 | 124 | 48 |
@@ -38,10 +38,10 @@
 
 | Run | Role | Model | Calls | Input tokens | Output tokens (incl. reasoning) |
 |---|---|---|---|---|---|
-| OE-2.5 Sep21 | proposer | gemini-2.5-flash | 37 | 870,912 | 262,206 |
-| OE-2.5 Sep21 | proposer | gemini-2.5-pro | 53 | 1,235,195 | 645,902 |
-| OE-2.5 Sep21 | proposer | (rate-limited, retried) | 4 | | |
-| OE-2.5 Sep21 | C++ writer | gemini-2.5-pro | 66 | 1,177,226 | 756,741 |
+| OE-2.5 early | proposer | gemini-2.5-flash | 37 | 870,912 | 262,206 |
+| OE-2.5 early | proposer | gemini-2.5-pro | 53 | 1,235,195 | 645,902 |
+| OE-2.5 early | proposer | (rate-limited, retried) | 4 | | |
+| OE-2.5 early | C++ writer | gemini-2.5-pro | 66 | 1,177,226 | 756,741 |
 | OE-2.5 v3 | proposer | gemini-2.5-flash | 40 | 1,082,118 | 318,729 |
 | OE-2.5 v3 | proposer | gemini-2.5-pro | 137 | 3,632,807 | 1,669,589 |
 | OE-2.5 v3 | proposer | (rate-limited, retried) | 11 | | |
@@ -83,8 +83,8 @@
 
 | Run | Design | Score in the search | All 33 | Training 17 | Held out 16 | Held-out traces up |
 |---|---|---|---|---|---|---|
-| OE-2.5 Sep21 | `c8957d2b2855` | +0.16% | +0.07% [-0.80%, +0.88%] | -0.26% [-1.50%, +0.82%] | +0.41% [-0.78%, +1.58%] | 10/16 |
-| OE-2.5 Sep21 | `2e5680038f4e` | +0.40% | +0.37% [+0.09%, +0.73%] | +0.39% [+0.07%, +0.84%] | +0.34% [-0.04%, +0.94%] | 8/16 |
+| OE-2.5 early | `c8957d2b2855` | +0.16% | +0.07% [-0.80%, +0.88%] | -0.26% [-1.50%, +0.82%] | +0.41% [-0.78%, +1.58%] | 10/16 |
+| OE-2.5 early | `2e5680038f4e` | +0.40% | +0.37% [+0.09%, +0.73%] | +0.39% [+0.07%, +0.84%] | +0.34% [-0.04%, +0.94%] | 8/16 |
 | OE-2.5 v3 | `e10d4a832a77` | +0.24% | +0.10% [-0.62%, +0.72%] | -0.25% [-1.40%, +0.59%] | +0.48% [-0.31%, +1.31%] | 8/16 |
 | OE-2.5 v3 | `311521127a79` | +0.40% | +0.59% [-0.15%, +1.32%] | +0.27% [-0.78%, +1.25%] | +0.93% [-0.05%, +1.98%] | 9/16 |
 | OE-2.5 A2 | `3714da345231` | +0.18% | +0.07% [-0.05%, +0.24%] | +0.15% [-0.04%, +0.46%] | -0.02% [-0.12%, +0.05%] | 4/16 |
@@ -97,7 +97,7 @@
 
 | Run | Search | Models | Design | Held out 16 | All 33 | Metadata area (22 nm) | Declared metadata |
 |---|---|---|---|---|---|---|---|
-| OE-2.5 Sep21 | OpenEvolve + guidance | 2.5 Pro / 2.5 Flash | `c8957d2b2855` | 1.0041 | 1.0007 | 0.0394 mm² | 47.875 KB |
+| OE-2.5 early | OpenEvolve + guidance | 2.5 Pro / 2.5 Flash | `c8957d2b2855` | 1.0041 | 1.0007 | 0.0394 mm² | 47.875 KB |
 | OE-2.5 v3 | OpenEvolve + guidance | 2.5 Pro / 2.5 Flash | `311521127a79` | 1.0093 | 1.0059 | 0.0394 mm² | 47.875 KB |
 | OE-2.5 A2 | OpenEvolve + guidance | 2.5 Pro / 2.5 Flash | `b88d6375ef26` | 1.0030 | 1.0026 | 0.0379 mm² | 47.375 KB |
 | OE-3.x B2 | OpenEvolve + guidance | 3.1 Pro / 3.8 Flash | only the seed was validated | 1.0000 | 1.0000 | | |
