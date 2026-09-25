@@ -51,8 +51,9 @@ cp -a <this repository>/loop ~/chia_loop
 mkdir -p ~/loop_out && cp <this repository>/setup/trace_seconds_50M100M.json ~/loop_out/
 ```
 
-- The machine is `champsim/champsim_config.json`: DPC4's single-core configuration, a 3 MB LLC of
-  4096 sets × 12 ways, no prefetcher at any level. Each candidate is built into
+- The machine is DPC4's single-core full-bandwidth configuration without prefetchers,
+  `champsim/dpc4/1C.fullBW.nopref.mockingjay.json`: a 3 MB LLC of 4096 sets × 12 ways, DRAM at
+  4800 MT/s, no prefetcher at any level. The candidate's module replaces the LLC's policy. Each candidate is built into
   `replacement/evolved_policy/` by the node, which runs `config.sh` and `make` itself.
 - Keep the set of folders under `replacement/` fixed during a run: ChampSim compiles every module
   folder, so a broken leftover breaks every build, and adding or removing a folder makes the next
