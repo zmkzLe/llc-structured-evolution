@@ -125,11 +125,15 @@ The whole launch at toy length (2 traces, 1M + 5M instructions, 3 proposals), fo
 the scores mean nothing at this length:
 
 ```
-VALIDATOR_EXTRA='--traces 429.mcf-192B,483.xalancbmk-127B --warmup 1000000 --sim 5000000' \
+VALIDATOR_EXTRA='--traces 429.mcf-192B,483.xalancbmk-127B --warmup 1000000 --sim 5000000 --expect-seconds 300' \
 ADAPT_EVERY=3 ./launch_arm.sh dry1 600 <20 minutes from now> <35 minutes from now> gs://<bucket> \
   --traces 429.mcf-192B,483.xalancbmk-127B --warmup 1000000 --sim 5000000 --iterations 3 \
   --ensemble gemini-2.5-pro=0.7,gemini-2.5-flash=0.3
 ```
+
+`--expect-seconds 300` tells the validator a validation takes about 5 minutes at this length.
+Without it, the validator assumes the full length's 3.2 hours and defers everything, the seed
+included, past the short deadline.
 
 Never run a dry run on a machine where a real run is live: its orphan guard ends every simulation
 that is not its own validator's once its search stops.

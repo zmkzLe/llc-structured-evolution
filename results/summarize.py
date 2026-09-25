@@ -85,7 +85,10 @@ for D, label, framework, models in chosen:
     recs = jl(D / "yaml_run/records.jsonl")
     vals = jl(D / "yaml_run/validation.jsonl")
     calls = jl(D / "llm_calls.jsonl")
-    seed = next(r for r in recs if r.get("id") == SEED and r.get("status") == "ok")
+    seed = next((r for r in recs if r.get("id") == SEED and r.get("status") == "ok"), None)
+    if seed is None:
+        print(f"{label}: the seed has not been scored yet; skipped", file=sys.stderr)
+        continue
     train = list(seed["ipc"])
     ok = [r for r in recs if r.get("status") == "ok"]
     refused = [r for r in recs if r.get("status") != "ok"]
