@@ -78,34 +78,3 @@
 | GEPA-3.x | proposer | gemini-3.8-flash | 39 | 600,740 | 301,403 |
 | GEPA-3.x | proposer | (rate-limited, retried) | 15 | | |
 | GEPA-3.x | C++ writer | gemini-3.1-pro-preview | 10 | 173,809 | 98,291 |
-
-## Held-out validations (against Mockingjay, 33 traces at 50M + 100M; 95% bootstrap over traces)
-
-| Run | Design | Score in the search | All 33 | Training 17 | Held out 16 | Held-out traces up |
-|---|---|---|---|---|---|---|
-| OE-2.5 early | `c8957d2b2855` | +0.16% | +0.07% [-0.80%, +0.88%] | -0.26% [-1.50%, +0.82%] | +0.41% [-0.78%, +1.58%] | 10/16 |
-| OE-2.5 early | `2e5680038f4e` | +0.40% | +0.37% [+0.09%, +0.73%] | +0.39% [+0.07%, +0.84%] | +0.34% [-0.04%, +0.94%] | 8/16 |
-| OE-2.5 v3 | `e10d4a832a77` | +0.24% | +0.10% [-0.62%, +0.72%] | -0.25% [-1.40%, +0.59%] | +0.48% [-0.31%, +1.31%] | 8/16 |
-| OE-2.5 v3 | `311521127a79` | +0.40% | +0.59% [-0.15%, +1.32%] | +0.27% [-0.78%, +1.25%] | +0.93% [-0.05%, +1.98%] | 9/16 |
-| OE-2.5 A2 | `3714da345231` | +0.18% | +0.07% [-0.05%, +0.24%] | +0.15% [-0.04%, +0.46%] | -0.02% [-0.12%, +0.05%] | 4/16 |
-| OE-2.5 A2 | `b88d6375ef26` | +0.43% | +0.26% [-0.20%, +0.72%] | +0.22% [-0.07%, +0.56%] | +0.30% [-0.60%, +1.20%] | 9/16 |
-| OE-2.5 A2 | `ea244a758864` | +0.54% | +0.21% [-0.22%, +0.66%] | +0.40% [+0.04%, +0.86%] | +0.02% [-0.77%, +0.78%] | 8/16 |
-| Ada-3.x | `90a333eded10` | +0.25% | +0.26% [-0.65%, +1.15%] | +0.02% [-1.39%, +1.26%] | +0.51% [-0.57%, +1.74%] | 7/16 |
-| Ada-3.x | `429a3b77e242` | +0.47% | +0.07% [-0.95%, +1.06%] | +0.17% [-1.26%, +1.43%] | -0.03% [-1.49%, +1.43%] | 7/16 |
-
-## Best design per run, chosen by its held-out score
-
-| Run | Search | Models | Design | Held out 16 | All 33 | Metadata area (22 nm) | Declared metadata |
-|---|---|---|---|---|---|---|---|
-| OE-2.5 early | OpenEvolve + guidance | 2.5 Pro / 2.5 Flash | `c8957d2b2855` | 1.0041 | 1.0007 | 0.0394 mm² | 47.875 KB |
-| OE-2.5 v3 | OpenEvolve + guidance | 2.5 Pro / 2.5 Flash | `311521127a79` | 1.0093 | 1.0059 | 0.0394 mm² | 47.875 KB |
-| OE-2.5 A2 | OpenEvolve + guidance | 2.5 Pro / 2.5 Flash | `b88d6375ef26` | 1.0030 | 1.0026 | 0.0379 mm² | 47.375 KB |
-| OE-3.x B2 | OpenEvolve + guidance | 3.1 Pro / 3.8 Flash | only the seed was validated | 1.0000 | 1.0000 | | |
-| Ada-3.x | AdaEvolve | 3.1 Pro / 3.8 Flash | `90a333eded10` | 1.0051 | 1.0026 | 0.0387 mm² | 47.812 KB |
-| Ada+g-3.x | AdaEvolve + guidance | 3.1 Pro / 3.8 Flash | only the seed was validated | 1.0000 | 1.0000 | | |
-| EvoX-2.5 | EvoX + guidance | 2.5 Pro / 2.5 Flash | only the seed was validated | 1.0000 | 1.0000 | | |
-| EvoX-3.x | EvoX + guidance | 3.1 Pro / 3.8 Flash | only the seed was validated | 1.0000 | 1.0000 | | |
-| GEPA-2.5 | GEPA + guidance | 2.5 Pro / 2.5 Flash | only the seed was validated | 1.0000 | 1.0000 | | |
-| GEPA-3.x | GEPA + guidance | 3.1 Pro / 3.8 Flash | only the seed was validated | 1.0000 | 1.0000 | | |
-
-The seed's (Mockingjay's) IPCs at 20M + 50M are identical on all 17 training traces in every run: **True**.

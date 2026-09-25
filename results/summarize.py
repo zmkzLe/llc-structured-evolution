@@ -4,10 +4,9 @@
     python3 results/summarize.py ~/oe_out/my_run    # any run folders, labelled by name
 
 Every score is recomputed from the per-trace IPCs: a design's IPC over the seed's (Mockingjay's)
-on each trace, and the geometric mean over the traces. Bootstrap intervals are over traces,
-20,000 resamples with a fixed seed, so the output is the same on every run.
+on each trace, and the geometric mean over the traces.
 """
-import collections, json, math, random, re, sys
+import collections, json, math, re, sys
 from datetime import datetime
 from pathlib import Path
 
@@ -47,12 +46,6 @@ def gm(xs):
     return math.exp(sum(math.log(x) for x in xs) / len(xs))
 
 
-def boot(vals, n=20000, seed=1):
-    rnd = random.Random(seed)
-    bs = sorted(gm(rnd.choice(vals) for _ in vals) for _ in range(n))
-    return bs[int(0.025 * n)], bs[int(0.975 * n)]
-
-
 def pct(x):
     return f"{(x - 1) * 100:+.2f}%"
 
@@ -83,7 +76,6 @@ chosen = [described(a) for a in sys.argv[1:]] or [(BASE / f, l, s, m) for f, l, 
 for D, label, framework, models in chosen:
     folder = D.name
     recs = jl(D / "yaml_run/records.jsonl")
-    vals = jl(D / "yaml_run/validation.jsonl")
     calls = jl(D / "llm_calls.jsonl")
     seed = next((r for r in recs if r.get("id") == SEED and r.get("status") == "ok"), None)
     if seed is None:
@@ -102,24 +94,11 @@ for D, label, framework, models in chosen:
         t[0] += 1; t[1] += c.get("prompt_tokens") or 0; t[2] += (c.get("completion_tokens") or 0) + (c.get("reasoning_tokens") or 0)
     cc = [c for r in recs for c in (r.get("cpp_calls") or [])]
     cu = [c.get("usage") or {} for c in cc]
-    ref_ipc = next((v["ipc"] for v in vals if v.get("event") == "validated" and v["id"] == SEED), None)
-    validated = []
-    for v in vals:
-        if ref_ipc is None or v.get("event") != "validated" or v["id"] == SEED:
-            continue
-        rat = {t: v["ipc"][t] / ref_ipc[t] for t in v["ipc"]}
-        held = [t for t in rat if t not in train]
-        rec = next(r for r in ok if r["id"] == v["id"])
-        validated.append(dict(id=v["id"], search=vs[v["id"]], held_up=sum(1 for t in held if rat[t] > 1), n_held=len(held),
-                              kb=rec["declared_kb"], area=rec["cost"]["metadata_area_mm2"],
-                              **{g: [rat[t] for t in tl] for g, tl in
-                                 (("all", list(rat)), ("training", [t for t in rat if t in train]), ("held", held))}))
     runs[label] = dict(folder=folder, framework=framework, models=models, recs=recs, ok=ok, refused=refused, vs=vs,
                        best=best, hours=(max(times) - min(times)).total_seconds() / 3600, calls=len(calls),
                        answered=len(ans), tk=dict(tk), cpp_models=sorted({r.get("cpp_model") for r in ok if r.get("cpp_model")}),
                        cpp_calls=len(cc), cpp_in=sum(u.get("prompt_tokens") or 0 for u in cu),
-                       cpp_out=sum((u.get("completion_tokens") or 0) + ((u.get("completion_tokens_details") or {}).get("reasoning_tokens") or 0) for u in cu),
-                       validated=validated, seed_ipc=seed["ipc"])
+                       cpp_out=sum((u.get("completion_tokens") or 0) + ((u.get("completion_tokens_details") or {}).get("reasoning_tokens") or 0) for u in cu))
 
 L = list(runs)
 P("## Runs\n")
@@ -150,26 +129,4 @@ for l in L:
     P(f"| {l} | proposer | (rate-limited, retried) | {s['calls'] - s['answered']} | | |")
     P(f"| {l} | C++ writer | {', '.join(s['cpp_models'])} | {s['cpp_calls']} | {s['cpp_in']:,} | {s['cpp_out']:,} |")
 
-P("\n## Held-out validations (against Mockingjay, 33 traces at 50M + 100M; 95% bootstrap over traces)\n")
-P("| Run | Design | Score in the search | All 33 | Training 17 | Held out 16 | Held-out traces up |")
-P("|---|---|---|---|---|---|---|")
-for l in L:
-    for v in runs[l]["validated"]:
-        cells = [f"{pct(gm(v[g]))} [{', '.join(map(pct, boot(v[g])))}]" for g in ("all", "training", "held")]
-        P(f"| {l} | `{v['id']}` | {pct(v['search'])} | " + " | ".join(cells) + f" | {v['held_up']}/{v['n_held']} |")
-
-P("\n## Best design per run, chosen by its held-out score\n")
-P("| Run | Search | Models | Design | Held out 16 | All 33 | Metadata area (22 nm) | Declared metadata |")
-P("|---|---|---|---|---|---|---|---|")
-for l in L:
-    s = runs[l]
-    if s["validated"]:
-        v = max(s["validated"], key=lambda v: gm(v["held"]))
-        P(f"| {l} | {s['framework']} | {s['models']} | `{v['id']}` | {gm(v['held']):.4f} | {gm(v['all']):.4f} | "
-          f"{v['area']:.4f} mm² | {v['kb']:g} KB |")
-    else:
-        P(f"| {l} | {s['framework']} | {s['models']} | only the seed was validated | 1.0000 | 1.0000 | | |")
-
-same = all(runs[l]["seed_ipc"] == runs[L[0]]["seed_ipc"] for l in L)
-P(f"\nThe seed's (Mockingjay's) IPCs at 20M + 50M are identical on all 17 training traces in every run: **{same}**.")
 print("\n".join(out))

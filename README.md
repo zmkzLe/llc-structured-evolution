@@ -58,37 +58,6 @@ docs/       SETUP.md, RUNNING.md, OUTPUTS.md, GATE.md
 4. **Read what it wrote** with [`docs/OUTPUTS.md`](docs/OUTPUTS.md), and tabulate it with
    `python3 results/summarize.py ~/oe_out/my_run`.
 
-## Results
-
-Best design of each run, chosen by its held-out score. The scores are geometric means of IPC over
-Mockingjay's at 50M + 100M instructions. The full tables, with 95% bootstrap intervals, are in
-[`results/SUMMARY.md`](results/SUMMARY.md); [`results/README.md`](results/README.md) says what each
-run was.
-
-| Run | Search | Proposer models | Best design | Held out (16) | All (33) | Area (22 nm) | State |
-|---|---|---|---|---|---|---|---|
-| `arm_adaptive_v3` | OpenEvolve + guidance | Gemini 2.5 Pro / Flash | `311521127a79` | 1.0093 | 1.0059 | 0.0394 mm² | 47.875 KB |
-| `arm_A2_gemini25` | OpenEvolve + guidance | Gemini 2.5 Pro / Flash | `b88d6375ef26` | 1.0030 | 1.0026 | 0.0379 mm² | 47.375 KB |
-| `arm_B2_gemini3` | OpenEvolve + guidance | Gemini 3.1 Pro / 3.8 Flash | none validated | — | — | | |
-| `arm_adaevolve_sj4` | AdaEvolve | Gemini 3.1 Pro / 3.8 Flash | `90a333eded10` | 1.0051 | 1.0026 | 0.0387 mm² | 47.812 KB |
-| `arm_adaevolve_adapt_gemini3` | AdaEvolve + guidance | Gemini 3.1 Pro / 3.8 Flash | none validated | — | — | | |
-| `arm_evox_gemini25`, `arm_evox_gemini3` | EvoX + guidance | 2.5 / 3.x | none validated | — | — | | |
-| `arm_gepa_gemini25`, `arm_gepa_gemini3` | GEPA + guidance | 2.5 / 3.x | none validated | — | — | | |
-
-Mockingjay itself declares 47.375 KB (0.0379 mm²). "None validated" means no design beat the
-0.1% bar on the training traces. Read these as observations, not established improvements:
-
-- each run is a single sample of a noisy search, with 50–500 candidates;
-- the gains are under 1%, and every held-out 95% interval includes zero;
-- the runs differ in length, models and settings;
-- the EvoX and GEPA runs lost most of their candidates to a mismatch between the reply format and
-  how the reply was parsed (see [`results/README.md`](results/README.md)).
-
-Faithfulness: before the runs, C++ written from the Mockingjay description alone made the same
-eviction and bypass decisions as our Mockingjay port in all 4,096 LLC sets, with identical cycle
-counts ([`docs/GATE.md`](docs/GATE.md)). For evolved designs, the C++ is only required to build
-and to finish every trace.
-
 ## Credits and license
 
 `loop/` builds on Sayanti Jana's CHIA loop: `run_openevolve.py`, `chia_llc_loop.py`,

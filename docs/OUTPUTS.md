@@ -110,8 +110,6 @@ the reference; these are the frameworks' views.
 and prints:
 - the runs;
 - the refusals by reason;
-- model calls and tokens;
-- every held-out validation, with 95% bootstrap intervals over traces;
-- each run's best design by held-out score.
+- model calls and tokens.
 
 `results/SUMMARY.md` is its output for the ten runs.
