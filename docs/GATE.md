@@ -32,9 +32,19 @@ identical); the replay at 4,096 × 12 exercised no bypass.
 
 ## What this does and does not cover
 
-In a run, the C++ writer does not translate from scratch. It edits the closest earlier design's
-C++, starting from the 2.5 Pro translation that passed (`loop/seed_cpp/`), and an audit call
-reverts any change the description did not ask for. Faithfulness is proven for the seed only. For
-every other design, the checks are that its C++ compiles and that every trace finishes. The
-storage and area figures are computed from the description, so they describe the C++ only as far
-as the translation is faithful.
+In a run, the C++ writer never translates from scratch. It edits the C++ of the closest earlier
+design for the change in the description. The chain of edits starts from the 2.5 Pro translation
+that passed (`loop/seed_cpp/`).
+- **If the edit does not compile,** the compiler's messages go back to the model for up to two
+  repair calls.
+- **If it still does not compile,** a second attempt edits the seed's validated C++ instead, again
+  with up to two repairs.
+- **If that fails too,** the candidate is discarded as `cpp_failed` and the seed's C++ is restored.
+- **Once an edit builds,** an audit call reverts any change the description did not ask for. Its
+  result is kept only if it builds and changes fewer lines than the edit, and more than none.
+
+A candidate makes at most seven C++ calls, usually two.
+
+Faithfulness is proven for the seed only. For every other design, the checks are that its C++
+compiles and that every trace finishes. The storage and area figures are computed from the
+description, so they describe the C++ only as far as the translation is faithful.
