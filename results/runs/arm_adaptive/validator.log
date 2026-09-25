@@ -1,0 +1,10 @@
+validator: /home/khoile0315/oe_out/arm_adaptive/yaml_run
+  tree /home/khoile0315/champsim_validate module validate_policy
+  33 traces at 50000000 + 100000000, 8 workers, sim timeout 18000 s
+  search stop 2026-09-23T22:00:00Z, deadline 2026-09-24T04:00:00Z, drain False, fake None
+waiting for /home/khoile0315/oe_out/arm_adaptive/yaml_run/store
+[2026-09-21T10:03:45Z] below_min_gain {"id": "5d8caa67b6c0", "score": 1.1085284538291478}
+[2026-09-21T13:28:59Z] started {"id": "c8957d2b2855", "score": 1.109422351618483}
+[2026-09-21T16:31:32Z] validated {"id": "c8957d2b2855", "score": {"all": 1.1012171176388856, "training": 1.1088642111927907, "held_out": 1.093149856387567}, "gap": {"difference": 0.01571435480522365, "ratio": 1.0143752978728402}, "seconds": 10953.0}
+[2026-09-21T18:17:22Z] started {"id": "2e5680038f4e", "score": 1.1120362903804792}
+[2026-09-21T21:21:27Z] validated {"id": "2e5680038f4e", "score": {"all": 1.1045142106905095, "training": 1.1160386167364376, "held_out": 1.0923998930978633}, "gap": {"difference": 0.02363872363857422, "ratio": 1.0216392584692944}, "seconds": 11044.9}

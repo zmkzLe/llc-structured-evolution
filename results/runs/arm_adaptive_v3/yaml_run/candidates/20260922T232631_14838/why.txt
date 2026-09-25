@@ -1,0 +1,23 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 21 validation errors for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mj_unified_rank_metric_improved_confidence', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+samplers.0.on_match.1
+  Value error, a rule needs exactly one of `set`, `use_duel`, `sample`, `train`, `run`, `each_way` or a declared step word, or only `stop` / `free` [type=value_error, input_value={'when': {'type_in': ['PR...ee': True, 'stop': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+samplers.0.on_match.2
+  Value error, a rule needs exactly one of `set`, `use_duel`, `sample`, `train`, `run`, `each_way` or a declared step word, or only `stop` / `free` [type=value_error, input_value={'train_rdp_only': {'rdp_...dow': 16}, 'free': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+samplers.0.install.predicted_rdp_val.ConstValue.const
+  Field required [type=missing, input_value={'table': {'table': 'rdp', 'index': 'pc_sig'}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+samplers.0.install.predicted_rdp_val.ConstValue.table
+  Extra inputs are not permitted [type=extra_forbidden, input_value={'table': 'rdp', 'index': 'pc_sig'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+samplers.0.install.predicted_rdp_val.TickValue.tick
+  Field required [type=missing, input_value={'table': {'table': 'rdp', 'index': 'pc_sig'}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+samplers.0.install.predicted_rdp_val.TickValue.table
+  Extra inputs are not permitted [type=extra_forbidden, input_value={'table': 'rdp', 'index': 'pc_sig'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_f

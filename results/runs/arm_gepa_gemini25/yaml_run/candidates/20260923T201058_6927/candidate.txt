@@ -1,0 +1,2 @@
+===== STRUCTURE_DESCRIPTION =====` marker line?
+-   [ ] Does the block contain the `===== NEW_WORDS =====

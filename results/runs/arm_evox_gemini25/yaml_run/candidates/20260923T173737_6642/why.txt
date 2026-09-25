@@ -1,0 +1,8 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 2 validation errors for StructureDescription
+tables.1
+  Value error, table 'bypass_confidence' is unset, so its entries have no initial value; drop init [type=value_error, input_value={'name': 'bypass_confiden...': 'MID', 'unset': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+on_fill.1.when
+  Value error, 'way': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'way': 'NUM_WAY'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

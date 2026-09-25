@@ -1,0 +1,207 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_unified_rank_metric_improved_confidence
+doc: >
+  Improves confidence training by introducing a new step word `train_confidence_on_accuracy`
+  that adjusts `rdp_conf` based on how accurately the predicted reuse distance (RDP)
+  matches the actual reuse distance (age). The sampler now stores the predicted RDP
+  at install time. The original `train_sampler_match` is split into `train_rdp_only`
+  (for RDP table) and the new `train_confidence_on_accuracy` (for confidence table).
+  Existing confidence decrements in `sweep` and `on_replace` are retained to handle
+  cases of no reuse or late reuse, complementing the accuracy-based training. This
+  aims to create a more robust and responsive confidence mechanism, which should
+  improve the overall accuracy of the `etr_with_confidence_cost` metric and thus
+  reduce `kept_dead` and `wrong_bypass` errors.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    # If confidence is zero, the line is considered useless. Bypass it.
+    - table: {table: rdp_conf, index: pc_sig, cmp: eq, threshold: 0}
+    # Use new unified rank for bypass > threshold check
+    - unified_rank_bypass_gt: {rdp_table: rdp, conf_table: rdp_conf, index: pc_sig, div: 8, scale: 2, threshold: 9}
+    # Use new unified rank for bypass > victim check
+    - unified_rank_exceeds_victim: {rdp_table: rdp, conf_table: rdp_conf, index: pc_sig, div: 8, scale: 2}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: rdp_conf
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+      - {name: predicted_rdp_val, kind: counter, width: 7, init: ZERO} # New: stores predicted RDP at install
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - when: {type_in: [PREFETCH]}
+        train_rdp_only: {rdp_table: rdp, index: signature, sample: age, scale: 2, min_diff: 16} # Only RDP training
+        train_confidence_on_accuracy: {conf_table: rdp_conf, index: signature, predicted_rdp_field: predicted_rdp_val, actual_age_field: age, correct_window: 16} # New: Accuracy-based confidence training
+        free: true
+        stop: true
+      - train_rdp_only: {rdp_table: rdp, index: signature, sample: age, scale: 1, min_diff: 16} # Only RDP training
+        train_confidence_on_accuracy: {conf_table: rdp_conf, index: signature, predicted_rdp_field: predicted_rdp_val, actual_age_field: age, correct_window: 16} # New: Accuracy-based confidence training
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp_conf, index: signature, op: decrement} # Keep decrement for long reuse
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+      - train: {table: rdp_conf, index: signature, op: decrement} # Keep decrement for no reuse before eviction
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}, predicted_rdp_val: {table: {table: rdp, index: pc_sig}}} # New: Store predicted RDP at install
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # The update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    # Aggressively evict lines with zero confidence, a proven heuristic
+    - when: {table: {table: rdp_conf, index: pc_sig, cmp: eq, threshold: 0}}
+      set: {etr: {const: 11}}
+      stop: true
+    # For all other lines, calculate ETR using the unified cost function
+    - set:
+        etr:
+          etr_with_confidence_cost:
+            rdp_table: rdp
+            conf_table: rdp_conf
+            index: pc_sig
+            div: 8
+            scale: 2
+            max_etr: 11
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: etr_with_confidence_cost
+  place: value
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as 0. An absent 'conf_val' is treated as 0.
+    The maximum value for confidence is 3.
+    Calculates a base_etr = rdp_val / div using integer division.
+    Calculates a penalty = (3 - conf_val) * scale.
+    The final returned value is min(max_etr, base_etr + penalty).
+- name: unified_rank_bypass_gt
+  place: condition
+  params: {conf_table: table, div: {int: [1, 128]}, index: signature, rdp_table: table, scale: {int: [0, 16]}, threshold: {int: [0, 15]}}
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as 0. An absent 'conf_val' is treated as 0.
+    The maximum value for confidence is 3.
+    Calculates a base_etr = rdp_val / div using integer division.
+    Calculates a penalty = (3 - conf_val) * scale.
+    Calculates a predicted_etr = base_etr + penalty.
+    Returns true if predicted_etr is greater than the threshold.
+- name: unified_rank_exceeds_victim
+  place: condition
+  params: {conf_table: table, div: {int: [1, 128]}, index: signature, rdp_table: table, scale: {int: [0, 16]}}
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as 0. An absent 'conf_val' is treated as 0.
+    The maximum value for confidence is 3.
+    Calculates a base_etr = rdp_val / div using integer division.
+    Calculates a penalty = (3 - conf_val) * scale.
+    Calculates a predicted_etr = base_etr + penalty.
+    Returns true if this predicted_etr is greater than the absolute value of the victim way's key.
+- name: train_rdp_only
+  place: step
+  params:
+    rdp_table: table
+    index: signature
+    sample: state
+    scale: {int: [1, 2]}
+    min_diff: {int: [0, 127]}
+  means: >
+    Performs training for the rdp_table using the 'toward' operation.
+    The target value is min(sample * scale, rdp_table.max).
+    The entry moves one step toward the target if the difference from the target is at least min_diff.
+- name: train_confidence_on_accuracy
+  place: step
+  params:
+    conf_table: table
+    index: signature
+    predicted_rdp_field: state
+    actual_age_field: state
+    correct_window: {int: [0, 127]}
+  means: >
+    Reads 'predicted_rdp' from predicted_rdp_field and 'actual_age' from actual_age_field.
+    Calculates the absolute difference: diff = abs(predicted_rdp - actual_age).
+    If diff <= correct_window, then conf_table[index] is incremented (saturating).
+    Otherwise, conf_table[index] is decremented (saturating).

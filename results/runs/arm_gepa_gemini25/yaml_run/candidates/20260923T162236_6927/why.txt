@@ -1,0 +1,14 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 4 validation errors for StructureDescription
+on_access.0.when.counter.threshold.str-enum[Threshold]
+  Input should be 'ZERO', 'MAX' or 'MAX_OVER_2' [type=enum, input_value='NUM_WAY', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/enum
+on_access.0.when.counter.threshold.int
+  Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='NUM_WAY', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/int_parsing
+on_fill.0.when.counter.threshold.str-enum[Threshold]
+  Input should be 'ZERO', 'MAX' or 'MAX_OVER_2' [type=enum, input_value='NUM_WAY', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/enum
+on_fill.0.when.counter.threshold.int
+  Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='NUM_WAY', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/int_parsing

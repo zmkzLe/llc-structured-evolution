@@ -1,0 +1,74 @@
+Run so far: 122 candidates, 51 scored, 71 refused or failed (schema_rejected 9, words_refused 62).
+Refusal kinds seen more than once this run (a pattern, not a one-off): 34 times, words_refused: high_rdp_and_confident_bypass: already declared in this run with another definition; a word is never changed, so declare a new name; 13 times, words_refused: the new words must be a YAML list of words; 13 times, schema_rejected: name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mockingjay_confidence_full_clock'); 3 times, words_refused: train_sampler_match, unified_etr_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name; 2 times, words_refused: incoming_etr_exceeds_victim, train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 34 x words_refused: high_rdp_and_confident_bypass: already declared in this run with another definition; a word is never changed, so declare a new name
+- 13 x words_refused: the new words must be a YAML list of words
+- 13 x schema_rejected: name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mockingjay_confidence_full_clock')
+- 3 x words_refused: train_sampler_match, unified_etr_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+- 2 x words_refused: incoming_etr_exceeds_victim, train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name
+- 1 x words_refused: confident_victim_exceed, high_rdp_and_confident: already declared in this run with another definition; a word is never changed, so declare a new name
+- 1 x words_refused: confidence_ranked_etr, deconfident_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+- 1 x words_refused: confidence_penalized_etr, train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name
+- 1 x schema_rejected: victim.bypass_when.0 Value error, 'high_rdp_and_confident_bypass': not a word of the grammar here, nor a declared condition word (written: {'high_rdp_and_confident_...: 73, 'conf_thresh': 2}})
+- 1 x schema_rejected: victim.bypass_when.0 Value error, 'high_rdp_and_confident_bypass': not a word of the grammar here, nor a declared condition word (written: {'high_rdp_and_confident_...: 73, 'conf_thresh': 1}}) victim.bypass_when.1 Value error, 'confident_vi
+- 1 x schema_rejected: Value error, on_hit[1] -> procedures.access[5]: 'etr' is signed; write the literal, MAX has no meaning for it (written: {'name': 'mockingjay_inse...ue}, {'run': 'access'}]})
+The seed scored 1.00000.
+Best so far: 311521127a79 at 1.00400, +0.40% over Mockingjay.
+
+Parts of the design changed so far (candidates that changed it, how many beat their closest earlier design, best and mean change of the score):
+- new_words: 32 tried, 16 improved, best +0.02564, mean -0.00325
+- samplers: 23 tried, 12 improved, best +0.02564, mean -0.00442
+- victim.bypass_when: 28 tried, 11 improved, best +0.02564, mean -0.00561
+- procedures.access: 26 tried, 11 improved, best +0.02564, mean -0.00685
+- tables: 9 tried, 5 improved, best +0.02564, mean -0.00281
+- state: 9 tried, 5 improved, best +0.02564, mean -0.00545
+- on_hit: 1 tried, 0 improved, best -0.04786, mean -0.04786
+- signatures: 1 tried, 0 improved, best -0.04786, mean -0.04786
+
+The last 10 candidates, oldest first:
+113. refused (words_refused), changed 64 canonical lines in procedures.access, victim.bypass_when, new_words, new words etr_with_confidence_cost, penalized_etr_bypass_gt, penalized_etr_exceeds_victim, train_sampler_match: penalized_etr_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+114. refused (words_refused): the new words must be a YAML list of words
+115. refused (schema_rejected): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mj_recovery_from_4bit_clock_and_unified_rank')
+116. scored 311521127a79 at 1.00400, changed 102 canonical lines in procedures.access, victim.bypass_when, new_words, new words unified_etr_rank, incoming_rank_gt_threshold, incoming_rank_exceeds_victim, train_sampler_match: a repeat of an earlier design
+117. refused (words_refused), changed 95 canonical lines in procedures.access, victim.bypass_when, new_words, new words train_sampler_match, etr_with_confidence_cost, incoming_etr_gt_threshold, incoming_etr_exceeds_victim: incoming_etr_exceeds_victim, train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name
+118. scored 9808c7c9216f at 0.97416, changed 55 canonical lines in procedures.access, samplers, tables, victim.bypass_when, new_words, new words deconfident_etr_val, deconfident_exceeds_victim, deconfident_rdp_gt: +0.00065 against its closest earlier design
+119. refused (words_refused): the new words must be a YAML list of words
+120. refused (words_refused), changed 88 canonical lines in procedures.access, victim.bypass_when, new_words, new words deconfident_rdp_gt, incoming_unified_rank_gt_victim, train_sampler_match, unified_confidence_rank: train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name
+121. refused (words_refused): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'hcr_penalized_rank_exceeds_victim')
+122. refused (words_refused): the new words must be a YAML list of words
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 67.1%, largest mistake kept_dead (72 of 793 sampled fills), IPC over Mockingjay's 1.0003, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.4%, largest mistake wrong_bypass (214501 of 431314 sampled fills), IPC over Mockingjay's 0.9997, LLC MPKI 137.8
+- 619.lbm_s-2677B: headroom 44.2%, largest mistake wrong_bypass (109840 of 259968 sampled fills), IPC over Mockingjay's 0.9962, LLC MPKI 83.0
+- 654.roms_s-1390B: headroom 34.2%, largest mistake wrong_bypass (44882 of 118056 sampled fills), IPC over Mockingjay's 1.0113, LLC MPKI 37.7
+- 459.GemsFDTD-1491B: headroom 33.2%, largest mistake wrong_bypass (28216 of 86891 sampled fills), IPC over Mockingjay's 1.0022, LLC MPKI 27.6
+- 433.milc-127B: headroom 32.8%, largest mistake wrong_bypass (20104 of 67701 sampled fills), IPC over Mockingjay's 1.0267, LLC MPKI 21.5
+
+New words accepted this run, best-scoring first:
+- train_sampler_match (step): Performs training for a sampler match based on the reuse distance 'sample' (age). First, it trains the rdp_table using the 'toward' operation. The target value is min(sample * scale, rdp_table.max). T [used 36, better 10, worse 4, same 0, failed 22]
+- unified_etr_rank (value): Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0. An absent 'conf_val' is treated as 0. The maximum value for confidence is 3. If 'conf_ [used 3, better 2, worse 0, same 0, failed 1]
+- incoming_rank_gt_threshold (condition): Calculates the estimated time to reuse (ETR) for the incoming line (incoming_etr) using the 'unified_etr_rank' logic: Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An ab [used 2, better 2, worse 0, same 0, failed 0]
+- incoming_rank_exceeds_victim (condition): Calculates the estimated time to reuse (ETR) for the incoming line (incoming_etr) using the 'unified_etr_rank' logic: Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An ab [used 2, better 2, worse 0, same 0, failed 0]
+- deconfident_rdp_gt (condition): Reads the value 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent entry in rdp_table is treated as a value of 0. The conf_table is assumed to be fully initialized, and i [used 39, better 17, worse 6, same 0, failed 16]
+- deconfident_exceeds_victim (condition): Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent rdp_val is treated as 0. The conf_table is assumed to be fully initialized, and its maximum value is 3. Calculate [used 45, better 18, worse 8, same 1, failed 18]
+- etr_with_confidence_cost (value): Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0. An absent 'conf_val' is treated as 0. The maximum value for confidence is 3. Calculate [used 12, better 4, worse 0, same 0, failed 8]
+- etr_with_confidence_penalty (value): Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0. 'conf_val' is read from its table, with an absent entry read as its init value (0). Th [used 1, better 0, worse 1, same 0, failed 0]
+- access_etr_logic (value): Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as a special value, and an absent 'conf_val' is treated as 0. The 'rdp' table must be declar [used 1, better 0, worse 1, same 0, failed 0]
+- unified_etr_exceeds_victim (condition): Computes a predicted ETR value using the same logic as the 'access_etr_logic' value word. It reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated [used 4, better 0, worse 1, same 0, failed 3]
+- confidence_ranked_etr (value): Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0. 'conf_val' is read from its table, with an absent entry read as its init value (0). Th [used 4, better 1, worse 0, same 0, failed 3]
+- confidence_penalized_etr (value): Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0. An absent 'conf_val' is read as its init value (0). The maximum value for confidence i [used 5, better 1, worse 0, same 0, failed 4]
+- strong_confidence_etr (value): Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0. An absent 'conf_val' is read as its init value (0). The maximum confidence is assumed  [used 2, better 0, worse 1, same 0, failed 1]
+- train_rdp_conf_on_match (step): Performs training for a sampler match based on the reuse distance 'sample' (age). First, it trains the rdp_table using the 'toward' operation. The target value is min(sample * scale, rdp_table.max). T [used 1, better 0, worse 1, same 0, failed 0]
+- high_rdp_and_confident_bypass (condition): True when the entry for the index in rdp_table is present and its value is greater than rdp_thresh, AND the entry for the same index in conf_table has a value greater than conf_thresh. An absent entry [used 19, better 4, worse 1, same 0, failed 14]
+- confidence_adjusted_etr (value): Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0. An absent 'conf_val' is read as its init value (0). The maximum value for confidence i [used 6, better 2, worse 0, same 0, failed 4]
+- train_rdp_and_rpc_on_match (step): This step performs two training actions for a sampler match. First, it trains the rdp_table using the 'toward' operation. The target value is min(sample * scale, rdp_table.max). The entry moves one st [used 1, better 1, worse 0, same 0, failed 0]
+- rdp_confidence_etr_rank (value): Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0. 'conf_val' is read from its table, with an absent entry read as its init value (0). Th [used 1, better 1, worse 0, same 0, failed 0]
+- incoming_etr_exceeds_victim (condition): Calculates the incoming line's estimated ETR using the logic of `rdp_confidence_etr_rank` with the provided parameters (rdp_table, conf_table, index, div, max_etr, min_etr). Returns true if this calcu [used 4, better 1, worse 0, same 0, failed 3]
+- high_rdp_and_confident (condition): True when the entry for the index in rdp_table is present and its value is greater than rdp_thresh, AND the entry for the same index in conf_table has reached its maximum value. An absent entry in rdp [used 3, better 1, worse 1, same 0, failed 1]
+- confident_victim_exceed (condition): A condition for use inside bypass_when. It is true when the entry for the index in conf_table has reached its maximum value, AND the value of rdp_table[index] divided by div is greater than the absolu [used 4, better 1, worse 2, same 0, failed 1]
+- penalized_confidence_etr_v2 (value): Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0. If rdp_val is greater than 73, returns max_etr. 'conf_val' is read from its table, wit [used 1, better 1, worse 0, same 0, failed 0]
+- bypass_confidence_etr (value): Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0. 'conf_val' is read from its table, with an absent entry read as its init value (0). Th [used 1, better 0, worse 1, same 0, failed 0]
+- is_confident (condition): True when the entry of the table at the index is greater than or equal to the threshold. The table is expected to be fully initialized (not 'unset'). [used 1, better 1, worse 0, same 0, failed 0]
+- deconfident_rdp_gt_v2 (condition): Reads the value 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent entry in rdp_table is treated as a value of 0. The conf_table is assumed to be fully initialized, and i [used 1, better 0, worse 1, same 0, failed 0]
+- and 19 more with lower or no scores: deconfident_exceeds_victim_v2, confident_high_rdp_gt, confident_exceeds_victim, confidence_amplified_etr, etr_from_rdp_and_confidence, penalized_etr_exceeds_victim, penalized_rdp_bypass, moving_average_train, high_rdp_conf_bypass, conf_penalized_etr, etr_by_confidence_rank, deconfident_etr_val, confidence_adjusted_etr_v2, predicted_etr_exceeds_victim, scaled_confidence_penalty_etr, high_rdp_and_lo

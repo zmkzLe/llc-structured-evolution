@@ -1,0 +1,89 @@
+Guidance version 3, written after 32 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 3 scored design(s); best 1.00241 (+0.24% against the seed)
+- name: deconfident_rdp_gt
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+    threshold:
+      int: [0, 127]
+  means: 'Reads the value ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An
+    absent entry in rdp_table is treated as a value of 0. The conf_table is assumed to be fully initialized,
+    and its maximum value is 3. Calculates an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val)
+    * scale). If the result of the subtraction is negative, it is treated as 0. Returns true if this adjusted_rdp
+    is greater than the threshold.
+
+    '
+# used by 3 scored design(s); best 1.00241 (+0.24% against the seed)
+- name: deconfident_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent rdp_val
+    is treated as 0. The conf_table is assumed to be fully initialized, and its maximum value is 3. Calculates
+    an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val) * scale). If the result of the subtraction
+    is negative, it is treated as 0. Calculates a predicted_etr value as adjusted_rdp divided by div,
+    using integer division. Returns true if predicted_etr is greater than the absolute value of the victim
+    way''s key.'
+# used by 1 scored design(s); best 1.00055 (+0.05% against the seed)
+- name: high_rdp_and_confident_bypass
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: True when the entry for the index in rdp_table is present and its value is greater than rdp_thresh,
+    AND the entry for the same index in conf_table has a value greater than conf_thresh. An absent entry
+    in rdp_table makes the condition false. An absent entry in conf_table is read as its init value.
+# used by 1 scored design(s); best 1.00038 (+0.04% against the seed)
+- name: confidence_adjusted_etr
+  place: value
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+  means: Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val'
+    is treated as 0. An absent 'conf_val' is read as its init value (0). The maximum value for confidence
+    is assumed to be 3. Calculates a base_etr = rdp_val / div, using integer division. Calculates an adjustment
+    = 3 - conf_val. The final value is min(max_etr, base_etr + adjustment).
+# used by 1 scored design(s); best 0.99984 (-0.02% against the seed)
+- name: train_rdp_and_rpc_on_match
+  place: step
+  params:
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    rpc_table: table
+    sample: state
+    scale:
+      int: [1, 2]
+  means: This step performs two training actions for a sampler match. First, it trains the rdp_table using
+    the 'toward' operation. The target value is min(sample * scale, rdp_table.max). The entry moves one
+    step toward the target if the difference is at least min_diff. Second, it trains the rpc_table at
+    the same index using the 'increment' operation.
+Names also taken (declared by a design not scored yet, or not shown above): high_rdp_and_confident, confident_victim_exceed, is_confident, moving_average_train
+
+Refused among the last 10 candidates, and why: schema_rejected 1 (victim.bypass_when.0 Value error, 'high_rdp_and_confident_bypass': not a word of the grammar here, nor a declared condition word (written: {'high_rdp_and_confident_...: 73, 'conf_thresh': 2}})). words_refused 5 (high_rdp_and_confident_bypass: already declared in this run with another definition; a word is never changed, so declare a new name; confidence_adjusted_etr: already declared in this run with another definition; a word is never changed, so declare a new name; the new words must be a YAML list of words)
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 8 times (words_refused): high_rdp_and_confident_bypass: already declared in this run with another definition; a word is never changed, so declare a new name; 3 times (schema_rejected): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mockingjay_confidence_full_clock')
+
+Your most successful changes, as in the best design e10d4a832a77, have come from adding `new_words` like `deconfident_rdp_gt` and `deconfident_exceeds_victim` and using them to modify `state`, `samplers`, and `procedures.access`. In contrast, changing `on_hit` or `signatures` led to a large performance loss. You must stop submitting proposals that are certain to be refused: you have been rejected eight times for trying to redefine `high_rdp_and_confident_bypass` and three times for invalid names like `mockingjay_confidence_full_clock`. To reuse an idea, you must declare it with a new, valid name. The largest remaining challenge is your bypass logic. On traces with high headroom like `605.mcf_s-1644B`, `619.lbm_s-2677B`, and `459.GemsFDTD-1491B`, the dominant mistake is `wrong_bypass`, indicating your bypass decisions are too aggressive. At the same time, on `627.cam4_s-573B` and `654.roms_s-1390B`, the main error is `kept_dead`, showing your eviction choices are poor. To address both issues, the policy needs a more nuanced way to rank lines for eviction. The success of words that combine reuse prediction with confidence suggests this is a promising direction. Consider creating a new word that calculates an eviction rank from both signals, which the current vocabulary cannot express, to better distinguish between lines that are merely predicted to be reused and those that are confidently predicted to be reused.

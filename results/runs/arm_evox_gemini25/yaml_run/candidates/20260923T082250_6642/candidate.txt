@@ -1,0 +1,7 @@
+===== STRUCTURE_DESCRIPTION =====
+# doc: I will add a "bypass feedback" mechanism. A new table will track signatures of bypassed lines. If a miss occurs for a signature in this table, it's a "wrong_bypass" signal, which will be used to make the main predictor (RDP) more conservative for that signature.
+# name: mockingjay_bypass_feedback
+# This is a hypothetical starting point. Your task is to create a complete, working design.
+
+<the complete structure description, in YAML>
+===== NEW_WORDS =====

@@ -1,0 +1,14 @@
+===== STRUCTURE_DESCRIPTION =====
+name: my_new_design
+doc: >
+  My hypothesis and a description of the change. This design modifies the
+  mockingjay seed to...
+# ... a complete and valid YAML description of the policy ...
+===== NEW_WORDS =====
+
+- name: my_new_word
+  place: condition
+  params: {table: table, index: signature}
+  means: >
+    This is the detailed meaning of my new word, explaining exactly what it
+    does, what it reads, and what it returns.

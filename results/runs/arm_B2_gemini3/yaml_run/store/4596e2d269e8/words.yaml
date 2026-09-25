@@ -1,0 +1,17 @@
+- name: live_max_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    stream_limit:
+      int: [0, 127]
+    table: table
+  means: >
+    True when the entry of the table at the index is present and either:
+    (1) its value is strictly greater than stream_limit; or
+    (2) at least one way in the access set has its field greater than or equal to zero,
+    and the table entry divided by div (integer division) is strictly greater than
+    the maximum of that field among all ways in the access set whose field is greater than or equal to zero.
+    False otherwise. Nothing is written.

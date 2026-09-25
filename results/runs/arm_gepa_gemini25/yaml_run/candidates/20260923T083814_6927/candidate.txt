@@ -1,0 +1,12 @@
+===== STRUCTURE_DESCRIPTION =====
+name: a_short_and_unique_name_for_your_design
+doc: >
+  A one-line summary of the change and why it should help. For example:
+  "This design adds a set-based counter to track volatility, aiming to reduce wrong_bypass errors on streaming workloads."
+#
+# ... the rest of your YAML description goes here ...
+#
+===== NEW_WORDS =====
+
+# If you introduce new words, declare them here following the format.
+# Otherwise, leave this section empty, but keep the marker line.

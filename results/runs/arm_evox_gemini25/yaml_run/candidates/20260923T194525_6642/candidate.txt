@@ -1,0 +1,151 @@
+===== STRUCTURE_DESCRIPTION =====
+# doc: Added a bypass history table and new words to track bypassed lines.
+# The bypass decision now considers this history to reduce wrong_bypass mistakes.
+# on_hit trains the bypass history down if a previously bypassed line is reused.
+# on_fill (bypassed) trains the bypass history up.
+name: mockingjay_bphist
+doc: >
+  Mockingjay with Bypass History (BPHist): Adds a per-PC signature bypass history table (bypass_history)
+  to inform the bypass decision. When a fill is bypassed, the corresponding pc_sig's bypass_history
+  entry is incremented. When a line is hit in the cache, if its pc_sig was previously marked as
+  bypassed (non-zero bypass_history), the bypass_history entry is decremented, and the RDP entry
+  for that pc_sig is also decremented (as the bypass was a wrong prediction). The bypass decision
+  now only occurs if the bypass_history for the incoming line's pc_sig is above a threshold,
+  in addition to the original RDP-based conditions. This aims to reduce 'wrong_bypass' errors.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    # Only bypass if bypass_history indicates it's safe (value 2 or 3, i.e., > 1) AND RDP predicts high reuse
+    - when: {table: {table: bypass_history, index: pc_sig, cmp: gt, threshold: 1}}
+      table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}
+    # Only bypass if bypass_history indicates it's safe (value 2 or 3, i.e., > 1) AND RDP predicts reuse_distance > victim_etr
+    - when: {table: {table: bypass_history, index: pc_sig, cmp: gt, threshold: 1}}
+      table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bypass_history      # New table to track bypass decisions: 0=never bypassed/wrong, 3=always bypassed/right
+    scope: global
+    kind: saturating
+    entries: 2048             # Same number of entries as RDP
+    width: 2                  # 0-3, tracks how often this PC is bypassed vs reused
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - # If this line's pc_sig was previously marked as bypassed (non-zero bypass_history)
+    when: {table: {table: bypass_history, index: pc_sig, cmp: gt, threshold: ZERO}}
+    # This indicates a wrong_bypass. Decrement bypass_history to reflect the mistake.
+    decrement_bypass_history: {table: bypass_history, index: pc_sig}
+    # Also, train RDP down for this pc_sig, as its prediction was too high if it led to a wrong bypass.
+    train: {table: rdp, index: pc_sig, op: decrement}
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - when: {is_bypassed_fill: {}}
+    # This fill was bypassed. Increment bypass_history to reinforce this decision for future similar accesses.
+    increment_bypass_history: {table: bypass_history, index: pc_sig}
+    stop: true # Bypassed fills do not run the 'access' procedure or get an ETR
+  - run: access
+===== NEW_WORDS =====
+
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the fill was bypassed.
+- name: increment_bypass_history
+  place: step
+  params: {table: table, index: signature}
+  means: Increments the entry in the specified table at the given index by one, clamping at MAX. If the entry is absent, it is initialized to 1. This strengthens the belief that this PC signature is a good bypass candidate.
+- name: decrement_bypass_history
+  place: step
+  params: {table: table, index: signature}
+  means: Decrements the entry in the specified table at the given index by one, clamping at ZERO. If the entry is absent, it remains absent. This weakens the belief that this PC signature is a good bypass candidate, as it was reused after bypass.

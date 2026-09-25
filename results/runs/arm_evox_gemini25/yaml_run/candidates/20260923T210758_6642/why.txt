@@ -1,0 +1,2 @@
+Candidate 81c05d9d7321 FAILED at words_refused; it was not scored.
+Reason: is_bypassed_fill: already declared in this run with another definition; a word is never changed, so declare a new name

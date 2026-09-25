@@ -1,0 +1,110 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name_v1
+doc: >
+  Start with a one-line summary of what you changed and why. For example:
+  "Adds a bypass tracker to learn from wrong bypasses by penalizing the RDP on a miss for a recently bypassed line."
+
+# --- Start with the Mockingjay policy and modify it as described above ---
+# Add your new table to the `tables` section.
+# Modify `victim.bypass_when` to use your new condition word.
+# Add your new penalty logic to the `on_fill` section.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    # --- Replace Mockingjay's bypass logic here ---
+    # Use your new condition word that has a side effect.
+    # For example:
+    # - words:
+    #     predict_bypass_and_record:
+    #       predictor: rdp
+    #       filter: bypass_tracker # Your new table
+    #       index: pc_sig
+    #       threshold: 73
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+  # --- Add your new bypass_tracker table here ---
+  - name: bypass_tracker
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 1
+    init: ZERO
+
+samplers:
+# ... (samplers section from Mockingjay, unchanged)
+# ...
+
+procedures:
+# ... (procedures section from Mockingjay, unchanged)
+# ...
+
+on_hit:
+# ... (on_hit section from Mockingjay, unchanged)
+# ...
+
+on_fill:
+  # --- Add your new penalty logic at the beginning of on_fill ---
+  # This logic runs for every miss.
+  # For example:
+  # - when: {table: {table: bypass_tracker, index: pc_sig, cmp: eq, threshold: 1}}
+  #   train: {table: rdp, index: pc_sig, op: decrement}
+  # - when: {table: {table: bypass_tracker, index: pc_sig, cmp: eq, threshold: 1}}
+  #   train: {table: bypass_tracker, index: pc_sig, op: decrement} # Clears the flag
+  #
+  # --- Then include the rest of Mockingjay's on_fill logic ---
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+
+===== NEW_WORDS =====
+
+# Declare the new words you used here.
+# For example, you will need to declare the condition word that
+# checks the predictor and records the bypass.
+- name: predict_bypass_and_record
+  place: condition
+  params: {predictor: table, filter: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    Checks the value in the predictor table at the given index. If the value is
+    greater than the threshold, this condition has a side effect: it trains the
+    filter table (a 1-bit saturating counter) at the same index by calling
+    increment. After the potential side effect, it returns true if the
+    predictor's value was greater than the threshold, and false otherwise. An
+    absent predictor entry is treated as 0 and returns false.

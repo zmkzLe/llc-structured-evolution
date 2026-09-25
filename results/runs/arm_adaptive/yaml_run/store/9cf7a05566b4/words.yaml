@@ -1,0 +1,9 @@
+- name: incoming_rdp_worse_than_victim
+  place: condition
+  params: {rdp_table: table, index: signature, multiplier: {int: [1, 16]}}
+  means: >
+    Reads the rdp_table entry at the given index; if absent, the value is 0. This is the incoming line's
+    predicted RDP value. Reads the victim key of the chosen victim way. This is the victim_etr.
+    Calculates a threshold as the absolute value of victim_etr multiplied by the multiplier, to approximate
+    the victim's original RDP value. True if the incoming line's predicted RDP value is greater than
+    this calculated threshold. False otherwise. This word can only be used in a 'bypass_when' clause.

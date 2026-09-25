@@ -1,0 +1,17 @@
+- name: high_rdp_and_low_conf
+  place: condition
+  params: {rdp_table: table, conf_table: table, index: signature, rdp_thresh: {int: [0, 127]}, conf_thresh: {int: [0, 3]}}
+  means: >
+    True when the entry for the index in rdp_table is present and its value is
+    greater than rdp_thresh, AND the entry for the same index in conf_table has a
+    value greater than conf_thresh. An absent entry in rdp_table makes the condition
+    false. An absent entry in conf_table is read as its init value.
+- name: lrh_adjusted_etr
+  place: value
+  params: {rdp_table: table, lrh_table: table, index: signature, div: {int: [1, 128]}, sub: {int: [0, 3]}}
+  means: >
+    Reads rdp_val from rdp_table[index] and lrh_val from lrh_table[index].
+    An absent entry for rdp_val or lrh_val is read as 0. Calculates a preliminary
+    etr as integer division of rdp_val by div. Then, it subtracts the product of
+    lrh_val and sub. The final result is clamped to be between -11 and 11, inclusive,
+    and returned.

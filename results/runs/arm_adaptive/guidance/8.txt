@@ -1,0 +1,94 @@
+Guidance version 8, written after 80 candidates.
+
+New words accepted this run, with the declaration to repeat verbatim to reuse one (the same name with another definition is refused; for another meaning choose a name none of these use):
+- name: incoming_rdp_worse_than_victim
+  place: condition
+  params:
+    index: signature
+    multiplier:
+      int: [1, 16]
+    rdp_table: table
+  means: Reads the rdp_table entry at the given index; if absent, the value is 0. This is the incoming
+    line's predicted RDP value. Reads the victim key of the chosen victim way. This is the victim_etr.
+    Calculates a threshold as the absolute value of victim_etr multiplied by the multiplier, to approximate
+    the victim's original RDP value. True if the incoming line's predicted RDP value is greater than this
+    calculated threshold. False otherwise. This word can only be used in a 'bypass_when' clause.
+- name: negate_table_value
+  place: value
+  params:
+    div:
+      int: [1, 1024]
+    index: signature
+    table: table
+  means: 'Reads the entry from the table at the index, an unsigned value. Divides it by div (integer division).
+    Returns the negation of the result, as a two''s complement number with the same width as the target
+    field. An absent entry is treated as 0, so the result is 0.
+
+    '
+- name: train_rdp_inc_conf_inc
+  place: step
+  params: {conf_table: table, index: signature, rdp_table: table}
+  means: Increments the rdp_table entry at the given index. Simultaneously, increments the conf_table
+    entry at the same index. The training for each table is identical to the 'increment' TrainOp.
+- name: train_rdp_toward_conf_dec
+  place: step
+  params:
+    conf_table: table
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    scale:
+      int: [1, 10]
+  means: 'Trains the rdp_table toward the value ''age'', scaled by scale, with a minimum difference of
+    min_diff. Simultaneously, decrements the conf_table entry at the same index. The rdp_table training
+    is identical to the ''toward'' TrainOp. The conf_table training is identical to the ''decrement''
+    TrainOp.
+
+    '
+- name: my_confident_rdp_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+  means: 'True when the rdp_table entry at the index is present, its value divided by div (integer division)
+    is greater than the absolute value of the chosen victim''s key, AND the conf_table entry at the index
+    is present and its value is its maximum value (2^width - 1). False otherwise. Only for use in bypass_when.
+
+    '
+- name: my_confident_rdp_gt_threshold
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: 'True when the rdp_table entry at the index is present and its value is greater than rdp_thresh,
+    AND the conf_table entry at the same index is present and its value is its maximum value (2^width
+    - 1). False otherwise.
+
+    '
+- name: confident_bypass_victim
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    div:
+      int: [1, 1024]
+    index: signature
+    rdp_table: table
+  means: Reads the victim key of the chosen victim way. Reads the rdp_table entry at the given index;
+    if absent, the value is 0. True if this rdp value, divided by div (integer division), is greater than
+    the absolute value of the victim key, AND the entry in conf_table at the given index has a value greater
+    than or equal to conf_thresh. This word can only be used in bypass_when.
+# and 3 earlier word(s) not shown; their names are taken too: confident_rdp_greater_than, confident_table_exceeds_victim, confident_bypass_rdp
+
+Refused among the last 10 candidates, and why: schema_rejected 2 (1 validation error for StructureDescription name String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mj_confident_b; 1 validation error for StructureDescription Value error, sampler 'sampled_cache' on_match[1]: 'rdp_conf' is not a field of the sampler or a per_set, per_cpu or ). words_refused 3 (confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name; incoming_rdp_worse_than_victim: already declared in this run with another definition; a word is never changed, so declare a new name; confident_bypass_rdp, confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name)
+Refusal kinds seen more than once this run, a pattern to stop: 7 times (schema_rejected): 1 validation error for StructureDescription name String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_dea; 6 times (words_refused): confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name; 6 times (schema_rejected): duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears t
+
+Your most successful changes, including in the best design 2e5680038f4e, have come from refining `victim.bypass_when` with new words. The conditions `incoming_rdp_worse_than_victim` and `confident_bypass_victim` have proven effective by comparing an incoming line's predicted value against the victim's. However, your bypass logic remains flawed. On high-headroom traces like `605.mcf_s` and `619.lbm_s`, the dominant mistake is `wrong_bypass`, showing you discard useful lines too often, while on `627.cam4_s` the main error is `should_bypass`, meaning you insert useless lines. This conflict suggests your bypass criteria need more nuance. The `kept_dead` errors on `657.xz_s` also highlight a weakness in ranking resident lines, which could be addressed by changing what `tables` store or how `procedures.access` updates them. The vocabulary cannot compare a predicted value against a line's actual current age; a new word exposing a line's age from the replacement state would enable the policy to validate its predictions. Avoid changing `state`, `on_fill`, or `on_access`, as these have consistently failed. Crucially, you must stop submitting designs with invalid names or attempts to redefine existing words, as these repeated refusals are wasting your efforts.

@@ -1,0 +1,13 @@
+- name: pred_exceeds_victim_etr
+  place: condition
+  params:
+    div:
+      int: [1, 1024]
+    index: signature
+    table: table
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(table[index] / div).
+    Reads the absolute value of the 'etr' field of the victim way ('victim_etr').
+    The condition is true if the predicted ETR is greater than 'victim_etr'.
+    If the table entry is absent, the predicted ETR is 0, and the condition is false.
+    The 'etr' field must be a per_line state field. This can only be used in 'bypass_when'.

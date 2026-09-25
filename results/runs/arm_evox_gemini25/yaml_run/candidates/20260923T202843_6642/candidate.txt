@@ -1,0 +1,142 @@
+# Mockingjay with a Bypass Tracker (BT). The BT is a small sampler that records PC
+# signatures of lines that were bypassed. On a cache miss, if the line's signature
+# is found in the BT, it indicates a wrong bypass, and the RDP table is decremented
+# for that signature, making future bypass decisions less aggressive. The BT itself
+# removes the entry upon a match.
+name: mockingjay_bypass_tracker
+doc: >
+  Mockingjay with a Bypass Tracker (BT). The BT is a small sampler that records PC
+  signatures of lines that were bypassed. On a cache miss, if the line's signature
+  is found in the BT, it indicates a wrong bypass, and the RDP table is decremented
+  for that signature, making future bypass decisions less aggressive. The BT itself
+  removes the entry upon a match.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+  - name: bypassed_tracker # New sampler for tracking wrongly bypassed lines
+    scope: global
+    sets: {mirror: 16} # Smaller number of sampled sets (16) to fit metadata budget
+    extra_index_bits: 0 # No extra indexing bits
+    ways: 2 # Two ways per sampler set
+    tag_bits: 11 # Stores the pc_sig of the bypassed line
+    fields:
+      - {name: timestamp, kind: counter, width: 8, init: ZERO} # For LRU-like aging
+    age: {clock: set_clock, stamp: timestamp} # Uses the existing per_set set_clock
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match: # This runs when a missed line's signature is found in the tracker
+      - train: {table: rdp, index: signature, op: decrement} # Decrement RDP: it was a wrong bypass
+      - free: true # Remove from tracker, as it's now being filled
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}} # Record the time of bypass
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - when: {way: NUM_WAY} # If this is a miss (no hit way)
+      sample: bypassed_tracker # Check if this missed signature was previously bypassed
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - when: {is_current_fill_bypassed: {}} # If the fill was bypassed
+    sample: bypassed_tracker # Record the signature of the bypassed line
+  - run: access
+
+===== NEW_WORDS =====
+- name: is_current_fill_bypassed
+  place: condition
+  params: {}
+  means: >
+    True when the current on_fill event has its 'way' parameter equal to NUM_WAY,
+    indicating that the fill was bypassed.

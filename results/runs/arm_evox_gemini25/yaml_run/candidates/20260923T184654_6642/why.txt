@@ -1,0 +1,4 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 1 validation error for StructureDescription
+  Value error, victim.bypass_when[2]: index 'pc_sig_no_hit' takes 2048 values but table 'bypass_feedback' has 512 entries. The excess indices read and train memory past the table. [type=value_error, input_value={'name': 'mockingjay_bypa...n'}, {'run': 'access'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

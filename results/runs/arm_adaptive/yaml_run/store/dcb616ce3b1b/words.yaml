@@ -1,0 +1,8 @@
+- name: confident_bypass_victim
+  place: condition
+  params: {rdp_table: table, conf_table: table, index: signature, div: {int: [1, 1024]}, conf_thresh: {int: [0, 3]}}
+  means: >
+    Reads the victim key of the chosen victim way. Reads the rdp_table entry at the given index;
+    if absent, the value is 0. True if this rdp value, divided by div (integer division),
+    is greater than the absolute value of the victim key, AND the entry in conf_table at the given
+    index has a value greater than or equal to conf_thresh. This word can only be used in bypass_when.

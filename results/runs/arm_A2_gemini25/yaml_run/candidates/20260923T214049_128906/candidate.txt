@@ -1,0 +1,161 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_confident_blended_bypass
+doc: >
+  Adds a confidence mechanism to the blended ETR bypass policy. A new 2-bit confidence
+  table, trained on sampled reuse, gates all bypass decisions. Bypassing only occurs
+  for predictions with high confidence. This aims to reduce `wrong_bypass` errors from
+  the parent's `pred_exceeds_blended_etr` logic, while also adding a confidence-gated
+  static bypass to catch very long reuse predictions and reduce `kept_dead` errors.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - confident_pred_exceeds_blended_etr: {rdp_tbl: rdp, conf_tbl: rdp_conf, index: pc_sig, div: 8, conf_thresh: 2}
+    - rdp_and_conf_gt: {rdp_tbl: rdp, conf_tbl: rdp_conf, sig: pc_sig, rdp_thresh: 73, conf_thresh: 2}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 10              # Reduced from 11 to make space for confidence table
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 1024             # Reduced from 2048 due to smaller signature
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: rdp_conf
+    scope: global
+    kind: saturating
+    entries: 1024             # Matches rdp table entries
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 10, init: ZERO} # Matches pc_sig low_bits
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train_rdp_conf_on_hit: {rdp_table: rdp, conf_table: rdp_conf, index: signature, age: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train_rdp_conf_on_hit: {rdp_table: rdp, conf_table: rdp_conf, index: signature, age: age, scale: 1, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train_rdp_conf_on_miss: {rdp_table: rdp, conf_table: rdp_conf, index: signature}
+        free: true
+    on_replace:
+      - train_rdp_conf_on_miss: {rdp_table: rdp, conf_table: rdp_conf, index: signature}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: rdp_and_conf_gt
+  place: condition
+  params:
+    conf_tbl: table
+    conf_thresh:
+      int: [0, 3]
+    rdp_tbl: table
+    rdp_thresh:
+      int: [0, 127]
+    sig: signature
+  means: True if the entry for the signature 'sig' in table 'rdp_tbl' is present and its value is greater
+    than 'rdp_thresh', AND the entry for 'sig' in table 'conf_tbl' is present and its value is greater
+    than or equal to 'conf_thresh'. False otherwise.
+- name: confident_pred_exceeds_blended_etr
+  place: condition
+  params:
+    rdp_tbl: table
+    conf_tbl: table
+    conf_thresh: {int: [0, 3]}
+    index: signature
+    div: {int: [1, 1024]}
+  means: >
+    First, reads the confidence value from conf_tbl at the given index. An absent entry
+    is treated as 0. If this value is less than conf_thresh, the condition is false.
+    Otherwise, it calculates a predicted ETR for the incoming line as floor(rdp_tbl[index] / div).
+    An absent entry in rdp_tbl results in a predicted ETR of 0. It then calculates the integer
+    average of the absolute values of the 'etr' field across all valid resident lines in the
+    set ('avg_etr'). It finds the absolute value of the 'etr' field of the victim line ('victim_etr').
+    The condition is true if the predicted ETR is greater than the integer average of 'avg_etr' and
+    'victim_etr'. The 'etr' field must be a per_line state field. This can only be used in 'bypass_when'.
+- name: train_rdp_conf_on_hit
+  place: step
+  params: {rdp_table: table, conf_table: table, index: signature, age: state, scale: {int: [1, 10]}, min_diff: {int: [0, 127]}}
+  means: >
+    Trains the rdp_table at the given index with the 'toward' op, using the provided age, scale, and min_diff.
+    The rdp_table must be 'unset'. Then, increments the conf_table entry at the same index.
+- name: train_rdp_conf_on_miss
+  place: step
+  params: {rdp_table: table, conf_table: table, index: signature}
+  means: >
+    Increments the rdp_table entry at the given index. The rdp_table must be 'unset', so an absent entry
+    becomes rdp_table.max. Then, decrements the conf_table entry at the same index.

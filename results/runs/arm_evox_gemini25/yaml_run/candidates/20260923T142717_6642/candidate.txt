@@ -1,0 +1,34 @@
+== Guidance from this run so far ==
+Guidance version 23, written after 232 candidates.
+
+New words accepted this run: none yet. A new word's name must be one no design of this run has used.
+
+Refused among the last 10 candidates, and why: malformed 6 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 4 (Input should be a valid dictionary or instance of StructureDescription (written: '<the complete structure description, in YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<your complete YAML structure description here>'))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 15 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<your complete YAML structure description here>'); 11 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 2 times (malformed): candidate is missing section(s): NEW_WORDS
+
+You must stop submitting malformed proposals, as nearly all your attempts have been refused for basic errors like providing placeholder text instead of YAML or omitting the required `STRUCTURE_DESCRIPTION` and `NEW_WORDS` sections. This has prevented any progress, leaving the score unchanged from the Mockingjay seed because no design has been successfully tested and improved upon it.
+
+You have successfully submitted the Mockingjay seed. The current feedback clearly indicates that the most significant opportunity for improvement lies in reducing `wrong_bypass` errors, particularly on traces like `433.milc-127B`, `450.soplex-247B`, and `459.GemsFDTD-1491B`, which exhibit high headroom and frequent `wrong_bypass` mistakes.
+
+Mockingjay's current bypass mechanism relies solely on the `rdp` table's prediction at the time of fill. However, the policy currently has no way to *learn* from its bypass mistakes because it cannot effectively track information about lines that were bypassed but later proven useful (i.e., accessed again before any resident line would have been evicted).
+
+To address this, your next design must introduce a mechanism to record information about *bypassed* lines and use this information to train the `rdp` table. You should declare a **new `step` word** that encapsulates this learning process.
+
+Consider the following for your design:
+*   **New Structure:** Declare a new `sampler` (e.g., `bypass_tracker`) to act as a shadow cache for *bypassed lines*. This sampler should store the `pc_sig` and a timestamp (e.g., from `set_clock`) of lines that are bypassed from the main cache. This sampler will have its own victim policy and `tag_bits` as appropriate for tracking bypassed lines.
+*   **New `step` word: `handle_bypass_learning`**
+    *   **Name:** `handle_bypass_learning`
+    *   **Place:** `step`
+    *   **Parameters:**
+        *   `sampler`: The name of the `bypass_tracker` sampler.
+        *   `rdp_table`: The name of the `rdp` table.
+        *   `current_pc_sig`: The `pc_sig` of the current access.
+        *   `current_set_clock`: The `set_clock` of the current access's set.
+        *   `is_bypassed_fill`: A boolean parameter indicating if the current `on_fill` event is for a bypassed line (`way == NUM_WAY`).
+    *   **Meaning:** This word is called during an `on_fill` event.
+        1.  It first attempts to find an entry in the `sampler` (the `bypass_tracker`) that matches the `current_pc_sig`.
+        2.  If a match is found: This signifies a `wrong_bypass` (a line previously bypassed is now being filled). The `rdp_table` entry indexed by `current_pc_sig` must be *decremented* to discourage future bypasses for this signature. The matched entry in the `sampler` must then be *freed*.
+        3.  If no match is found, and `is_bypassed_fill` is true: This means a new line is being bypassed. The `current_pc_sig` and `current_set_clock` must be *installed* as a new entry into the `sampler` (the `bypass_tracker`).
+*   **Integration:** Call your new `handle_bypass_learning` step word from the `on_fill` event, *after* the initial `WRITE` check but *before* Mockingjay's existing `access` procedure. Ensure the `is_bypassed_fill` parameter is set correctly based on the `way` value in `on_fill`.
+
+This approach will allow the policy to observe its `wrong_bypass` decisions and adapt the `rdp` table accordingly, leading to more accurate bypass predictions. Remember to keep your changes within the line limit (600 canonical lines) and the 48 KB metadata budget.

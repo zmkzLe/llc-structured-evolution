@@ -1,0 +1,142 @@
+===== STRUCTURE_DESCRIPTION =====
+# doc: Added a bypassed_sampler to track lines bypassed by Mockingjay's policy and train the RDP table when a wrong_bypass occurs.
+name: mockingjay_with_wrong_bypass_learner
+doc: >
+  Mockingjay: each line holds an estimated time to reuse (ETR), counted down every
+  8 accesses to its set; the victim is the line with the largest |ETR|, an overdue
+  (negative) one on ties. A predictor table keyed by the hit-or-miss PC signature
+  gives the ETR on insertion, and a fill predicted to be reused after every line in
+  the set is bypassed. A sampled shadow cache on 32 sets measures reuse distances
+  with an 8-bit per-set clock and trains the predictor one step at a time; entries
+  older than INF_RD train it up as scans. Writebacks are inserted at -INF_ETR and
+  train nothing.
+  This version adds a small sampler to detect when a line was wrongly bypassed and
+  uses this information to train the RDP table, reducing future wrong bypasses.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+  - name: line_addr_sig # New signature for the bypassed sampler tag
+    source: ip # Using IP for simplicity, could be line address for more precision
+    hash: crc3
+    low_bits: 10 # Smaller signature for the sampler tag
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+  - name: bypassed_sampler # New sampler to track wrongly bypassed lines
+    scope: global
+    sets: {mirror: 1} # Smallest possible sampler, one sampled set
+    extra_index_bits: 0
+    ways: 16 # Store up to 16 recently bypassed lines
+    tag_bits: 46 # Use full line address as tag
+    fields:
+      - {name: pc_signature, kind: counter, width: 11, init: ZERO} # Store PC signature of bypassed line
+    victim: {key: pc_signature, extremum: min, tie_break: first, prefer_free: true} # Evict least relevant (or oldest if all have same sig)
+    on_match:
+      # If we match a previously bypassed line on a cache miss, it means it was a wrong bypass.
+      # Decrement RDP for this signature to make it less likely to bypass next time.
+      - train: {table: rdp, index: pc_signature, op: decrement}
+      - free: true # Remove from sampler, as this wrong bypass has been "learned"
+    install: {pc_signature: {signature: pc_sig}} # Store the PC signature when bypassed
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+    - when: {hit: false} # If it's a cache miss, check the bypassed sampler
+      sample: bypassed_sampler
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+  - when: {way: NUM_WAY} # If this fill was bypassed
+    sample: bypassed_sampler # Record it in the bypassed sampler
+===== NEW_WORDS =====

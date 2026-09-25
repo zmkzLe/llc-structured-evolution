@@ -1,0 +1,28 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 19 validation errors for StructureDescription
+on_fill.1.set.sampled_cache.ConstValue.const
+  Field required [type=missing, input_value={'install': {'is_prefetch': {'const': 1}}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+on_fill.1.set.sampled_cache.ConstValue.install
+  Extra inputs are not permitted [type=extra_forbidden, input_value={'is_prefetch': {'const': 1}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+on_fill.1.set.sampled_cache.TickValue.tick
+  Field required [type=missing, input_value={'install': {'is_prefetch': {'const': 1}}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+on_fill.1.set.sampled_cache.TickValue.install
+  Extra inputs are not permitted [type=extra_forbidden, input_value={'is_prefetch': {'const': 1}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+on_fill.1.set.sampled_cache.CounterGatedValue.default
+  Field required [type=missing, input_value={'install': {'is_prefetch': {'const': 1}}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+on_fill.1.set.sampled_cache.CounterGatedValue.counter
+  Field required [type=missing, input_value={'install': {'is_prefetch': {'const': 1}}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+on_fill.1.set.sampled_cache.CounterGatedValue.every_n
+  Field required [type=missing, input_value={'install': {'is_prefetch': {'const': 1}}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+on_fill.1.set.sampled_cache.CounterGatedValue.then
+  Field required [type=missing, input_value={'install': {'is_prefetch': {'const': 1}}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+on_fill.1.set.sampled_cache.CounterGatedValue.install
+  Extra inpu

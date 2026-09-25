@@ -1,0 +1,148 @@
+===== STRUCTURE_DESCRIPTION =====
+# Based on Mockingjay.
+# doc: Added a new `predicted_reuse_confidence` table and `check_reuse_confidence` new_word to improve bypass decisions.
+# This new mechanism tracks the confidence of a PC signature's reuse prediction,
+# aiming to reduce both `should_bypass` (inserting useless lines) and `wrong_bypass` (bypassing useful lines) errors.
+# To manage state, the `rdp` table's `entries` were reduced from 2048 to 1024.
+name: mockingjay_reuse_confidence
+doc: >
+  Added a new `predicted_reuse_confidence` table and `check_reuse_confidence` new_word to improve bypass decisions.
+  This new mechanism tracks the confidence of a PC signature's reuse prediction,
+  aiming to reduce both `should_bypass` (inserting useless lines) and `wrong_bypass` (bypassing useful lines) errors.
+  To manage state, the `rdp` table's `entries` were reduced from 2048 to 1024, and its `max` value was reduced to 63 to allow for 6-bit width.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}} # Original bypass logic
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}  # Original bypass logic
+    - {check_reuse_confidence: {table: predicted_reuse_confidence, index: pc_sig, threshold: 1}} # Bypass if confidence is low
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 1024             # Reduced from 2048 to save state
+    width: 6                  # Reduced width from 7 to save state (max 63 instead of 95)
+    max: 63                   # INF_RD, adjusted for 6-bit width
+    unset: true
+  - name: predicted_reuse_confidence # New table to track confidence of reuse predictions
+    scope: global
+    kind: saturating
+    entries: 2048             # Size similar to original RDP to capture PC signatures
+    width: 2                  # 2-bit saturating counter (0: low confidence, 3: high confidence)
+    init: 1                   # Start at a neutral confidence level
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+      - {name: is_bypassed_candidate, kind: flag, width: 1, init: ZERO} # Flag to track if entry was a bypass candidate
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 63}} # Adjusted threshold for new rdp max
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        # If a prefetch hit and was reused, it wasn't a `should_bypass` error, so increment confidence
+        train: {table: predicted_reuse_confidence, index: signature, op: increment}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        # If a non-prefetch hit and was reused, increment confidence
+        train: {table: predicted_reuse_confidence, index: signature, op: increment}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 63}} # Adjusted threshold for new rdp max
+        train: {table: rdp, index: signature, op: increment}
+        # If an entry was swept and was very old (i.e., not reused), and it was a bypass candidate, decrement confidence
+        when: {counter: {counter: is_bypassed_candidate, cmp: eq, threshold: 1}}
+        train: {table: predicted_reuse_confidence, index: signature, op: decrement}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+      # If an entry was replaced without reuse, and it was a bypass candidate, decrement confidence
+      - when: {counter: {counter: is_bypassed_candidate, cmp: eq, threshold: 1}}
+        train: {table: predicted_reuse_confidence, index: signature, op: decrement}
+    install:
+      signature: {signature: pc_sig}
+      timestamp: {read: set_clock}
+      is_bypassed_candidate: # Set this flag based on the initial bypass prediction during fill
+        default: {const: 0}
+        when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}} # If it would have been bypassed by original RDP
+        then: {const: 1}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 63}} # Adjusted threshold for new rdp max
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+
+- name: check_reuse_confidence
+  place: condition
+  params: {table: table, index: signature, threshold: {int: [0, 3]}}
+  means: >
+    True when the entry of the table at the index is present and its value is
+    less than or equal to the threshold. An absent entry counts as below threshold.
+    This is used to decide whether to bypass based on low confidence in a reuse prediction.

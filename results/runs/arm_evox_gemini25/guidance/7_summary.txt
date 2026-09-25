@@ -1,0 +1,38 @@
+Run so far: 71 candidates, 4 scored, 67 refused or failed (malformed 20, schema_rejected 46, too_much_storage 1).
+Refusal kinds seen more than once this run (a pattern, not a one-off): 36 times, schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 18 times, malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 3 times, schema_rejected: state Field required (written: {'name': 'your_new_design...d on the feedback...\n'}) victim Field required (written: {'name': 'your_new_design...d on the feedback...\n'}); 2 times, schema_rejected: victim Field required (written: {'name': 'mockingjay_v2',...'width': 5, 'init': 0}]}); 2 times, malformed: candidate is missing section(s): NEW_WORDS
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 36 x schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+- 18 x malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+- 3 x schema_rejected: state Field required (written: {'name': 'your_new_design...d on the feedback...\n'}) victim Field required (written: {'name': 'your_new_design...d on the feedback...\n'})
+- 2 x schema_rejected: victim Field required (written: {'name': 'mockingjay_v2',...'width': 5, 'init': 0}]})
+- 2 x malformed: candidate is missing section(s): NEW_WORDS
+- 1 x too_much_storage: this design declares 384.0 KB of replacement metadata at this LLC; the budget is 48 KB (the seed declares 47.4 KB): pay for new state by narrowing or removing state elsewhere
+- 1 x schema_rejected: victim.key Field required (written: {'bypass_when': [{'table'...gt', 'threshold': 80}}]}) victim.extremum Field required (written: {'bypass_when': [{'table'...gt', 'threshold': 80}}]})
+- 1 x schema_rejected: samplers.1.on_match.0.train Value error, op: decrement moves by one; min_diff would be ignored (written: {'table': 'rdp', 'index':...crement', 'min_diff': 1}) samplers.1.on_replace.0.train Value error, op: increment moves by one; min_diff w
+- 1 x schema_rejected: samplers.0.on_match.1.train.min_diff Input should be a valid integer (written: {'adjusted_min_diff': {'b...8, 'min': 8, 'max': 32}}) samplers.0.on_match.2.train.min_diff Input should be a valid integer (written: {'adjusted_min_diff': {'b...
+- 1 x schema_rejected: name Field required (written: {"<The COMPLETE YAML of y...ng with 'name": "...'>"}) state Field required (written: {"<The COMPLETE YAML of y...ng with 'name": "...'>"}) victim Field required (written: {"<The COMPLETE YAML of y...ng with 'na
+- 1 x schema_rejected: duplicate key 'when' at line 121, column 7. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+The seed scored 1.00000.
+Best so far: c41837327dd0 at 1.00000, +0.00% over Mockingjay.
+
+The last 10 candidates, oldest first:
+62. the seed, scored 1.00000
+63. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+64. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the complete YAML description of your design>')
+65. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+66. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+67. refused (malformed): candidate is missing section(s): NEW_WORDS
+68. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the complete YAML description of your design>')
+69. refused (schema_rejected): samplers.0.on_match.1.train.min_diff Input should be a valid integer (written: {'adjusted_min_diff': {'b...8, 'min': 8, 'max': 32}}) samplers.0.on_match.2.train.min_diff Input should be a valid intege
+70. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+71. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: "<your complete YAML stru...ng with the 'name' key>")
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 52.4%, largest mistake should_bypass (53 of 550 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.4%, largest mistake wrong_bypass (213210 of 430741 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 137.6
+- 619.lbm_s-2677B: headroom 43.9%, largest mistake wrong_bypass (109263 of 258760 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 82.6
+- 459.GemsFDTD-1491B: headroom 33.3%, largest mistake wrong_bypass (28218 of 86909 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 27.6
+- 657.xz_s-2302B: headroom 32.2%, largest mistake kept_dead (991 of 3706 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 1.3
+- 433.milc-127B: headroom 28.4%, largest mistake wrong_bypass (14351 of 63506 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 20.2
+
+New words accepted this run: none yet.

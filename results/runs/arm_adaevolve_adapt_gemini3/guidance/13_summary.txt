@@ -1,0 +1,66 @@
+Run so far: 133 candidates, 22 scored, 111 refused or failed (malformed 35, schema_rejected 73, too_much_storage 1, words_refused 2).
+Refusal kinds seen more than once this run (a pattern, not a one-off): 53 times, schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 34 times, malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 5 times, schema_rejected: state Field required (written: {'name': 'my_policy', 'do...t changed and why...\n'}) victim Field required (written: {'name': 'my_policy', 'do...t changed and why...\n'}); 3 times, schema_rejected: victim Field required (written: {'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]}); 3 times, schema_rejected: state Input should be a valid list (written: '... (include all require...t, NO placeholders) ...') victim Field required (written: {'name': 'your_policy_nam..., NO placeholders) ...'})
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 53 x schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+- 34 x malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+- 5 x schema_rejected: state Field required (written: {'name': 'my_policy', 'do...t changed and why...\n'}) victim Field required (written: {'name': 'my_policy', 'do...t changed and why...\n'})
+- 3 x schema_rejected: victim Field required (written: {'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]})
+- 3 x schema_rejected: state Input should be a valid list (written: '... (include all require...t, NO placeholders) ...') victim Field required (written: {'name': 'your_policy_nam..., NO placeholders) ...'})
+- 2 x schema_rejected: state.0.width Field required (written: {'name': 'example_field'}) state.0.scope Field required (written: {'name': 'example_field'}) victim Field required (written: {'name': 'your_policy_nam...ame': 'example_field'}]})
+- 1 x words_refused: means Field required (written: {'name': 'your_new_word', 'place': 'condition'})
+- 1 x words_refused: confident_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+- 1 x too_much_storage: this design declares 48.1 KB of replacement metadata at this LLC; the budget is 48 KB (the seed declares 47.4 KB): pay for new state by narrowing or removing state elsewhere
+- 1 x schema_rejected: while scanning a simple key in "<unicode string>", line 6, column 1: <the rest of the actual YAML str ... ^ could not find expected ':' in "<unicode string>", line 7, column 1: ^
+- 1 x schema_rejected: state Input should be a valid list (written: '...') victim Input should be a valid dictionary or instance of VictimSelector (written: '...')
+- 1 x schema_rejected: expected '<document start>', but found '[' in "<unicode string>", line 6, column 5: ... [rest of the actual YAML configu ... ^
+The seed scored 1.00000.
+Best so far: c41837327dd0 at 1.00000, +0.00% over Mockingjay.
+
+Parts of the design changed so far (candidates that changed it, how many beat their closest earlier design, best and mean change of the score):
+- victim.bypass_when: 8 tried, 2 improved, best +0.00120, mean -0.00608
+- new_words: 7 tried, 2 improved, best +0.00120, mean -0.00689
+- samplers: 6 tried, 2 improved, best +0.00120, mean -0.00047
+- tables: 5 tried, 2 improved, best +0.00120, mean -0.00014
+- on_fill: 2 tried, 0 improved, best -0.00061, mean -0.00885
+- on_hit: 2 tried, 0 improved, best -0.00061, mean -0.00885
+- procedures.access: 2 tried, 0 improved, best -0.00061, mean -0.00885
+- victim.extremum: 2 tried, 0 improved, best -0.01337, mean -0.02238
+- victim.tie_break: 2 tried, 0 improved, best -0.01337, mean -0.02238
+- procedures.age_set: 1 tried, 0 improved, best -0.01708, mean -0.01708
+- procedures.etr_from_rdp: 1 tried, 0 improved, best -0.01708, mean -0.01708
+- duel: 1 tried, 0 improved, best -0.00061, mean -0.00061
+- signatures: 1 tried, 0 improved, best -0.00061, mean -0.00061
+- state: 1 tried, 0 improved, best -0.00061, mean -0.00061
+
+The last 10 candidates, oldest first:
+124. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+125. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<valid YAML structure de...ERS, NO ANGLE BRACKETS>')
+126. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+127. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: None)
+128. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+129. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+130. scored b207dd538c49 at 0.99870, changed 46 canonical lines in samplers, tables, victim.bypass_when, new words bypass_if_dead, bypass_exceeds_if_dead: -0.00029 against its closest earlier design
+131. scored 94b00417c252 at 0.99939, changed 42 canonical lines in duel, on_fill, on_hit, procedures.access, samplers, signatures, state, tables: -0.00061 against its closest earlier design
+132. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+133. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the actual structure de...ERS. MUST BE COMPLETE.>')
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 52.4%, largest mistake should_bypass (53 of 550 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.4%, largest mistake wrong_bypass (213210 of 430741 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 137.6
+- 619.lbm_s-2677B: headroom 43.9%, largest mistake wrong_bypass (109263 of 258760 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 82.6
+- 459.GemsFDTD-1491B: headroom 33.3%, largest mistake wrong_bypass (28218 of 86909 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 27.6
+- 657.xz_s-2302B: headroom 32.2%, largest mistake kept_dead (991 of 3706 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 1.3
+- 433.milc-127B: headroom 28.4%, largest mistake wrong_bypass (14351 of 63506 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 20.2
+
+New words accepted this run, best-scoring first:
+- confident_exceeds_victim (condition): True when the entry of the table at the index is present, its value divided by div (integer division) is greater than the absolute value of the victim key of the way the victim search chose, and the e [used 4, better 1, worse 1, same 0, failed 2]
+- bypass_if_dead (condition): True when the entry of the rdp table at the index is present and its value is strictly greater than the threshold, and the entry of the conf table at the index is equal to 0. False otherwise. [used 2, better 1, worse 1, same 0, failed 0]
+- bypass_exceeds_if_dead (condition): True when the entry of the rdp table at the index is present, its value divided by div (integer division) is strictly greater than the absolute value of the chosen victim way's key, and the entry of t [used 2, better 1, worse 1, same 0, failed 0]
+- confident_bypass (condition): True when the entry of the table at the index is present and its value is greater than the threshold, and the entry of the conf table at the index is greater than 1. False otherwise. [used 3, better 0, worse 1, same 0, failed 2]
+- table_exceeds_positive_victim (condition): True when the entry of the table at the index is present, the chosen victim way's key is greater than or equal to 0, and the table entry divided by div (integer division) is greater than the chosen vi [used 1, better 0, worse 1, same 0, failed 0]
+- train_fast_adapt (step): Reads the table entry at the index. If the entry is absent, it is set to the age, clamped at max_val. Else, if the entry is strictly greater than the age plus the margin, the entry is decreased by the [used 1, better 0, worse 1, same 0, failed 0]
+- train_add (step): Reads the table entry at the index. If the entry is absent, it is set to the amount, clamped at max_val. Else, the entry is increased by the amount, clamped at max_val. The final value is written to t [used 1, better 0, worse 1, same 0, failed 0]
+- overdue_or_furthest (Extremum): Ways are scanned 0 to NUM_WAY-1. If any way has a negative key value, the way with the minimum signed key value is chosen, breaking ties by tie_break. If no way has a negative key value, the way with  [used 1, better 0, worse 1, same 0, failed 0]
+- overdue_then_max (Extremum): Finds the victim way by scanning ways 0 to NUM_WAY-1. Any way with a negative key is prioritized over any way with a non-negative key; among ways with negative keys, the most negative (smallest signed [used 1, better 0, worse 1, same 0, failed 0]
+- bypass_overdue_aware (condition): Evaluates whether an incoming fill should bypass. Returns true only if the table entry at index is present and strictly greater than min_rd, the chosen victim way has a non-negative key (meaning no re [used 1, better 0, worse 1, same 0, failed 0]
+- high_confidence_bypass (condition): True when the rdp table entry at the index is present, the conf table entry at the index is greater than or equal to min_conf, and either the rdp entry is greater than rdp_thresh, or the chosen victim

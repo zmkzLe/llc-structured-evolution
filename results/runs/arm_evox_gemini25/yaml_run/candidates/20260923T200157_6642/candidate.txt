@@ -1,0 +1,168 @@
+===== STRUCTURE_DESCRIPTION =====
+# Mockingjay with a Bypass Feedback Mechanism (BFM) to reduce wrong_bypass errors.
+# A small sampler tracks recently bypassed lines. If a tracked line is later accessed,
+# it indicates a wrong_bypass, and the RDP table entry for that PC signature is detrained.
+name: mockingjay_bfm
+doc: >
+  Mockingjay: each line holds an estimated time to reuse (ETR), counted down every
+  8 accesses to its set; the victim is the line with the largest |ETR|, an overdue
+  (negative) one on ties. A predictor table keyed by the hit-or-miss PC signature
+  gives the ETR on insertion, and a fill predicted to be reused after every line in
+  the set is bypassed. A sampled shadow cache on 32 sets measures reuse distances
+  with an 8-bit per-set clock and trains the predictor one step at a time; entries
+  older than INF_RD train it up as scans. Writebacks are inserted at -INF_ETR and
+  train nothing.
+  This design adds a Bypass Feedback Mechanism (BFM) using a small bypassed_tracker
+  sampler. When a line is bypassed, its PC signature and address are recorded in the
+  bypassed_tracker. If this tracked line is accessed again, it signifies a wrong_bypass
+  event, and the RDP table for that PC signature is decremented, making future bypasses
+  for that signature less likely.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+  - name: global_clock        # Added for Bypass Feedback Mechanism
+    scope: global
+    kind: counter
+    width: 64
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+  - name: bypassed_tracker     # Sampler for Bypass Feedback Mechanism
+    scope: global
+    sets: {mirror: 4}         # Small number of sampled sets
+    extra_index_bits: 0       # No extra index bits for simplicity
+    ways: 8                   # Small number of ways
+    tag_bits: 46              # Captures the line address above the LLC set index
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO} # Stores pc_sig
+      - {name: timestamp, kind: counter, width: 64, init: ZERO} # For LRU
+    age: {clock: global_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:                 # Logic handled by manage_bypassed_tracking step
+      - train: {table: rdp, index: signature, op: decrement} # Detrain RDP on wrong_bypass
+        free: true            # Free the entry after detection
+    on_replace: none
+    install: {signature: {signature: pc_sig}, timestamp: {tick: global_clock}} # Store on bypass
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - manage_bypassed_tracking: {tracker: bypassed_tracker, predictor: rdp, pc_signature: pc_sig, current_clock: global_clock, fill_was_bypassed: is_bypassed_fill}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_access:
+  - set: {global_clock: {add: 1}} # Increment global clock on every access
+  - run: access
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - # on_hit implicitly runs on_access first, which calls manage_bypassed_tracking
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: >
+    True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the
+    fill was bypassed.
+- name: manage_bypassed_tracking
+  place: step
+  params: {tracker: sampler, predictor: table, pc_signature: signature, current_clock: state, fill_was_bypassed: condition}
+  means: >
+    This step orchestrates the bypass tracking logic. First, on any access, it attempts to match the current
+    access's address against entries in the 'tracker' sampler. If a match occurs, it indicates a previously bypassed
+    line has been reused. In this case, the 'predictor' table entry indexed by 'pc_signature' is decremented
+    (trained to be less likely to bypass for this signature in the future), and the matched entry in 'tracker' is then 'free'd.
+    Second, if the current event is an 'on_fill' event and the 'fill_was_bypassed' condition is true,
+    the current access's line address, 'pc_signature', and 'current_clock' value are installed into the 'tracker' sampler.
+    This new word is intended to be called from both 'on_access' and 'on_fill' events.

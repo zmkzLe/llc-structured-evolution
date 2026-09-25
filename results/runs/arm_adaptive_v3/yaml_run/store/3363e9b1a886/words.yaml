@@ -1,0 +1,8 @@
+- name: confident_victim_exceed
+  place: condition
+  params: {rdp_table: table, conf_table: table, index: signature, div: {int: [1, 128]}}
+  means: >
+    A condition for use inside bypass_when. It is true when the entry for the
+    index in conf_table has reached its maximum value, AND the value of
+    rdp_table[index] divided by div is greater than the absolute value of the
+    key of the victim way. An absent rdp_table entry is treated as 0.

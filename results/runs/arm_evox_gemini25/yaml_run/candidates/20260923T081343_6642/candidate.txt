@@ -1,0 +1,15 @@
+===== STRUCTURE_DESCRIPTION =====
+# Your complete, valid YAML description goes here.
+# It must be a full policy, not just a fragment.
+# Start by copying the parent design, then modify it.
+name: my_new_design_name
+doc: >
+  A one-line summary of what changed and why. For example:
+  This design adds a bypass-tracking counter to address wrong_bypass errors.
+...
+# The rest of the full YAML structure for the policy.
+...
+===== NEW_WORDS =====
+
+# If you define a new word, its full YAML declaration goes here.
+# If not, leave this section empty but present.

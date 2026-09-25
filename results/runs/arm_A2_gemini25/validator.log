@@ -1,0 +1,13 @@
+validator: /home/khoile0315/oe_out/arm_A2_gemini25/yaml_run
+  tree /home/khoile0315/champsim_validate module validate_policy
+  33 traces at 50000000 + 100000000, 8 workers, sim timeout 18000 s
+  search stop 2026-09-23T22:00:00Z, deadline 2026-09-24T04:00:00Z, drain False, fake None
+waiting for /home/khoile0315/oe_out/arm_A2_gemini25/yaml_run/store
+[2026-09-23T06:50:30Z] started {"id": "c41837327dd0", "score": 1.0}
+[2026-09-23T10:07:22Z] validated {"id": "c41837327dd0", "score": {"all": 1.0, "training": 1.0, "held_out": 1.0}, "gap": {"difference": 0.0, "ratio": 1.0}, "seconds": 11811.7}
+[2026-09-23T10:07:42Z] started {"id": "3714da345231", "score": 1.001843906813808}
+[2026-09-23T13:16:59Z] validated {"id": "3714da345231", "score": {"all": 1.0006674424379038, "training": 1.0014972551553794, "held_out": 0.999786519773884}, "gap": {"difference": 0.001710735381495354, "ratio": 1.001711100667653}, "seconds": 11356.6}
+[2026-09-23T13:17:55Z] started {"id": "b88d6375ef26", "score": 1.0042740271562112}
+[2026-09-23T16:27:20Z] validated {"id": "b88d6375ef26", "score": {"all": 1.002592192006951, "training": 1.0022342175401164, "held_out": 1.0029726799756635}, "gap": {"difference": -0.0007384624355470937, "ratio": 0.9992637262706249}, "seconds": 11365.2}
+[2026-09-23T16:28:10Z] started {"id": "ea244a758864", "score": 1.005362111964911}
+[2026-09-23T19:50:53Z] validated {"id": "ea244a758864", "score": {"all": 1.002132650521933, "training": 1.0039677529837194, "held_out": 1.0001865293245424}, "gap": {"difference": 0.003781223659176991, "ratio": 1.0037805184816182}, "seconds": 12162.9}

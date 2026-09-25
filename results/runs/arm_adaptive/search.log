@@ -1,0 +1,781 @@
+guidance: every proposal's prompt carries /home/khoile0315/oe_out/arm_adaptive/guidance.txt as it stands at that moment
+LLM: google/gemini-2.5-pro (weight 0.7), google/gemini-2.5-flash (weight 0.3) via Vertex (a3-chia-hack26ath-7727); usage bills that project's credit, token refreshed per request
+seed written to /home/khoile0315/oe_out/arm_adaptive/seed_candidate.txt (4145 B); evaluator yaml_evaluator.py
+effective config: iterations 100000, diff_based_evolution False, evaluator timeout 10800s, max_code_length 200000, max_tokens 32000, llm timeout 300s, llm retries 2 (delay 5s), temperature 0.7, model seed None (run seed None, database seed 42), parallel 2, islands 2 (migration every 50), proposers [('google/gemini-2.5-pro', 0.7), ('google/gemini-2.5-flash', 0.3)]
+running OpenEvolve for 100000 iterations
+2026-09-21 06:38:33,546 - INFO - Logging to /home/khoile0315/oe_out/arm_adaptive/logs/openevolve_20260921_063833.log
+2026-09-21 06:38:33,601 - INFO - Initialized OpenAI LLM with model: google/gemini-2.5-pro
+2026-09-21 06:38:33,607 - INFO - Initialized OpenAI LLM with model: google/gemini-2.5-flash
+2026-09-21 06:38:33,607 - INFO - Initialized LLM ensemble with models: google/gemini-2.5-pro (weight: 0.70), google/gemini-2.5-flash (weight: 0.30)
+2026-09-21 06:38:33,619 - INFO - Initialized LLM ensemble with models: google/gemini-2.5-pro (weight: 0.70), google/gemini-2.5-flash (weight: 0.30)
+2026-09-21 06:38:33,619 - INFO - Initialized prompt sampler
+2026-09-21 06:38:33,620 - INFO - Set custom templates: system=evaluator_system_message, user=None
+2026-09-21 06:38:33,620 - INFO - Initialized program database with 0 programs
+2026-09-21 06:38:33,642 - INFO - Successfully loaded evaluation function from /home/khoile0315/chia_loop/yaml_evaluator.py
+2026-09-21 06:38:33,642 - WARNING - Configuration has 'cascade_evaluation: true' but evaluator '/home/khoile0315/chia_loop/yaml_evaluator.py' does not define 'evaluate_stage1' function. This will fall back to direct evaluation, making the cascade setting useless. Consider setting 'cascade_evaluation: false' or implementing cascade functions.
+2026-09-21 06:38:33,642 - INFO - Initialized evaluator with /home/khoile0315/chia_loop/yaml_evaluator.py
+2026-09-21 06:38:33,642 - INFO - Initialized OpenEvolve with /home/khoile0315/oe_out/arm_adaptive/seed_candidate.txt
+2026-09-21 06:38:33,642 - INFO - Adding initial program to database
+2026-09-21 07:12:43,005 - INFO - Evaluated program 6adb9531-23ca-4241-a58a-a649283b0389 in 2049.36s: combined_score=1.1076, status=ok, over_mockingjay=1.0000, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-21 07:12:43,005 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 5, 'diversity': 0}
+2026-09-21 07:12:43,005 - INFO - Stored artifacts for initial program
+2026-09-21 07:12:43,009 - INFO - Initialized process parallel controller with 2 workers
+2026-09-21 07:12:43,009 - INFO - Started process pool with 2 processes
+2026-09-21 07:12:43,009 - INFO - Using island-based evolution with 2 islands
+2026-09-21 07:12:43,009 - INFO - Island Status:
+2026-09-21 07:12:43,009 - INFO -  * Island 0: 1 programs, best=1.1076, avg=1.1076, diversity=0.00, gen=0 (best: 6adb9531-23ca-4241-a58a-a649283b0389)
+2026-09-21 07:12:43,009 - INFO -    Island 1: 0 programs, best=0.0000, avg=0.0000, diversity=0.00, gen=0
+2026-09-21 07:12:43,009 - INFO - Starting process-based evolution from iteration 1 for 100000 iterations (total: 100001)
+2026-09-21 07:12:43,019 - INFO - Early stopping disabled
+2026-09-21 07:12:43,033 - INFO - Initialized LLM ensemble with models: google/gemini-2.5-pro (weight: 0.70), google/gemini-2.5-flash (weight: 0.30)
+2026-09-21 07:12:43,033 - INFO - Initialized LLM ensemble with models: google/gemini-2.5-pro (weight: 0.70), google/gemini-2.5-flash (weight: 0.30)
+2026-09-21 07:12:43,044 - INFO - Initialized LLM ensemble with models: google/gemini-2.5-pro (weight: 0.70), google/gemini-2.5-flash (weight: 0.30)
+2026-09-21 07:12:43,044 - INFO - Initialized LLM ensemble with models: google/gemini-2.5-pro (weight: 0.70), google/gemini-2.5-flash (weight: 0.30)
+2026-09-21 07:12:43,045 - INFO - Set custom templates: system=evaluator_system_message, user=None
+2026-09-21 07:12:43,045 - INFO - Set custom templates: system=evaluator_system_message, user=None
+2026-09-21 07:12:43,067 - INFO - Successfully loaded evaluation function from /home/khoile0315/chia_loop/yaml_evaluator.py
+2026-09-21 07:12:43,067 - INFO - Successfully loaded evaluation function from /home/khoile0315/chia_loop/yaml_evaluator.py
+2026-09-21 07:12:43,067 - WARNING - Configuration has 'cascade_evaluation: true' but evaluator '/home/khoile0315/chia_loop/yaml_evaluator.py' does not define 'evaluate_stage1' function. This will fall back to direct evaluation, making the cascade setting useless. Consider setting 'cascade_evaluation: false' or implementing cascade functions.
+2026-09-21 07:12:43,067 - WARNING - Configuration has 'cascade_evaluation: true' but evaluator '/home/khoile0315/chia_loop/yaml_evaluator.py' does not define 'evaluate_stage1' function. This will fall back to direct evaluation, making the cascade setting useless. Consider setting 'cascade_evaluation: false' or implementing cascade functions.
+2026-09-21 07:12:43,067 - INFO - Initialized evaluator with /home/khoile0315/chia_loop/yaml_evaluator.py
+2026-09-21 07:12:43,067 - INFO - Initialized evaluator with /home/khoile0315/chia_loop/yaml_evaluator.py
+2026-09-21 07:12:43,108 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 07:12:43,108 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 07:13:50,408 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 07:14:33,403 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 07:14:33,480 - INFO - Evaluated program d9b9665e-2dc4-41f9-86a9-5060e7bcf567 in 0.07s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Value error, procedure(s) train_on_miss, train_on_reuse, train_on_reuse_prefetch declared but never run by any event [type=value_error, input_value={'name': 'mockingjay_conf...ue}, {'run': 'access'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 07:14:33,484 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 9, 'diversity': 5}
+2026-09-21 07:14:33,485 - INFO - Iteration 2: Program d9b9665e-2dc4-41f9-86a9-5060e7bcf567 (parent: 6adb9531-23ca-4241-a58a-a649283b0389) completed in 110.37s
+2026-09-21 07:14:33,485 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Value error, procedure(s) train_on_miss, train_on_reuse, train_on_reuse_prefetch declared but never run by any event [type=value_error, input_value={'name': 'mockingjay_conf...ue}, {'run': 'access'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 07:14:33,520 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 07:16:17,952 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 07:51:01,645 - INFO - Evaluated program 5df5d052-9a2e-4417-91b0-6559ee44d074 in 2231.23s: combined_score=1.1067, status=ok, over_mockingjay=0.9992, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6621.1321, cacti_node_nm=22.0000
+2026-09-21 07:51:01,650 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 0, 'diversity': 0}
+2026-09-21 07:51:01,650 - INFO - Iteration 1: Program 5df5d052-9a2e-4417-91b0-6559ee44d074 (parent: 6adb9531-23ca-4241-a58a-a649283b0389) completed in 2298.54s
+2026-09-21 07:51:01,650 - INFO - Metrics: combined_score=1.1067, status=ok, over_mockingjay=0.9992, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6621.1321, cacti_node_nm=22.0000
+2026-09-21 07:51:01,686 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 07:52:34,195 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 07:52:34,249 - INFO - Evaluated program 53823e7c-b3be-428d-86f4-f7e55f385f0a in 0.05s: combined_score=0.0000, status=words_refused, error=4 validation errors for NewWord
+params.sample.str
+  Input should be a valid string [type=string_type, input_value={'symbol': ['age']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.sample.IntRange.int
+  Field required [type=missing, input_value={'symbol': ['age']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.sample.IntRange.symbol
+  Extra inputs are not permitted [type=extra_forbidden, input_value=['age'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.sample.SymbolOf.symbol
+  Input should be a valid string [type=string_type, input_value=['age'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+2026-09-21 07:52:34,256 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 9, 'diversity': 9}
+2026-09-21 07:52:34,256 - INFO - Iteration 4: Program 53823e7c-b3be-428d-86f4-f7e55f385f0a (parent: 6adb9531-23ca-4241-a58a-a649283b0389) completed in 92.56s
+2026-09-21 07:52:34,256 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=4 validation errors for NewWord
+params.sample.str
+  Input should be a valid string [type=string_type, input_value={'symbol': ['age']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.sample.IntRange.int
+  Field required [type=missing, input_value={'symbol': ['age']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.sample.IntRange.symbol
+  Extra inputs are not permitted [type=extra_forbidden, input_value=['age'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.sample.SymbolOf.symbol
+  Input should be a valid string [type=string_type, input_value=['age'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+2026-09-21 07:52:34,289 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 07:53:02,251 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 07:53:02,317 - INFO - Evaluated program 2824f541-db54-4410-a4b7-e0ea1a721a6b in 0.06s: combined_score=0.0000, status=schema_rejected, error=duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-21 07:53:02,322 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 9, 'diversity': 3}
+2026-09-21 07:53:02,322 - INFO - Iteration 5: Program 2824f541-db54-4410-a4b7-e0ea1a721a6b (parent: 6adb9531-23ca-4241-a58a-a649283b0389) completed in 28.03s
+2026-09-21 07:53:02,322 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-21 07:53:02,358 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 07:54:20,282 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 07:58:03,857 - INFO - Evaluated program e6b07272-761e-485b-a761-b712e1e3a377 in 2505.90s: combined_score=1.1039, status=ok, over_mockingjay=0.9966, metadata_kb=46.0000, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.6667, metadata_area_mm2=0.0378, metadata_energy_uj=6647.4983, cacti_node_nm=22.0000
+2026-09-21 07:58:03,861 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 3, 'diversity': 1}
+2026-09-21 07:58:03,861 - INFO - Iteration 3: Program e6b07272-761e-485b-a761-b712e1e3a377 (parent: 6adb9531-23ca-4241-a58a-a649283b0389) completed in 2610.34s
+2026-09-21 07:58:03,861 - INFO - Metrics: combined_score=1.1039, status=ok, over_mockingjay=0.9966, metadata_kb=46.0000, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.6667, metadata_area_mm2=0.0378, metadata_energy_uj=6647.4983, cacti_node_nm=22.0000
+2026-09-21 07:58:03,897 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 07:58:18,655 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 07:58:18,708 - INFO - Evaluated program 20c74867-a153-43fb-89f9-f5132e565537 in 0.05s: combined_score=0.0000, status=words_refused, error=1 validation error for NewWord
+params
+  Value error, parameter 'sample': type 'symbol' is not one of state, table, signature, sampler, access_types, {int: [lo, hi]} or {symbol: <list>} [type=value_error, input_value={'rdp_table': 'table', 'c...iff': {'int': [0, 127]}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 07:58:18,711 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 9, 'diversity': 3}
+2026-09-21 07:58:18,711 - INFO - Iteration 7: Program 20c74867-a153-43fb-89f9-f5132e565537 (parent: 53823e7c-b3be-428d-86f4-f7e55f385f0a) completed in 14.81s
+2026-09-21 07:58:18,711 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=1 validation error for NewWord
+params
+  Value error, parameter 'sample': type 'symbol' is not one of state, table, signature, sampler, access_types, {int: [lo, hi]} or {symbol: <list>} [type=value_error, input_value={'rdp_table': 'table', 'c...iff': {'int': [0, 127]}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 07:58:18,749 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 07:59:24,715 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 07:59:24,792 - INFO - Evaluated program 4e8b109b-e123-48c6-bc71-5032cd6a3661 in 0.07s: combined_score=0.0000, status=words_refused, error=confident_bypass_rdp, confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 07:59:24,804 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 7, 'diversity': 0}
+2026-09-21 07:59:24,804 - INFO - Iteration 8: Program 4e8b109b-e123-48c6-bc71-5032cd6a3661 (parent: 2824f541-db54-4410-a4b7-e0ea1a721a6b) completed in 66.04s
+2026-09-21 07:59:24,804 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=confident_bypass_rdp, confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 07:59:24,837 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 08:00:05,908 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 08:00:05,972 - INFO - Evaluated program a70a4a3e-7f43-4b5c-9d5f-82f7a38c576d in 0.06s: combined_score=0.0000, status=words_refused, error=4 validation errors for NewWord
+params.cmp.str
+  Input should be a valid string [type=string_type, input_value={'symbol': ['Comparison']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.cmp.IntRange.int
+  Field required [type=missing, input_value={'symbol': ['Comparison']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.cmp.IntRange.symbol
+  Extra inputs are not permitted [type=extra_forbidden, input_value=['Comparison'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.cmp.SymbolOf.symbol
+  Input should be a valid string [type=string_type, input_value=['Comparison'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+2026-09-21 08:00:05,977 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 8, 'diversity': 0}
+2026-09-21 08:00:05,978 - INFO - Iteration 9: Program a70a4a3e-7f43-4b5c-9d5f-82f7a38c576d (parent: e6b07272-761e-485b-a761-b712e1e3a377) completed in 41.14s
+2026-09-21 08:00:05,978 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=4 validation errors for NewWord
+params.cmp.str
+  Input should be a valid string [type=string_type, input_value={'symbol': ['Comparison']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.cmp.IntRange.int
+  Field required [type=missing, input_value={'symbol': ['Comparison']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.cmp.IntRange.symbol
+  Extra inputs are not permitted [type=extra_forbidden, input_value=['Comparison'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.cmp.SymbolOf.symbol
+  Input should be a valid string [type=string_type, input_value=['Comparison'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+2026-09-21 08:00:06,016 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 08:01:32,334 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 08:01:32,407 - INFO - Evaluated program c398b583-0d17-4f16-86f9-8192fc37ba7c in 0.07s: combined_score=0.0000, status=words_refused, error=confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 08:01:32,411 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 3, 'diversity': 0}
+2026-09-21 08:01:32,411 - INFO - Iteration 10: Program c398b583-0d17-4f16-86f9-8192fc37ba7c (parent: 20c74867-a153-43fb-89f9-f5132e565537) completed in 86.39s
+2026-09-21 08:01:32,411 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 08:01:32,453 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 08:02:02,178 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 08:34:48,356 - INFO - Evaluated program c6f7cacf-a657-4f9a-ab77-4097e8957ab1 in 2428.07s: combined_score=1.1054, status=ok, over_mockingjay=0.9980, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6886.6699, cacti_node_nm=22.0000
+2026-09-21 08:34:48,362 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 8, 'diversity': 0}
+2026-09-21 08:34:48,362 - INFO - Iteration 6: Program c6f7cacf-a657-4f9a-ab77-4097e8957ab1 (parent: 6adb9531-23ca-4241-a58a-a649283b0389) completed in 2506.00s
+2026-09-21 08:34:48,363 - INFO - Metrics: combined_score=1.1054, status=ok, over_mockingjay=0.9980, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6886.6699, cacti_node_nm=22.0000
+2026-09-21 08:34:48,468 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 08:35:17,611 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 08:41:57,995 - INFO - Evaluated program fae61654-8f70-4d91-b3c9-42f23bc274c2 in 2395.81s: combined_score=1.0858, status=ok, over_mockingjay=0.9803, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6777.8164, cacti_node_nm=22.0000
+2026-09-21 08:41:58,007 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 0, 'diversity': 7}
+2026-09-21 08:41:58,007 - INFO - Iteration 11: Program fae61654-8f70-4d91-b3c9-42f23bc274c2 (parent: 5df5d052-9a2e-4417-91b0-6559ee44d074) completed in 2425.54s
+2026-09-21 08:41:58,007 - INFO - Metrics: combined_score=1.0858, status=ok, over_mockingjay=0.9803, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6777.8164, cacti_node_nm=22.0000
+2026-09-21 08:41:58,044 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 08:43:13,454 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 09:13:23,537 - INFO - Evaluated program f3b3d7d9-bdb2-43c7-95ce-639a708c2a92 in 2285.92s: combined_score=1.1048, status=ok, over_mockingjay=0.9975, metadata_kb=46.0000, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.6667, metadata_area_mm2=0.0378, metadata_energy_uj=6624.9893, cacti_node_nm=22.0000
+2026-09-21 09:13:23,543 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 6, 'diversity': 0}
+2026-09-21 09:13:23,544 - INFO - Iteration 12: Program f3b3d7d9-bdb2-43c7-95ce-639a708c2a92 (parent: e6b07272-761e-485b-a761-b712e1e3a377) completed in 2315.07s
+2026-09-21 09:13:23,544 - INFO - Metrics: combined_score=1.1048, status=ok, over_mockingjay=0.9975, metadata_kb=46.0000, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.6667, metadata_area_mm2=0.0378, metadata_energy_uj=6624.9893, cacti_node_nm=22.0000
+2026-09-21 09:13:23,582 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 09:13:58,510 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 09:13:58,582 - INFO - Evaluated program 9acf8210-485d-42e2-a8b7-0844524cb9ae in 0.07s: combined_score=0.0000, status=schema_rejected, error=duplicate key 'train' at line 80, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-21 09:13:58,591 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 5, 'diversity': 1}
+2026-09-21 09:13:58,591 - INFO - Iteration 14: Program 9acf8210-485d-42e2-a8b7-0844524cb9ae (parent: d9b9665e-2dc4-41f9-86a9-5060e7bcf567) completed in 35.00s
+2026-09-21 09:13:58,592 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=duplicate key 'train' at line 80, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-21 09:13:58,626 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 09:15:35,725 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 09:23:04,991 - INFO - Evaluated program 1de6fcc1-bbb5-47ca-858f-7be0264e3cec in 2391.53s: combined_score=1.1065, status=ok, over_mockingjay=0.9990, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6867.1834, cacti_node_nm=22.0000
+2026-09-21 09:23:04,998 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 5, 'diversity': 0}
+2026-09-21 09:23:04,999 - INFO - Iteration 13: Program 1de6fcc1-bbb5-47ca-858f-7be0264e3cec (parent: 53823e7c-b3be-428d-86f4-f7e55f385f0a) completed in 2466.95s
+2026-09-21 09:23:04,999 - INFO - Metrics: combined_score=1.1065, status=ok, over_mockingjay=0.9990, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6867.1834, cacti_node_nm=22.0000
+2026-09-21 09:23:05,035 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 09:23:33,856 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 09:23:34,142 - INFO - Evaluated program 849a681f-88f9-4616-8277-d2b72ec6aa6c in 0.28s: combined_score=1.1048, status=ok, over_mockingjay=0.9975, metadata_kb=46.0000, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.6667, metadata_area_mm2=0.0378, metadata_energy_uj=6624.9893, cacti_node_nm=22.0000
+2026-09-21 09:23:34,148 - INFO - Iteration 16: Program 849a681f-88f9-4616-8277-d2b72ec6aa6c (parent: e6b07272-761e-485b-a761-b712e1e3a377) completed in 29.11s
+2026-09-21 09:23:34,148 - INFO - Metrics: combined_score=1.1048, status=ok, over_mockingjay=0.9975, metadata_kb=46.0000, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.6667, metadata_area_mm2=0.0378, metadata_energy_uj=6624.9893, cacti_node_nm=22.0000
+2026-09-21 09:23:34,187 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 09:25:28,372 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 09:53:12,662 - INFO - Evaluated program ad65b257-3aa0-44a0-9134-cc7a96e85040 in 2256.93s: combined_score=1.1061, status=ok, over_mockingjay=0.9987, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6881.5132, cacti_node_nm=22.0000
+2026-09-21 09:53:12,666 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 3, 'diversity': 2}
+2026-09-21 09:53:12,666 - INFO - Iteration 15: Program ad65b257-3aa0-44a0-9134-cc7a96e85040 (parent: c6f7cacf-a657-4f9a-ab77-4097e8957ab1) completed in 2354.04s
+2026-09-21 09:53:12,666 - INFO - Metrics: combined_score=1.1061, status=ok, over_mockingjay=0.9987, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6881.5132, cacti_node_nm=22.0000
+2026-09-21 09:53:12,706 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 09:53:48,813 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 09:53:48,888 - INFO - Evaluated program f97da254-41da-4fb0-b45a-87e3230b8d39 in 0.07s: combined_score=0.0000, status=schema_rejected, error=duplicate key 'when' at line 85, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-21 09:53:48,895 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 7, 'diversity': 0}
+2026-09-21 09:53:48,895 - INFO - Iteration 18: Program f97da254-41da-4fb0-b45a-87e3230b8d39 (parent: f3b3d7d9-bdb2-43c7-95ce-639a708c2a92) completed in 36.18s
+2026-09-21 09:53:48,895 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=duplicate key 'when' at line 85, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-21 09:53:48,933 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 09:55:14,611 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 09:55:14,687 - INFO - Evaluated program a50ee31c-bec9-492d-a191-cabfa64b39aa in 0.07s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Value error, on_hit[1] -> procedures.access[6]: 'rdp' / 8 reaches 11, which 'etr' (4 bits, -8..7) cannot hold [type=value_error, input_value={'name': 'mj_wider_confid...ue}, {'run': 'access'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 09:55:14,694 - INFO - Iteration 19: Program a50ee31c-bec9-492d-a191-cabfa64b39aa (parent: 1de6fcc1-bbb5-47ca-858f-7be0264e3cec) completed in 85.75s
+2026-09-21 09:55:14,695 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Value error, on_hit[1] -> procedures.access[6]: 'rdp' / 8 reaches 11, which 'etr' (4 bits, -8..7) cannot hold [type=value_error, input_value={'name': 'mj_wider_confid...ue}, {'run': 'access'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 09:55:14,731 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 09:57:19,624 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 10:03:03,694 - INFO - Evaluated program 651cfa5e-3a0c-47d3-bd4e-d3fa4666482d in 2255.32s: combined_score=1.1085, status=ok, over_mockingjay=1.0008, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6606.1142, cacti_node_nm=22.0000
+2026-09-21 10:03:03,701 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 0, 'diversity': 9}
+2026-09-21 10:03:03,701 - INFO - Island 0 MAP-Elites coverage reached 10.0% (10/100 cells)
+2026-09-21 10:03:03,701 - INFO - New best program 651cfa5e-3a0c-47d3-bd4e-d3fa4666482d replaces 6adb9531-23ca-4241-a58a-a649283b0389 (combined_score: 1.1076 → 1.1085, +0.0009)
+2026-09-21 10:03:03,702 - INFO - Iteration 17: Program 651cfa5e-3a0c-47d3-bd4e-d3fa4666482d (parent: 6adb9531-23ca-4241-a58a-a649283b0389) completed in 2369.51s
+2026-09-21 10:03:03,702 - INFO - Metrics: combined_score=1.1085, status=ok, over_mockingjay=1.0008, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6606.1142, cacti_node_nm=22.0000
+2026-09-21 10:03:03,702 - INFO - 🌟 New best solution found at iteration 17: 651cfa5e-3a0c-47d3-bd4e-d3fa4666482d
+2026-09-21 10:03:03,739 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 10:04:28,669 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 10:36:05,295 - INFO - Evaluated program 9de1626b-e7ea-4216-993e-43393f2caa2e in 2325.67s: combined_score=1.1071, status=ok, over_mockingjay=0.9995, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6860.4474, cacti_node_nm=22.0000
+2026-09-21 10:36:05,302 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 3, 'diversity': 3}
+2026-09-21 10:36:05,302 - INFO - Iteration 20: Program 9de1626b-e7ea-4216-993e-43393f2caa2e (parent: 5df5d052-9a2e-4417-91b0-6559ee44d074) completed in 2450.57s
+2026-09-21 10:36:05,302 - INFO - Metrics: combined_score=1.1071, status=ok, over_mockingjay=0.9995, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6860.4474, cacti_node_nm=22.0000
+2026-09-21 10:36:05,339 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 10:37:45,360 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 10:44:17,032 - INFO - Evaluated program e9a578ee-13d6-4d8d-8f88-93f6eb4ac9af in 2388.36s: combined_score=1.1065, status=ok, over_mockingjay=0.9990, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.6420, cacti_node_nm=22.0000
+2026-09-21 10:44:17,038 - INFO - Island 1 MAP-Elites cell improved: {'complexity': 7, 'diversity': 0} (fitness: 0.000 -> 1.106)
+2026-09-21 10:44:17,039 - INFO - Iteration 21: Program e9a578ee-13d6-4d8d-8f88-93f6eb4ac9af (parent: e6b07272-761e-485b-a761-b712e1e3a377) completed in 2473.29s
+2026-09-21 10:44:17,039 - INFO - Metrics: combined_score=1.1065, status=ok, over_mockingjay=0.9990, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.6420, cacti_node_nm=22.0000
+2026-09-21 10:44:17,112 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 10:44:54,483 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 11:18:13,782 - INFO - Evaluated program 4a374ec8-6ce5-443a-8bad-278547fa1287 in 2428.42s: combined_score=1.0940, status=ok, over_mockingjay=0.9877, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6972.7145, cacti_node_nm=22.0000
+2026-09-21 11:18:13,790 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 8, 'diversity': 1}
+2026-09-21 11:18:13,791 - INFO - Iteration 22: Program 4a374ec8-6ce5-443a-8bad-278547fa1287 (parent: f97da254-41da-4fb0-b45a-87e3230b8d39) completed in 2528.44s
+2026-09-21 11:18:13,791 - INFO - Metrics: combined_score=1.0940, status=ok, over_mockingjay=0.9877, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6972.7145, cacti_node_nm=22.0000
+2026-09-21 11:18:13,826 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 11:18:41,473 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 11:18:41,547 - INFO - Evaluated program 6a406818-60f9-43d4-9742-4b12587497e2 in 0.07s: combined_score=0.0000, status=schema_rejected, error=duplicate key 'train' at line 78, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-21 11:18:41,557 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 8, 'diversity': 3}
+2026-09-21 11:18:41,557 - INFO - Iteration 24: Program 6a406818-60f9-43d4-9742-4b12587497e2 (parent: 651cfa5e-3a0c-47d3-bd4e-d3fa4666482d) completed in 27.72s
+2026-09-21 11:18:41,557 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=duplicate key 'train' at line 78, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-21 11:18:41,591 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 11:19:20,040 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 11:19:20,117 - INFO - Evaluated program c287a264-effd-4f4b-b957-9a8183b9ca43 in 0.07s: combined_score=0.0000, status=words_refused, error=confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 11:19:20,130 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 9, 'diversity': 4}
+2026-09-21 11:19:20,130 - INFO - Island 1 MAP-Elites coverage reached 10.0% (10/100 cells)
+2026-09-21 11:19:20,130 - INFO - Iteration 25: Program c287a264-effd-4f4b-b957-9a8183b9ca43 (parent: 20c74867-a153-43fb-89f9-f5132e565537) completed in 38.53s
+2026-09-21 11:19:20,130 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 11:19:20,161 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 11:19:48,238 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 11:19:48,312 - INFO - Evaluated program cc393858-a03b-48ba-b287-80a3cec63c21 in 0.07s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_dead_conf_bypass_sampler_5ways', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 11:19:48,320 - INFO - Iteration 26: Program cc393858-a03b-48ba-b287-80a3cec63c21 (parent: 849a681f-88f9-4616-8277-d2b72ec6aa6c) completed in 28.15s
+2026-09-21 11:19:48,320 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_dead_conf_bypass_sampler_5ways', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 11:19:48,356 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 11:20:16,521 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 11:20:16,595 - INFO - Evaluated program 75780545-30bd-49be-bce7-1fd377388360 in 0.07s: combined_score=0.0000, status=schema_rejected, error=duplicate key 'train' at line 76, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-21 11:20:16,604 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 7, 'diversity': 3}
+2026-09-21 11:20:16,604 - INFO - Iteration 27: Program 75780545-30bd-49be-bce7-1fd377388360 (parent: 651cfa5e-3a0c-47d3-bd4e-d3fa4666482d) completed in 28.24s
+2026-09-21 11:20:16,604 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=duplicate key 'train' at line 76, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-21 11:20:16,640 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 11:21:27,451 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 11:21:27,861 - INFO - Evaluated program 9777915b-c1ad-401c-9fa6-240f73323652 in 0.41s: combined_score=1.1065, status=ok, over_mockingjay=0.9990, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.6420, cacti_node_nm=22.0000
+2026-09-21 11:21:27,870 - INFO - Island 1 MAP-Elites cell improved: {'complexity': 6, 'diversity': 0} (fitness: 1.105 -> 1.106)
+2026-09-21 11:21:27,870 - INFO - Iteration 28: Program 9777915b-c1ad-401c-9fa6-240f73323652 (parent: e6b07272-761e-485b-a761-b712e1e3a377) completed in 71.22s
+2026-09-21 11:21:27,871 - INFO - Metrics: combined_score=1.1065, status=ok, over_mockingjay=0.9990, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.6420, cacti_node_nm=22.0000
+2026-09-21 11:21:27,906 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 11:22:10,820 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 11:22:34,809 - INFO - Evaluated program 1f555336-044c-4a65-98b6-44a129efd187 in 2260.32s: combined_score=1.1082, status=ok, over_mockingjay=1.0006, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6607.3329, cacti_node_nm=22.0000
+2026-09-21 11:22:34,813 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 0, 'diversity': 8}
+2026-09-21 11:22:34,813 - INFO - Iteration 23: Program 1f555336-044c-4a65-98b6-44a129efd187 (parent: 6adb9531-23ca-4241-a58a-a649283b0389) completed in 2297.70s
+2026-09-21 11:22:34,813 - INFO - Metrics: combined_score=1.1082, status=ok, over_mockingjay=1.0006, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6607.3329, cacti_node_nm=22.0000
+2026-09-21 11:22:34,853 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 11:23:11,583 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 11:23:11,661 - INFO - Evaluated program 25c4a4a4-fcf2-4fd9-9796-06d22c4c4c87 in 0.07s: combined_score=0.0000, status=schema_rejected, error=duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-21 11:23:11,672 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 8, 'diversity': 5}
+2026-09-21 11:23:11,672 - INFO - Iteration 30: Program 25c4a4a4-fcf2-4fd9-9796-06d22c4c4c87 (parent: 651cfa5e-3a0c-47d3-bd4e-d3fa4666482d) completed in 36.81s
+2026-09-21 11:23:11,672 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-21 11:23:11,704 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 11:24:13,252 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 11:24:13,688 - INFO - Evaluated program fb92271e-9c5f-42bb-a781-5f1d45f4b271 in 0.43s: combined_score=1.1065, status=ok, over_mockingjay=0.9990, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.6420, cacti_node_nm=22.0000
+2026-09-21 11:24:13,700 - INFO - Iteration 31: Program fb92271e-9c5f-42bb-a781-5f1d45f4b271 (parent: c287a264-effd-4f4b-b957-9a8183b9ca43) completed in 61.98s
+2026-09-21 11:24:13,700 - INFO - Metrics: combined_score=1.1065, status=ok, over_mockingjay=0.9990, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.6420, cacti_node_nm=22.0000
+2026-09-21 11:24:13,732 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 11:26:53,659 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 11:26:53,712 - INFO - Evaluated program 30613224-1654-496a-9ee6-9685f3780bbc in 0.05s: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 11:26:53,717 - INFO - Iteration 32: Program 30613224-1654-496a-9ee6-9685f3780bbc (parent: 651cfa5e-3a0c-47d3-bd4e-d3fa4666482d) completed in 159.98s
+2026-09-21 11:26:53,717 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 11:26:53,794 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 11:28:31,352 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 11:59:59,255 - INFO - Evaluated program 905f62ca-3518-4b37-a52c-8051eb2b248a in 2268.43s: combined_score=1.1039, status=ok, over_mockingjay=0.9966, metadata_kb=42.1250, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.0208, metadata_area_mm2=0.0341, metadata_energy_uj=6075.0765, cacti_node_nm=22.0000
+2026-09-21 11:59:59,261 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 9, 'diversity': 0}
+2026-09-21 11:59:59,262 - INFO - Iteration 29: Program 905f62ca-3518-4b37-a52c-8051eb2b248a (parent: a50ee31c-bec9-492d-a191-cabfa64b39aa) completed in 2311.35s
+2026-09-21 11:59:59,262 - INFO - Metrics: combined_score=1.1039, status=ok, over_mockingjay=0.9966, metadata_kb=42.1250, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.0208, metadata_area_mm2=0.0341, metadata_energy_uj=6075.0765, cacti_node_nm=22.0000
+2026-09-21 11:59:59,300 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 12:00:35,982 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 12:00:36,049 - INFO - Evaluated program 732e7012-f764-4e7d-b6d3-ded1c3b684a9 in 0.06s: combined_score=0.0000, status=words_refused, error=4 validation errors for NewWord
+params.cmp.str
+  Input should be a valid string [type=string_type, input_value={'symbol': ['Comparison']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.cmp.IntRange.int
+  Field required [type=missing, input_value={'symbol': ['Comparison']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.cmp.IntRange.symbol
+  Extra inputs are not permitted [type=extra_forbidden, input_value=['Comparison'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.cmp.SymbolOf.symbol
+  Input should be a valid string [type=string_type, input_value=['Comparison'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+2026-09-21 12:00:36,056 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 9, 'diversity': 1}
+2026-09-21 12:00:36,056 - INFO - Iteration 34: Program 732e7012-f764-4e7d-b6d3-ded1c3b684a9 (parent: 1de6fcc1-bbb5-47ca-858f-7be0264e3cec) completed in 36.75s
+2026-09-21 12:00:36,056 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=4 validation errors for NewWord
+params.cmp.str
+  Input should be a valid string [type=string_type, input_value={'symbol': ['Comparison']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.cmp.IntRange.int
+  Field required [type=missing, input_value={'symbol': ['Comparison']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.cmp.IntRange.symbol
+  Extra inputs are not permitted [type=extra_forbidden, input_value=['Comparison'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.cmp.SymbolOf.symbol
+  Input should be a valid string [type=string_type, input_value=['Comparison'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+2026-09-21 12:00:36,094 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 12:01:28,055 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 12:08:13,327 - INFO - Evaluated program b6cbacaa-46ab-4168-b1e6-954b40c962f3 in 2381.97s: combined_score=1.1061, status=ok, over_mockingjay=0.9986, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6887.8980, cacti_node_nm=22.0000
+2026-09-21 12:08:13,338 - INFO - Island 0 MAP-Elites cell improved: {'complexity': 7, 'diversity': 0} (fitness: 0.000 -> 1.106)
+2026-09-21 12:08:13,338 - INFO - Iteration 33: Program b6cbacaa-46ab-4168-b1e6-954b40c962f3 (parent: 1f555336-044c-4a65-98b6-44a129efd187) completed in 2479.53s
+2026-09-21 12:08:13,339 - INFO - Metrics: combined_score=1.1061, status=ok, over_mockingjay=0.9986, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6887.8980, cacti_node_nm=22.0000
+2026-09-21 12:08:13,372 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 12:09:03,193 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-21 12:09:03,194 - INFO - Retrying request to /chat/completions in 0.430918 seconds
+2026-09-21 12:10:41,321 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 12:10:41,478 - INFO - Evaluated program 183d21e7-1a17-4da8-a803-ad21821fd185 in 0.15s: combined_score=0.0000, status=words_refused, error=confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 12:10:41,490 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 9, 'diversity': 2}
+2026-09-21 12:10:41,490 - INFO - Iteration 36: Program 183d21e7-1a17-4da8-a803-ad21821fd185 (parent: 849a681f-88f9-4616-8277-d2b72ec6aa6c) completed in 148.11s
+2026-09-21 12:10:41,490 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 12:10:41,526 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 12:11:15,731 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 12:38:24,000 - INFO - Evaluated program e5c781bf-fd97-4b3b-b220-3deabbb9ac3e in 2215.94s: combined_score=1.1076, status=ok, over_mockingjay=1.0000, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6625.1414, cacti_node_nm=22.0000
+2026-09-21 12:38:24,010 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 4, 'diversity': 1}
+2026-09-21 12:38:24,010 - INFO - Iteration 35: Program e5c781bf-fd97-4b3b-b220-3deabbb9ac3e (parent: fae61654-8f70-4d91-b3c9-42f23bc274c2) completed in 2267.91s
+2026-09-21 12:38:24,010 - INFO - Metrics: combined_score=1.1076, status=ok, over_mockingjay=1.0000, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6625.1414, cacti_node_nm=22.0000
+2026-09-21 12:38:24,045 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 12:38:59,324 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 12:38:59,404 - INFO - Evaluated program b542815e-e5fa-431f-bb52-4ccdd622d676 in 0.08s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_confident_bypass_fast_learn', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 12:38:59,416 - INFO - Iteration 38: Program b542815e-e5fa-431f-bb52-4ccdd622d676 (parent: 9acf8210-485d-42e2-a8b7-0844524cb9ae) completed in 35.36s
+2026-09-21 12:38:59,416 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_confident_bypass_fast_learn', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 12:38:59,448 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 12:39:22,318 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 12:39:22,401 - INFO - Evaluated program fe16c21e-a9df-4800-a245-60e81c8778fa in 0.08s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Value error, samplers[0].on_match[1]: 'train_rdp_toward_conf_inc' sample: 'age' is not a declared sampler [type=value_error, input_value={'name': 'mj_conf_bypass_...ue}, {'run': 'access'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 12:39:22,414 - INFO - Iteration 39: Program fe16c21e-a9df-4800-a245-60e81c8778fa (parent: 20c74867-a153-43fb-89f9-f5132e565537) completed in 22.95s
+2026-09-21 12:39:22,414 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Value error, samplers[0].on_match[1]: 'train_rdp_toward_conf_inc' sample: 'age' is not a declared sampler [type=value_error, input_value={'name': 'mj_conf_bypass_...ue}, {'run': 'access'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 12:39:22,445 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 12:40:46,476 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 12:47:41,274 - INFO - Evaluated program 1604ba80-6d4e-4bb8-a7f2-3956d3126f71 in 2185.54s: combined_score=1.1064, status=ok, over_mockingjay=0.9989, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6870.5681, cacti_node_nm=22.0000
+2026-09-21 12:47:41,288 - INFO - Iteration 37: Program 1604ba80-6d4e-4bb8-a7f2-3956d3126f71 (parent: 9777915b-c1ad-401c-9fa6-240f73323652) completed in 2219.75s
+2026-09-21 12:47:41,288 - INFO - Metrics: combined_score=1.1064, status=ok, over_mockingjay=0.9989, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6870.5681, cacti_node_nm=22.0000
+2026-09-21 12:47:41,343 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 12:49:05,309 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 13:18:53,029 - INFO - Evaluated program 1a0dabdc-35d9-4bf4-a916-6d0723ef36a9 in 2286.55s: combined_score=1.1062, status=ok, over_mockingjay=0.9987, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6887.2213, cacti_node_nm=22.0000
+2026-09-21 13:18:53,041 - INFO - Island 0 MAP-Elites cell improved: {'complexity': 7, 'diversity': 0} (fitness: 1.106 -> 1.106)
+2026-09-21 13:18:53,042 - INFO - Iteration 40: Program 1a0dabdc-35d9-4bf4-a916-6d0723ef36a9 (parent: fae61654-8f70-4d91-b3c9-42f23bc274c2) completed in 2370.58s
+2026-09-21 13:18:53,042 - INFO - Metrics: combined_score=1.1062, status=ok, over_mockingjay=0.9987, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6887.2213, cacti_node_nm=22.0000
+2026-09-21 13:18:53,079 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 13:19:26,867 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 13:28:08,848 - INFO - Evaluated program 55b27aea-f6d3-4204-aabc-e4f53eef4947 in 2343.54s: combined_score=1.1094, status=ok, over_mockingjay=1.0016, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6851.3907, cacti_node_nm=22.0000
+2026-09-21 13:28:08,857 - INFO - Island 0 MAP-Elites cell improved: {'complexity': 5, 'diversity': 0} (fitness: 1.108 -> 1.109)
+2026-09-21 13:28:08,857 - INFO - New best program 55b27aea-f6d3-4204-aabc-e4f53eef4947 replaces 651cfa5e-3a0c-47d3-bd4e-d3fa4666482d (combined_score: 1.1085 → 1.1094, +0.0009)
+2026-09-21 13:28:08,857 - INFO - Iteration 41: Program 55b27aea-f6d3-4204-aabc-e4f53eef4947 (parent: c6f7cacf-a657-4f9a-ab77-4097e8957ab1) completed in 2427.51s
+2026-09-21 13:28:08,857 - INFO - Metrics: combined_score=1.1094, status=ok, over_mockingjay=1.0016, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6851.3907, cacti_node_nm=22.0000
+2026-09-21 13:28:08,857 - INFO - 🌟 New best solution found at iteration 41: 55b27aea-f6d3-4204-aabc-e4f53eef4947
+2026-09-21 13:28:08,930 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 13:31:22,305 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 13:31:22,361 - INFO - Evaluated program 16465264-e2b8-420a-8010-0a64a4f2008d in 0.05s: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 13:31:22,368 - INFO - New MAP-Elites cell occupied in island 1: {'complexity': 0, 'diversity': 9}
+2026-09-21 13:31:22,368 - INFO - Iteration 43: Program 16465264-e2b8-420a-8010-0a64a4f2008d (parent: 20c74867-a153-43fb-89f9-f5132e565537) completed in 193.43s
+2026-09-21 13:31:22,368 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 13:31:22,444 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 13:33:09,036 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 13:33:09,615 - INFO - Evaluated program 90de3a45-e9c8-45e9-b977-11f11f52d9d0 in 0.58s: combined_score=1.1094, status=ok, over_mockingjay=1.0016, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6851.3907, cacti_node_nm=22.0000
+2026-09-21 13:33:09,627 - INFO - Iteration 44: Program 90de3a45-e9c8-45e9-b977-11f11f52d9d0 (parent: 5df5d052-9a2e-4417-91b0-6559ee44d074) completed in 107.17s
+2026-09-21 13:33:09,627 - INFO - Metrics: combined_score=1.1094, status=ok, over_mockingjay=1.0016, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6851.3907, cacti_node_nm=22.0000
+2026-09-21 13:33:09,665 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 13:35:18,861 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 13:35:18,937 - INFO - Evaluated program 97fdd3fd-81bc-4b6b-b63d-aa76965f9246 in 0.07s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim.bypass_when.1
+  Value error, 'confident_bypass_rdp': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_rdp': ...rdp', 'rdp_thresh': 73}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 13:35:18,942 - INFO - Iteration 45: Program 97fdd3fd-81bc-4b6b-b63d-aa76965f9246 (parent: 5df5d052-9a2e-4417-91b0-6559ee44d074) completed in 129.27s
+2026-09-21 13:35:18,943 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim.bypass_when.1
+  Value error, 'confident_bypass_rdp': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_rdp': ...rdp', 'rdp_thresh': 73}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 13:35:18,987 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 13:36:40,556 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 13:57:37,098 - INFO - Evaluated program ef9a44a1-e555-4c19-abdb-7b8416856ff6 in 2290.23s: combined_score=1.1064, status=ok, over_mockingjay=0.9989, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6868.4643, cacti_node_nm=22.0000
+2026-09-21 13:57:37,106 - INFO - Island 1 MAP-Elites cell improved: {'complexity': 8, 'diversity': 0} (fitness: 0.000 -> 1.106)
+2026-09-21 13:57:37,107 - INFO - Iteration 42: Program ef9a44a1-e555-4c19-abdb-7b8416856ff6 (parent: c287a264-effd-4f4b-b957-9a8183b9ca43) completed in 2324.02s
+2026-09-21 13:57:37,107 - INFO - Metrics: combined_score=1.1064, status=ok, over_mockingjay=0.9989, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6868.4643, cacti_node_nm=22.0000
+2026-09-21 13:57:37,143 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 13:59:18,792 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 13:59:19,399 - INFO - Evaluated program 57f4a68b-94ab-4281-8cd9-208962365da1 in 0.60s: combined_score=1.1094, status=ok, over_mockingjay=1.0016, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6851.3907, cacti_node_nm=22.0000
+2026-09-21 13:59:19,403 - INFO - Island 0 MAP-Elites cell improved: {'complexity': 5, 'diversity': 1} (fitness: 0.000 -> 1.109)
+2026-09-21 13:59:19,404 - INFO - Iteration 47: Program 57f4a68b-94ab-4281-8cd9-208962365da1 (parent: 1f555336-044c-4a65-98b6-44a129efd187) completed in 102.26s
+2026-09-21 13:59:19,404 - INFO - Metrics: combined_score=1.1094, status=ok, over_mockingjay=1.0016, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6851.3907, cacti_node_nm=22.0000
+2026-09-21 13:59:19,444 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 14:00:50,423 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 14:16:41,305 - INFO - Evaluated program ebd5857e-adc5-4d6d-a56a-153a0b0ed585 in 2400.75s: combined_score=1.1034, status=ok, over_mockingjay=0.9962, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6899.6092, cacti_node_nm=22.0000
+2026-09-21 14:16:41,310 - INFO - Iteration 46: Program ebd5857e-adc5-4d6d-a56a-153a0b0ed585 (parent: 849a681f-88f9-4616-8277-d2b72ec6aa6c) completed in 2482.32s
+2026-09-21 14:16:41,310 - INFO - Metrics: combined_score=1.1034, status=ok, over_mockingjay=0.9962, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6899.6092, cacti_node_nm=22.0000
+2026-09-21 14:16:41,362 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 14:18:25,681 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 14:42:09,156 - INFO - Evaluated program 7f06be32-3907-4cd8-b3ac-7272919082d3 in 2478.73s: combined_score=1.1068, status=ok, over_mockingjay=0.9993, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6883.7760, cacti_node_nm=22.0000
+2026-09-21 14:42:09,165 - INFO - Island 0 MAP-Elites cell improved: {'complexity': 7, 'diversity': 0} (fitness: 1.106 -> 1.107)
+2026-09-21 14:42:09,165 - INFO - Iteration 48: Program 7f06be32-3907-4cd8-b3ac-7272919082d3 (parent: 2824f541-db54-4410-a4b7-e0ea1a721a6b) completed in 2569.71s
+2026-09-21 14:42:09,165 - INFO - Metrics: combined_score=1.1068, status=ok, over_mockingjay=0.9993, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6883.7760, cacti_node_nm=22.0000
+2026-09-21 14:42:09,201 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 14:44:37,883 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 14:44:37,922 - INFO - Evaluated program d45880ab-2765-49c3-ba8f-b18873059f20 in 0.04s: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 14:44:37,931 - INFO - Iteration 50: Program d45880ab-2765-49c3-ba8f-b18873059f20 (parent: c6f7cacf-a657-4f9a-ab77-4097e8957ab1) completed in 148.72s
+2026-09-21 14:44:37,931 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 14:44:37,967 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 14:46:53,544 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 14:56:45,082 - INFO - Evaluated program 9da9c552-9553-4e02-bd14-b911282ead42 in 2299.40s: combined_score=1.1062, status=ok, over_mockingjay=0.9987, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6871.1841, cacti_node_nm=22.0000
+2026-09-21 14:56:45,098 - INFO - Iteration 49: Program 9da9c552-9553-4e02-bd14-b911282ead42 (parent: 16465264-e2b8-420a-8010-0a64a4f2008d) completed in 2403.72s
+2026-09-21 14:56:45,099 - INFO - Metrics: combined_score=1.1062, status=ok, over_mockingjay=0.9987, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6871.1841, cacti_node_nm=22.0000
+2026-09-21 14:56:45,151 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 15:00:15,160 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 15:00:15,202 - INFO - Evaluated program 63b0f682-fa20-423b-b2db-3619872ffd36 in 0.04s: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 15:00:15,208 - INFO - Iteration 52: Program 63b0f682-fa20-423b-b2db-3619872ffd36 (parent: 1f555336-044c-4a65-98b6-44a129efd187) completed in 210.05s
+2026-09-21 15:00:15,208 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 15:00:15,285 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 15:00:58,343 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 15:00:58,441 - INFO - Evaluated program c9d7c0ee-7647-4185-9fb4-12b50e3083d7 in 0.09s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mj_confidence_and_faster_learning', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 15:00:58,449 - INFO - Iteration 53: Program c9d7c0ee-7647-4185-9fb4-12b50e3083d7 (parent: fae61654-8f70-4d91-b3c9-42f23bc274c2) completed in 43.16s
+2026-09-21 15:00:58,449 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mj_confidence_and_faster_learning', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 15:00:58,519 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 15:02:14,406 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 15:02:14,469 - INFO - Evaluated program 6d7a91b3-b09c-4930-8fb9-85275c53f948 in 0.06s: combined_score=0.0000, status=words_refused, error=1 validation error for NewWord
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='incoming_rdp_worse_than_victim_rdp', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 15:02:14,475 - INFO - Iteration 54: Program 6d7a91b3-b09c-4930-8fb9-85275c53f948 (parent: 9da9c552-9553-4e02-bd14-b911282ead42) completed in 75.95s
+2026-09-21 15:02:14,475 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=1 validation error for NewWord
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='incoming_rdp_worse_than_victim_rdp', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 15:02:14,513 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 15:03:46,379 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 15:34:17,510 - INFO - Evaluated program f0717fcd-3304-4a66-ab3c-ea3002d325c9 in 2843.96s: combined_score=1.0449, status=ok, over_mockingjay=0.9434, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=7425.7988, cacti_node_nm=22.0000
+2026-09-21 15:34:17,519 - INFO - Island 1 MAP-Elites cell improved: {'complexity': 9, 'diversity': 1} (fitness: 0.000 -> 1.045)
+2026-09-21 15:34:17,519 - INFO - Iteration 51: Program f0717fcd-3304-4a66-ab3c-ea3002d325c9 (parent: ebd5857e-adc5-4d6d-a56a-153a0b0ed585) completed in 2979.54s
+2026-09-21 15:34:17,519 - INFO - Metrics: combined_score=1.0449, status=ok, over_mockingjay=0.9434, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=7425.7988, cacti_node_nm=22.0000
+2026-09-21 15:34:17,556 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 15:34:50,050 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 15:34:50,115 - INFO - Evaluated program 78d4eb5a-2479-4d27-b9dd-74399e7b3093 in 0.06s: combined_score=0.0000, status=words_refused, error=1 validation error for NewWord
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='confident_rdp_exceeds_victim_thresh', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 15:34:50,125 - INFO - Iteration 56: Program 78d4eb5a-2479-4d27-b9dd-74399e7b3093 (parent: 90de3a45-e9c8-45e9-b977-11f11f52d9d0) completed in 32.56s
+2026-09-21 15:34:50,125 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=1 validation error for NewWord
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='confident_rdp_exceeds_victim_thresh', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 15:34:50,160 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 15:36:01,288 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 15:36:02,030 - INFO - Evaluated program d0015d61-a779-456b-821b-4ea11b899bfa in 0.74s: combined_score=1.1065, status=ok, over_mockingjay=0.9990, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.6420, cacti_node_nm=22.0000
+2026-09-21 15:36:02,037 - INFO - Iteration 57: Program d0015d61-a779-456b-821b-4ea11b899bfa (parent: e6b07272-761e-485b-a761-b712e1e3a377) completed in 71.87s
+2026-09-21 15:36:02,037 - INFO - Metrics: combined_score=1.1065, status=ok, over_mockingjay=0.9990, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.6420, cacti_node_nm=22.0000
+2026-09-21 15:36:02,076 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 15:36:32,405 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 15:43:56,541 - INFO - Evaluated program 874baf11-036e-4c46-9d25-5e73c60d1bce in 2410.16s: combined_score=1.1084, status=ok, over_mockingjay=1.0007, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6871.6445, cacti_node_nm=22.0000
+2026-09-21 15:43:56,549 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 6, 'diversity': 0}
+2026-09-21 15:43:56,549 - INFO - Iteration 55: Program 874baf11-036e-4c46-9d25-5e73c60d1bce (parent: 7f06be32-3907-4cd8-b3ac-7272919082d3) completed in 2502.03s
+2026-09-21 15:43:56,550 - INFO - Metrics: combined_score=1.1084, status=ok, over_mockingjay=1.0007, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6871.6445, cacti_node_nm=22.0000
+2026-09-21 15:43:56,586 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 15:48:10,499 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 15:48:10,540 - INFO - Evaluated program b18ebc75-21e6-4fe2-9a54-56cac4b9528d in 0.04s: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 15:48:10,547 - INFO - Iteration 59: Program b18ebc75-21e6-4fe2-9a54-56cac4b9528d (parent: 30613224-1654-496a-9ee6-9685f3780bbc) completed in 253.95s
+2026-09-21 15:48:10,548 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 15:48:10,585 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 15:48:47,097 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 16:13:54,401 - INFO - Evaluated program 913f4e8e-c924-4684-bbc4-fb7a21572722 in 2241.99s: combined_score=1.1063, status=ok, over_mockingjay=0.9988, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6870.9323, cacti_node_nm=22.0000
+2026-09-21 16:13:54,412 - INFO - Iteration 58: Program 913f4e8e-c924-4684-bbc4-fb7a21572722 (parent: 9777915b-c1ad-401c-9fa6-240f73323652) completed in 2272.33s
+2026-09-21 16:13:54,412 - INFO - Metrics: combined_score=1.1063, status=ok, over_mockingjay=0.9988, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6870.9323, cacti_node_nm=22.0000
+2026-09-21 16:13:54,446 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 16:14:29,417 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 16:14:29,501 - INFO - Evaluated program 8dfbd959-cf2b-43a1-bbf5-eb83e0127ecf in 0.08s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+victim.bypass_when.0
+  Value error, 'confident_bypass_rdp': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_rdp': ...: 73, 'conf_thresh': 2}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+victim.bypass_when.1
+  Value error, 'confident_bypass_victim': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_victim...': 8, 'conf_thresh': 2}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 16:14:29,507 - INFO - Iteration 61: Program 8dfbd959-cf2b-43a1-bbf5-eb83e0127ecf (parent: 75780545-30bd-49be-bce7-1fd377388360) completed in 35.06s
+2026-09-21 16:14:29,507 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+victim.bypass_when.0
+  Value error, 'confident_bypass_rdp': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_rdp': ...: 73, 'conf_thresh': 2}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+victim.bypass_when.1
+  Value error, 'confident_bypass_victim': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_victim...': 8, 'conf_thresh': 2}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 16:14:29,546 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 16:15:32,947 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-21 16:15:32,948 - INFO - Retrying request to /chat/completions in 0.486601 seconds
+2026-09-21 16:17:26,472 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 16:17:27,252 - INFO - Evaluated program 00ccb6f5-7790-4365-9db8-142947188d10 in 0.78s: combined_score=1.1084, status=ok, over_mockingjay=1.0007, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6871.6445, cacti_node_nm=22.0000
+2026-09-21 16:17:27,260 - INFO - Iteration 62: Program 00ccb6f5-7790-4365-9db8-142947188d10 (parent: 7f06be32-3907-4cd8-b3ac-7272919082d3) completed in 177.71s
+2026-09-21 16:17:27,260 - INFO - Metrics: combined_score=1.1084, status=ok, over_mockingjay=1.0007, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6871.6445, cacti_node_nm=22.0000
+2026-09-21 16:17:27,298 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 16:18:12,058 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 16:25:32,349 - INFO - Evaluated program 6e0b2b1f-1006-4e95-a604-ea942ebe2f56 in 2205.25s: combined_score=1.1061, status=ok, over_mockingjay=0.9986, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6872.0310, cacti_node_nm=22.0000
+2026-09-21 16:25:32,361 - INFO - Iteration 60: Program 6e0b2b1f-1006-4e95-a604-ea942ebe2f56 (parent: 9da9c552-9553-4e02-bd14-b911282ead42) completed in 2241.77s
+2026-09-21 16:25:32,362 - INFO - Metrics: combined_score=1.1061, status=ok, over_mockingjay=0.9986, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6872.0310, cacti_node_nm=22.0000
+2026-09-21 16:25:32,395 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 16:27:37,131 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 16:53:54,081 - INFO - Evaluated program a8fe0f63-4685-420a-b13b-6902eba9d6c1 in 2142.02s: combined_score=1.1063, status=ok, over_mockingjay=0.9988, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.9232, cacti_node_nm=22.0000
+2026-09-21 16:53:54,094 - INFO - Iteration 63: Program a8fe0f63-4685-420a-b13b-6902eba9d6c1 (parent: d0015d61-a779-456b-821b-4ea11b899bfa) completed in 2186.79s
+2026-09-21 16:53:54,094 - INFO - Metrics: combined_score=1.1063, status=ok, over_mockingjay=0.9988, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.9232, cacti_node_nm=22.0000
+2026-09-21 16:53:54,129 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 16:54:22,761 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 16:54:22,842 - INFO - Evaluated program 296eeeff-2b50-425b-8f42-f09cd00e33b0 in 0.08s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mj_conf_penalty_fastlearn_bypass2', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+victim.bypass_when.0
+  Value error, 'confident_bypass_victim': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_victim...': 8, 'conf_thresh': 2}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 16:54:22,848 - INFO - Iteration 65: Program 296eeeff-2b50-425b-8f42-f09cd00e33b0 (parent: ad65b257-3aa0-44a0-9134-cc7a96e85040) completed in 28.71s
+2026-09-21 16:54:22,848 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mj_conf_penalty_fastlearn_bypass2', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+victim.bypass_when.0
+  Value error, 'confident_bypass_victim': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_victim...': 8, 'conf_thresh': 2}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 16:54:22,888 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 16:55:39,385 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 17:06:11,729 - INFO - Evaluated program 20fb83db-1101-4e28-a0e4-7c222822371e in 2314.59s: combined_score=1.1088, status=ok, over_mockingjay=1.0011, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6860.1758, cacti_node_nm=22.0000
+2026-09-21 17:06:11,735 - INFO - Iteration 64: Program 20fb83db-1101-4e28-a0e4-7c222822371e (parent: 9de1626b-e7ea-4216-993e-43393f2caa2e) completed in 2439.34s
+2026-09-21 17:06:11,735 - INFO - Metrics: combined_score=1.1088, status=ok, over_mockingjay=1.0011, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6860.1758, cacti_node_nm=22.0000
+2026-09-21 17:06:11,775 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 17:07:59,219 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 17:32:34,862 - INFO - Evaluated program 75b1c182-9206-4512-95d9-2321668f6520 in 2215.47s: combined_score=1.1061, status=ok, over_mockingjay=0.9987, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.5611, cacti_node_nm=22.0000
+2026-09-21 17:32:34,871 - INFO - Iteration 66: Program 75b1c182-9206-4512-95d9-2321668f6520 (parent: cc393858-a03b-48ba-b287-80a3cec63c21) completed in 2291.98s
+2026-09-21 17:32:34,871 - INFO - Metrics: combined_score=1.1061, status=ok, over_mockingjay=0.9987, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.5611, cacti_node_nm=22.0000
+2026-09-21 17:32:34,908 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 17:33:24,402 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 17:33:24,487 - INFO - Evaluated program b694feae-8d00-4029-8873-275290384de7 in 0.08s: combined_score=0.0000, status=schema_rejected, error=3 validation errors for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_fastlearn_conf_bypass_fix', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+victim.bypass_when.0
+  Value error, 'confident_bypass_rdp': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_rdp': ...: 73, 'conf_thresh': 3}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+victim.bypass_when.1
+  Value error, 'confident_bypass_victim': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_victim...': 8, 'conf_thresh': 3}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 17:33:24,499 - INFO - Iteration 68: Program b694feae-8d00-4029-8873-275290384de7 (parent: 2824f541-db54-4410-a4b7-e0ea1a721a6b) completed in 49.58s
+2026-09-21 17:33:24,500 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=3 validation errors for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_fastlearn_conf_bypass_fix', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+victim.bypass_when.0
+  Value error, 'confident_bypass_rdp': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_rdp': ...: 73, 'conf_thresh': 3}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+victim.bypass_when.1
+  Value error, 'confident_bypass_victim': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_victim...': 8, 'conf_thresh': 3}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 17:33:24,532 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 17:33:25,350 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-21 17:33:25,351 - INFO - Retrying request to /chat/completions in 0.433219 seconds
+2026-09-21 17:35:24,106 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 17:35:24,198 - INFO - Evaluated program 625922b5-fa16-4bbe-956e-19f6b007d22b in 0.09s: combined_score=0.0000, status=words_refused, error=confident_bypass_rdp: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 17:35:24,208 - INFO - Iteration 69: Program 625922b5-fa16-4bbe-956e-19f6b007d22b (parent: 6a406818-60f9-43d4-9742-4b12587497e2) completed in 119.67s
+2026-09-21 17:35:24,209 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=confident_bypass_rdp: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 17:35:24,244 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 17:36:42,028 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 17:36:42,099 - INFO - Evaluated program 93f53cd1-9b1f-48bf-8083-168b44e1757e in 0.07s: combined_score=0.0000, status=words_refused, error=1 validation error for NewWord
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='confident_incoming_rdp_worse_than_victim_etr', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 17:36:42,110 - INFO - Iteration 70: Program 93f53cd1-9b1f-48bf-8083-168b44e1757e (parent: c287a264-effd-4f4b-b957-9a8183b9ca43) completed in 77.86s
+2026-09-21 17:36:42,110 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=1 validation error for NewWord
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='confident_incoming_rdp_worse_than_victim_etr', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 17:36:42,145 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 17:37:12,205 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 17:37:13,172 - INFO - Evaluated program b760ed22-dcf8-4091-9394-5629573c953e in 0.96s: combined_score=1.1094, status=ok, over_mockingjay=1.0016, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6851.3907, cacti_node_nm=22.0000
+2026-09-21 17:37:13,184 - INFO - Iteration 71: Program b760ed22-dcf8-4091-9394-5629573c953e (parent: 5df5d052-9a2e-4417-91b0-6559ee44d074) completed in 31.03s
+2026-09-21 17:37:13,184 - INFO - Metrics: combined_score=1.1094, status=ok, over_mockingjay=1.0016, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6851.3907, cacti_node_nm=22.0000
+2026-09-21 17:37:13,217 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 17:37:48,218 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 17:37:48,307 - INFO - Evaluated program 6e1ec07a-bd4b-4b21-9ea2-a6912b6dbb52 in 0.09s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mj_confident_bypass_and_penalty_v3', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 17:37:48,314 - INFO - Iteration 72: Program 6e1ec07a-bd4b-4b21-9ea2-a6912b6dbb52 (parent: 97fdd3fd-81bc-4b6b-b63d-aa76965f9246) completed in 35.09s
+2026-09-21 17:37:48,314 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mj_confident_bypass_and_penalty_v3', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+2026-09-21 17:37:48,354 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 17:38:51,356 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 17:45:45,014 - INFO - Evaluated program 35c38def-fc90-4d54-8ba2-22776bc08b27 in 2265.79s: combined_score=1.0882, status=ok, over_mockingjay=0.9825, metadata_kb=42.1250, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.0208, metadata_area_mm2=0.0341, metadata_energy_uj=6162.9516, cacti_node_nm=22.0000
+2026-09-21 17:45:45,026 - INFO - Iteration 67: Program 35c38def-fc90-4d54-8ba2-22776bc08b27 (parent: a50ee31c-bec9-492d-a191-cabfa64b39aa) completed in 2373.24s
+2026-09-21 17:45:45,026 - INFO - Metrics: combined_score=1.0882, status=ok, over_mockingjay=0.9825, metadata_kb=42.1250, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.0208, metadata_area_mm2=0.0341, metadata_energy_uj=6162.9516, cacti_node_nm=22.0000
+2026-09-21 17:45:45,060 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 17:46:09,130 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:17:04,798 - INFO - Evaluated program f6c36206-6181-4a64-935b-31f3bea2f7b0 in 2293.44s: combined_score=1.1120, status=ok, over_mockingjay=1.0040, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6580.3134, cacti_node_nm=22.0000
+2026-09-21 18:17:04,810 - INFO - Island 1 MAP-Elites cell improved: {'complexity': 6, 'diversity': 0} (fitness: 1.106 -> 1.112)
+2026-09-21 18:17:04,810 - INFO - New best program f6c36206-6181-4a64-935b-31f3bea2f7b0 replaces 55b27aea-f6d3-4204-aabc-e4f53eef4947 (combined_score: 1.1094 → 1.1120, +0.0026)
+2026-09-21 18:17:04,810 - INFO - Iteration 73: Program f6c36206-6181-4a64-935b-31f3bea2f7b0 (parent: 9da9c552-9553-4e02-bd14-b911282ead42) completed in 2356.45s
+2026-09-21 18:17:04,810 - INFO - Metrics: combined_score=1.1120, status=ok, over_mockingjay=1.0040, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6580.3134, cacti_node_nm=22.0000
+2026-09-21 18:17:04,810 - INFO - 🌟 New best solution found at iteration 73: f6c36206-6181-4a64-935b-31f3bea2f7b0
+2026-09-21 18:17:04,844 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 18:18:53,733 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:18:53,904 - INFO - Evaluated program 661016ec-2711-481b-93af-ebfd0f19053b in 0.17s: combined_score=0.0000, status=words_refused, error=confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 18:18:53,913 - INFO - New MAP-Elites cell occupied in island 0: {'complexity': 8, 'diversity': 1}
+2026-09-21 18:18:53,913 - INFO - Iteration 75: Program 661016ec-2711-481b-93af-ebfd0f19053b (parent: 8dfbd959-cf2b-43a1-bbf5-eb83e0127ecf) completed in 109.06s
+2026-09-21 18:18:53,913 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 18:18:53,949 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 18:19:24,337 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:19:24,423 - INFO - Evaluated program 28f6d655-4f28-4fc3-b0bc-cc7b2061f343 in 0.08s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Value error, sampler 'sampled_cache' on_match[1]: 'rdp_conf' is not a field of the sampler or a per_set, per_cpu or global state field [type=value_error, input_value={'name': 'mj_aggressive_c...ue}, {'run': 'access'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 18:19:24,436 - INFO - Iteration 76: Program 28f6d655-4f28-4fc3-b0bc-cc7b2061f343 (parent: 1de6fcc1-bbb5-47ca-858f-7be0264e3cec) completed in 30.47s
+2026-09-21 18:19:24,436 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Value error, sampler 'sampled_cache' on_match[1]: 'rdp_conf' is not a field of the sampler or a per_set, per_cpu or global state field [type=value_error, input_value={'name': 'mj_aggressive_c...ue}, {'run': 'access'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 18:19:24,468 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 18:20:58,311 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:20:58,398 - INFO - Evaluated program 4cb922ce-4d95-4d01-8431-b65aa17341b9 in 0.08s: combined_score=0.0000, status=words_refused, error=incoming_rdp_worse_than_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 18:20:58,404 - INFO - Iteration 77: Program 4cb922ce-4d95-4d01-8431-b65aa17341b9 (parent: 16465264-e2b8-420a-8010-0a64a4f2008d) completed in 93.93s
+2026-09-21 18:20:58,404 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=incoming_rdp_worse_than_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 18:20:58,444 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 18:22:24,841 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:22:24,934 - INFO - Evaluated program c4e17079-3c78-4c70-92cc-34223968e55f in 0.09s: combined_score=0.0000, status=words_refused, error=confident_bypass_rdp, confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 18:22:24,945 - INFO - Iteration 78: Program c4e17079-3c78-4c70-92cc-34223968e55f (parent: d9b9665e-2dc4-41f9-86a9-5060e7bcf567) completed in 86.49s
+2026-09-21 18:22:24,945 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=confident_bypass_rdp, confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 18:22:24,980 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 18:23:11,528 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:23:12,441 - INFO - Evaluated program 7ef9dec2-c934-4a4f-878d-3a7e4e45a5d6 in 0.91s: combined_score=1.1120, status=ok, over_mockingjay=1.0040, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6580.3134, cacti_node_nm=22.0000
+2026-09-21 18:23:12,448 - INFO - Iteration 79: Program 7ef9dec2-c934-4a4f-878d-3a7e4e45a5d6 (parent: d0015d61-a779-456b-821b-4ea11b899bfa) completed in 47.46s
+2026-09-21 18:23:12,448 - INFO - Metrics: combined_score=1.1120, status=ok, over_mockingjay=1.0040, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6580.3134, cacti_node_nm=22.0000
+2026-09-21 18:23:12,486 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 18:23:29,149 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-21 18:23:29,151 - INFO - Retrying request to /chat/completions in 0.473420 seconds
+2026-09-21 18:24:12,728 - INFO - Evaluated program a5bf9267-56aa-4215-9a51-63f77905c96b in 2283.59s: combined_score=1.1086, status=ok, over_mockingjay=1.0009, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6857.2252, cacti_node_nm=22.0000
+2026-09-21 18:24:12,737 - INFO - Island 0 MAP-Elites cell improved: {'complexity': 6, 'diversity': 0} (fitness: 1.108 -> 1.109)
+2026-09-21 18:24:12,737 - INFO - Iteration 74: Program a5bf9267-56aa-4215-9a51-63f77905c96b (parent: 63b0f682-fa20-423b-b2db-3619872ffd36) completed in 2307.67s
+2026-09-21 18:24:12,737 - INFO - Metrics: combined_score=1.1086, status=ok, over_mockingjay=1.0009, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6857.2252, cacti_node_nm=22.0000
+2026-09-21 18:24:12,773 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 18:24:38,741 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:24:38,813 - INFO - Evaluated program 540404c5-1d3b-425f-aab1-772e53f21d34 in 0.07s: combined_score=0.0000, status=schema_rejected, error=while parsing a block mapping
+  in "<unicode string>", line 111, column 7:
+          except_touched: true
+          ^
+expected <block end>, but found '<block mapping start>'
+  in "<unicode string>", line 113, column 9:
+            set: {etr: {add: -1}}
+            ^
+2026-09-21 18:24:38,817 - INFO - Iteration 80: Program 540404c5-1d3b-425f-aab1-772e53f21d34 (parent: f0717fcd-3304-4a66-ab3c-ea3002d325c9) completed in 86.33s
+2026-09-21 18:24:38,818 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=while parsing a block mapping
+  in "<unicode string>", line 111, column 7:
+          except_touched: true
+          ^
+expected <block end>, but found '<block mapping start>'
+  in "<unicode string>", line 113, column 9:
+            set: {etr: {add: -1}}
+            ^
+2026-09-21 18:24:38,859 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 18:25:12,096 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:25:45,453 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:25:45,496 - INFO - Evaluated program 1e402463-2d91-426c-bf97-e8844ed09c4f in 0.04s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-21 18:25:45,509 - INFO - Iteration 82: Program 1e402463-2d91-426c-bf97-e8844ed09c4f (parent: 7ef9dec2-c934-4a4f-878d-3a7e4e45a5d6) completed in 66.64s
+2026-09-21 18:25:45,509 - INFO - Metrics: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-21 18:25:45,576 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 18:26:20,239 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:26:20,351 - INFO - Evaluated program ef256e4f-9104-44fd-a110-7cc18c67fa95 in 0.11s: combined_score=0.0000, status=words_refused, error=confident_rdp_greater_than: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 18:26:20,359 - INFO - Iteration 83: Program ef256e4f-9104-44fd-a110-7cc18c67fa95 (parent: 6a406818-60f9-43d4-9742-4b12587497e2) completed in 34.78s
+2026-09-21 18:26:20,359 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=confident_rdp_greater_than: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-21 18:26:20,418 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 18:27:32,133 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:27:33,085 - INFO - Evaluated program 83d93bbd-9753-4969-b411-f2c610dd0689 in 0.95s: combined_score=1.1120, status=ok, over_mockingjay=1.0040, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6580.3134, cacti_node_nm=22.0000
+2026-09-21 18:27:33,098 - INFO - Iteration 84: Program 83d93bbd-9753-4969-b411-f2c610dd0689 (parent: 913f4e8e-c924-4684-bbc4-fb7a21572722) completed in 72.67s
+2026-09-21 18:27:33,098 - INFO - Metrics: combined_score=1.1120, status=ok, over_mockingjay=1.0040, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6580.3134, cacti_node_nm=22.0000
+2026-09-21 18:27:33,131 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 18:30:51,468 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:30:51,548 - INFO - Evaluated program 7381b689-baa0-4c34-8d0e-2b0cbc8c758f in 0.07s: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 18:30:51,554 - INFO - Iteration 85: Program 7381b689-baa0-4c34-8d0e-2b0cbc8c758f (parent: f6c36206-6181-4a64-935b-31f3bea2f7b0) completed in 198.42s
+2026-09-21 18:30:51,554 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 18:30:51,632 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 18:31:18,299 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 18:31:20,197 - INFO - Evaluated program a54dc402-1254-4340-a806-4e858ec78d51 in 1.89s: combined_score=1.1094, status=ok, over_mockingjay=1.0016, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6851.3907, cacti_node_nm=22.0000
+2026-09-21 18:31:20,210 - INFO - Iteration 86: Program a54dc402-1254-4340-a806-4e858ec78d51 (parent: 5df5d052-9a2e-4417-91b0-6559ee44d074) completed in 28.57s
+2026-09-21 18:31:20,210 - INFO - Metrics: combined_score=1.1094, status=ok, over_mockingjay=1.0016, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6851.3907, cacti_node_nm=22.0000
+2026-09-21 18:31:20,281 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 18:31:47,257 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 19:05:57,761 - INFO - Evaluated program 755a9960-a337-47a8-9a05-6cf5b04556f5 in 2445.66s: combined_score=1.1079, status=ok, over_mockingjay=1.0003, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6861.5237, cacti_node_nm=22.0000
+2026-09-21 19:05:57,770 - INFO - Iteration 81: Program 755a9960-a337-47a8-9a05-6cf5b04556f5 (parent: d45880ab-2765-49c3-ba8f-b18873059f20) completed in 2504.99s
+2026-09-21 19:05:57,770 - INFO - Metrics: combined_score=1.1079, status=ok, over_mockingjay=1.0003, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6861.5237, cacti_node_nm=22.0000
+2026-09-21 19:05:57,809 - INFO - Sampled model: google/gemini-2.5-pro
+2026-09-21 19:08:34,716 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 19:08:34,763 - INFO - Evaluated program 67fd486c-0f10-4d91-ba7a-5cb1fc1f0d45 in 0.04s: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 19:08:34,772 - INFO - Iteration 88: Program 67fd486c-0f10-4d91-ba7a-5cb1fc1f0d45 (parent: 4a374ec8-6ce5-443a-8bad-278547fa1287) completed in 156.95s
+2026-09-21 19:08:34,772 - INFO - Metrics: combined_score=0.0000, status=words_refused, error=the new words must be a YAML list of words
+2026-09-21 19:08:34,809 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 19:09:02,275 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 19:09:02,366 - INFO - Evaluated program dee43706-4df3-4cf4-9655-bc55516bc756 in 0.09s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim.bypass_when.1
+  Value error, 'confident_bypass_victim': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_victim...': 8, 'conf_thresh': 2}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 19:09:02,374 - INFO - Iteration 89: Program dee43706-4df3-4cf4-9655-bc55516bc756 (parent: d45880ab-2765-49c3-ba8f-b18873059f20) completed in 27.56s
+2026-09-21 19:09:02,374 - INFO - Metrics: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim.bypass_when.1
+  Value error, 'confident_bypass_victim': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'confident_bypass_victim...': 8, 'conf_thresh': 2}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-09-21 19:09:02,416 - INFO - Sampled model: google/gemini-2.5-flash
+2026-09-21 19:09:40,935 - INFO - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/us-central1/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-21 19:15:18,372 - INFO - Received signal 15, initiating graceful shutdown...
+2026-09-21 19:15:18,372 - INFO - Graceful shutdown requested...
+2026-09-21 19:15:18,372 - INFO - Received signal 15, initiating graceful shutdown...
+2026-09-21 19:15:18,373 - INFO - Graceful shutdown requested...
+2026-09-21 19:15:18,372 - INFO - Received signal 15, initiating graceful shutdown...
+2026-09-21 19:15:18,373 - INFO - Graceful shutdown requested...
+2026-09-21 19:15:18,379 - INFO - Shutdown requested, canceling remaining evaluations...
+2026-09-21 19:15:18,379 - INFO - ✅ Evolution completed - Shutdown requested
+2026-09-21 19:15:18,379 - INFO - Evolution stopped due to shutdown request
+2026-09-21 19:15:18,380 - INFO - Received signal 15, initiating graceful shutdown...
+2026-09-21 19:15:18,380 - INFO - Received signal 15, initiating graceful shutdown...
+2026-09-21 19:15:18,380 - INFO - Graceful shutdown requested...
+2026-09-21 19:15:18,380 - INFO - Graceful shutdown requested...
+2026-09-21 19:15:19,448 - INFO - Stopped process pool
+2026-09-21 19:15:19,449 - INFO - Using tracked best program: f6c36206-6181-4a64-935b-31f3bea2f7b0
+2026-09-21 19:15:19,449 - INFO - Evolution complete. Best program has metrics: combined_score=1.1120, status=ok, over_mockingjay=1.0040, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6580.3134, cacti_node_nm=22.0000
+2026-09-21 19:15:19,449 - INFO - Saved best program to /home/khoile0315/oe_out/arm_adaptive/best/best_program.txt with program info to /home/khoile0315/oe_out/arm_adaptive/best/best_program_info.json
+
+=== result ===
+DiscoveryResult(best_score=1.1120, initial_score=0.0000)
+2026-09-21 19:18:18,667 - INFO - Received signal 15, initiating graceful shutdown...
+Exception ignored in: <module 'threading' from '/home/khoile0315/miniconda3/envs/chia_env/lib/python3.10/threading.py'>
+Traceback (most recent call last):
+  File "/home/khoile0315/miniconda3/envs/chia_env/lib/python3.10/threading.py", line 1537, in _shutdown
+    atexit_call()
+  File "/home/khoile0315/miniconda3/envs/chia_env/lib/python3.10/concurrent/futures/process.py", line 95, in _python_exit
+    t.join()
+  File "/home/khoile0315/miniconda3/envs/chia_env/lib/python3.10/threading.py", line 1096, in join
+    self._wait_for_tstate_lock()
+  File "/home/khoile0315/miniconda3/envs/chia_env/lib/python3.10/threading.py", line 1116, in _wait_for_tstate_lock
+    if lock.acquire(block, timeout):
+  File "/home/khoile0315/miniconda3/envs/chia_env/lib/python3.10/site-packages/openevolve/controller.py", line 322, in signal_handler
+    self.parallel_controller.request_shutdown()
+AttributeError: 'NoneType' object has no attribute 'request_shutdown'

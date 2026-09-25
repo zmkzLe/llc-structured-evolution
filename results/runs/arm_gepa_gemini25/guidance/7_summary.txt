@@ -1,0 +1,42 @@
+Run so far: 71 candidates, 13 scored, 58 refused or failed (malformed 18, schema_rejected 39, too_much_storage 1).
+Refusal kinds seen more than once this run (a pattern, not a one-off): 34 times, schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, in YAML>'); 14 times, malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 4 times, malformed: candidate is missing section(s): NEW_WORDS
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 34 x schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, in YAML>')
+- 14 x malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+- 4 x malformed: candidate is missing section(s): NEW_WORDS
+- 1 x too_much_storage: this design declares 384.0 KB of replacement metadata at this LLC; the budget is 48 KB (the seed declares 47.4 KB): pay for new state by narrowing or removing state elsewhere
+- 1 x schema_rejected: victim Field required (written: {'doc': 'My first change:...'width': 5, 'init': 0}]})
+- 1 x schema_rejected: samplers.0.on_match.1 Value error, a rule needs exactly one of `set`, `use_duel`, `sample`, `train`, `run`, `each_way` or a declared step word, or only `stop` / `free` (written: {'when': {'type_in': ['PR...ee': True, 'stop': True}) samplers
+- 1 x schema_rejected: procedures.access.1.each_way.set.etr.ConstValue.const Field required (written: {'clamped_sum': {'a': 'et..., 'min': -11, 'max': 11}) procedures.access.1.each_way.set.etr.ConstValue.clamped_sum Extra inputs are not permitted (written: {'a': 
+- 1 x schema_rejected: on_fill.1.set.sampled_cache.ConstValue.const Field required (written: {'install': {'is_prefetch': {'const': 1}}}) on_fill.1.set.sampled_cache.ConstValue.install Extra inputs are not permitted (written: {'is_prefetch': {'const': 1}}) on_fill
+- 1 x schema_rejected: name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'a_short_and_unique_name_for_your_design') state Field required (written: {'name': 'a_short_and_uni...treaming workloads."\n'}) victim Field required (written: {'name': 'a_
+The seed scored 1.00000.
+Best so far: c41837327dd0 at 1.00000, +0.00% over Mockingjay.
+
+Parts of the design changed so far (candidates that changed it, how many beat their closest earlier design, best and mean change of the score):
+- procedures.access: 1 tried, 0 improved, best -0.02729, mean -0.02729
+- samplers: 1 tried, 0 improved, best -0.02729, mean -0.02729
+- state: 1 tried, 0 improved, best -0.02729, mean -0.02729
+- new_words: 1 tried, 0 improved, best +0.00000, mean +0.00000
+
+The last 10 candidates, oldest first:
+62. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+63. the seed, scored 1.00000
+64. refused (schema_rejected): procedures.access.1.each_way.set.etr.ConstValue.const Field required (written: {'clamped_sum': {'a': 'et..., 'min': -11, 'max': 11}) procedures.access.1.each_way.set.etr.ConstValue.clamped_sum Extra i
+65. the seed, scored 1.00000
+66. the seed, scored 1.00000
+67. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+68. refused (malformed): candidate is missing section(s): NEW_WORDS
+69. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+70. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<A complete and valid YA...iption of your policy.>')
+71. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<your complete, valid st...e description, in YAML>')
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 52.4%, largest mistake should_bypass (53 of 550 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.4%, largest mistake wrong_bypass (213210 of 430741 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 137.6
+- 619.lbm_s-2677B: headroom 43.9%, largest mistake wrong_bypass (109263 of 258760 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 82.6
+- 459.GemsFDTD-1491B: headroom 33.3%, largest mistake wrong_bypass (28218 of 86909 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 27.6
+- 657.xz_s-2302B: headroom 32.2%, largest mistake kept_dead (991 of 3706 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 1.3
+- 433.milc-127B: headroom 28.4%, largest mistake wrong_bypass (14351 of 63506 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 20.2
+
+New words accepted this run: none yet.

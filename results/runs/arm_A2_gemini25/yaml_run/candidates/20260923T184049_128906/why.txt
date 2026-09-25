@@ -1,0 +1,2 @@
+Candidate 14739540fddc FAILED at words_refused; it was not scored.
+Reason: pred_gt_positive_victim_etr: already declared in this run with another definition; a word is never changed, so declare a new name

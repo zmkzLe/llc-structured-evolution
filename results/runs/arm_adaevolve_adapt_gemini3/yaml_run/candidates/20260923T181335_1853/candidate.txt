@@ -1,0 +1,8 @@
+===== STRUCTURE_DESCRIPTION =====
+# CRITICAL: Write the ENTIRE valid YAML dictionary here.
+# DO NOT use placeholders like "<the structure description, YAML>" or "...".
+# Doing so causes a schema validation error (Input should be a valid dictionary).
+# Provide 'name', 'doc', 'state', 'victim', and all other required sections in full.
+===== NEW_WORDS =====
+
+# A YAML list of the new words the description uses, or nothing.

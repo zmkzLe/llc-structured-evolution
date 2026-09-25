@@ -1,0 +1,8 @@
+- name: safe_exceeds_victim
+  place: condition
+  params: {table: table, index: signature, field: state, div: {int: [1, 16]}}
+  means: >
+    True when the entry of the table at the index is present, the field of the
+    victim way chosen by find_victim is greater than or equal to zero, and the
+    table entry divided by div (integer division) is strictly greater than that
+    field of the victim way. False otherwise. Nothing is written.

@@ -1,0 +1,12 @@
+- name: pred_gt_victim_etr
+  place: condition
+  params:
+    table: table
+    index: signature
+    div: {int: [1, 1024]}
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(table[index] / div).
+    Reads the 'etr' field of the victim line, which has already been selected.
+    The condition is true if the predicted ETR is strictly greater than the victim's ETR.
+    If the table entry is absent, the predicted ETR is 0.
+    The 'etr' field must be a per_line signed state field. This can only be used in 'bypass_when'.

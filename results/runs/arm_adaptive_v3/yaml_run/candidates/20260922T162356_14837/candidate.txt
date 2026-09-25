@@ -1,0 +1,177 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mj_unified_rank
+doc: >
+  Combines a unified ETR calculation based on confidence with selective confidence training.
+  The ETR for a line is now a function of its predicted reuse distance and confidence,
+  aiming to better rank lines for eviction and address both kept_dead and wrong_bypass
+  errors. Confidence is only built on short-latency reuses. To stay within the metadata
+  budget while adding a confidence table, sampler tag bits are reduced.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 4                  # TIMESTAMP_BITS, kept at 4 to manage metadata budget
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - deconfident_rdp_gt: {rdp_table: rdp, conf_table: rdp_conf, index: pc_sig, threshold: 73, scale: 4}
+    - deconfident_exceeds_victim: {rdp_table: rdp, conf_table: rdp_conf, index: pc_sig, div: 8, scale: 4}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: rdp_conf             # New confidence table
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 8               # Reduced from 10 to save budget for confidence table
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 4, init: ZERO} # 4-bit to match set_clock
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 14}} # Age is max 15
+        stop: true
+      - when: {type_in: [PREFETCH]}
+        train_sampler_match: {rdp_table: rdp, conf_table: rdp_conf, index: signature, sample: age, scale: 2, min_diff: 1, conf_thresh: 8}
+        free: true
+        stop: true
+      - train_sampler_match: {rdp_table: rdp, conf_table: rdp_conf, index: signature, sample: age, scale: 1, min_diff: 1, conf_thresh: 8}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 14}}
+        train: {table: rdp, index: signature, op: increment}
+      - when: {counter: {counter: age, cmp: gt, threshold: 14}}
+        train: {table: rdp_conf, index: signature, op: decrement}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+      - train: {table: rdp_conf, index: signature, op: decrement}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # The update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - set: {etr: {etr_by_confidence_rank: {rdp_table: rdp, conf_table: rdp_conf, index: pc_sig, div: 8, max_etr: 11}}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: deconfident_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent rdp_val
+    is treated as 0. The conf_table is assumed to be fully initialized, and its maximum value is 3. Calculates
+    an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val) * scale). If the result of the subtraction
+    is negative, it is treated as 0. Calculates a predicted_etr value as adjusted_rdp divided by div,
+    using integer division. Returns true if predicted_etr is greater than the absolute value of the victim
+    way''s key.'
+- name: deconfident_rdp_gt
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+    threshold:
+      int: [0, 127]
+  means: 'Reads the value ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An
+    absent entry in rdp_table is treated as a value of 0. The conf_table is assumed to be fully initialized,
+    and its maximum value is 3. Calculates an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val)
+    * scale). If the result of the subtraction is negative, it is treated as 0. Returns true if this adjusted_rdp
+    is greater than the threshold.
+
+    '
+- name: etr_by_confidence_rank
+  place: value
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+  means: "Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0. 'conf_val' is read from its table, with an absent entry read as its init value (0). The maximum value for confidence is 3. If rdp_val is greater than 73, the function returns max_etr. Otherwise, it calculates a base_etr = rdp_val / div using integer division. It calculates an adjustment = (3 - conf_val). The final returned value is min(max_etr, base_etr + adjustment)."
+- name: train_sampler_match
+  place: step
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 127]
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    sample: state
+    scale:
+      int: [1, 2]
+  means: 'Performs training for a sampler match based on the reuse distance ''sample'' (age).
+    First, it trains the rdp_table using the ''toward'' operation. The target value is min(sample * scale, rdp_table.max).
+    The entry moves one step toward the target if the difference from the target is at least min_diff.
+    Second, if the ''sample'' value is less than conf_thresh, it increments the conf_table entry at the
+    same index.'

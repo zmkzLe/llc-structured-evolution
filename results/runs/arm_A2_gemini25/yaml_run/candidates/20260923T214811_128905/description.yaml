@@ -1,0 +1,121 @@
+name: mj_confident_bypass
+doc: >
+  Introduces a confidence mechanism to refine bypass decisions. The previous design's
+  blended ETR comparison was imprecise. This design adds a confidence table, trained on
+  sampler hits and evictions, to gauge the reliability of reuse distance predictions.
+  A new bypass condition, `bypass_on_confident_long_rd`, only bypasses a line if its
+  predicted reuse is long, it would evict a valuable line, AND the prediction has high
+  confidence. This aims to reduce wrong bypasses by avoiding bypassing based on uncertain
+  predictions, and reduce kept-dead lines by more aggressively bypassing when confident.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - bypass_on_confident_long_rd: {rdp_tbl: rdp, conf_tbl: conf, index: pc_sig, div: 8, conf_thresh: 2}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 10
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 1024
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: conf
+    scope: global
+    kind: saturating
+    entries: 1024
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 10, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - train: {table: conf, index: signature, op: increment}
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: conf, index: signature, op: decrement}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+      - train: {table: conf, index: signature, op: decrement}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access

@@ -1,0 +1,20 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  A one-line summary of what changed and why. For example:
+  Adds a bypass filter to learn from wrong_bypass errors, funded by shrinking the RDP table.
+
+# The complete, valid YAML description of your policy goes here.
+# Start by copying the Mockingjay seed and modifying it.
+
+state:
+  # ...
+tables:
+  # ...
+on_fill:
+  # ...
+
+===== NEW_WORDS =====
+
+# A YAML list of new words you declare.
+# If you don't need new words, provide an empty list: []

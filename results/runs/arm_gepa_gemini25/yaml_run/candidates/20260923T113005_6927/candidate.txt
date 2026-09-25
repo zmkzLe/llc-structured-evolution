@@ -1,0 +1,2 @@
+===== STRUCTURE_DESCRIPTION =====` marker?
+3.  Does my response contain the `===== NEW_WORDS =====

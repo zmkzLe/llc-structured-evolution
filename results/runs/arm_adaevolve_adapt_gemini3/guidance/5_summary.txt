@@ -1,0 +1,54 @@
+Run so far: 50 candidates, 5 scored, 45 refused or failed (malformed 22, schema_rejected 23).
+Refusal kinds seen more than once this run (a pattern, not a one-off): 22 times, malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 16 times, schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 2 times, schema_rejected: state.0.width Field required (written: {'name': 'example_field'}) state.0.scope Field required (written: {'name': 'example_field'}) victim Field required (written: {'name': 'your_policy_nam...ame': 'example_field'}]})
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 22 x malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+- 16 x schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+- 2 x schema_rejected: state.0.width Field required (written: {'name': 'example_field'}) state.0.scope Field required (written: {'name': 'example_field'}) victim Field required (written: {'name': 'your_policy_nam...ame': 'example_field'}]})
+- 1 x schema_rejected: victim Field required (written: {'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]})
+- 1 x schema_rejected: state Input should be a valid list (written: '...') victim Input should be a valid dictionary or instance of VictimSelector (written: '...')
+- 1 x schema_rejected: state Input should be a valid list (written: '... (include all require...t, NO placeholders) ...') victim Field required (written: {'name': 'your_policy_nam..., NO placeholders) ...'})
+- 1 x schema_rejected: state Field required (written: {'name': 'my_policy', 'do...t changed and why...\n'}) victim Field required (written: {'name': 'my_policy', 'do...t changed and why...\n'})
+- 1 x schema_rejected: expected '<document start>', but found '<scalar>' in "<unicode string>", line 8, column 5: ... (all other sections: signatures, ... ^
+The seed scored 1.00000.
+Best so far: c41837327dd0 at 1.00000, +0.00% over Mockingjay.
+
+Parts of the design changed so far (candidates that changed it, how many beat their closest earlier design, best and mean change of the score):
+- victim.bypass_when: 3 tried, 0 improved, best -0.00141, mean -0.01539
+- new_words: 3 tried, 0 improved, best -0.00141, mean -0.01539
+- victim.extremum: 2 tried, 0 improved, best -0.01337, mean -0.02238
+- victim.tie_break: 2 tried, 0 improved, best -0.01337, mean -0.02238
+- on_fill: 1 tried, 0 improved, best -0.01708, mean -0.01708
+- on_hit: 1 tried, 0 improved, best -0.01708, mean -0.01708
+- procedures.access: 1 tried, 0 improved, best -0.01708, mean -0.01708
+- procedures.age_set: 1 tried, 0 improved, best -0.01708, mean -0.01708
+- procedures.etr_from_rdp: 1 tried, 0 improved, best -0.01708, mean -0.01708
+- samplers: 1 tried, 0 improved, best -0.00141, mean -0.00141
+- tables: 1 tried, 0 improved, best -0.00141, mean -0.00141
+
+The last 10 candidates, oldest first:
+41. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+42. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+43. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+44. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+45. refused (schema_rejected): victim Field required (written: {'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]})
+46. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: None)
+47. refused (schema_rejected): state.0.width Field required (written: {'name': 'example_field'}) state.0.scope Field required (written: {'name': 'example_field'}) victim Field required (written: {'name': 'your_policy_nam...ame': 'e
+48. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<complete valid YAML Str...older text or ellipses>')
+49. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+50. scored f16495df6cc4 at 0.98663, changed 20 canonical lines in victim.bypass_when, victim.extremum, victim.tie_break, new_words, new words overdue_or_furthest: -0.01337 against its closest earlier design
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 52.4%, largest mistake should_bypass (53 of 550 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.4%, largest mistake wrong_bypass (213210 of 430741 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 137.6
+- 619.lbm_s-2677B: headroom 43.9%, largest mistake wrong_bypass (109263 of 258760 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 82.6
+- 459.GemsFDTD-1491B: headroom 33.3%, largest mistake wrong_bypass (28218 of 86909 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 27.6
+- 657.xz_s-2302B: headroom 32.2%, largest mistake kept_dead (991 of 3706 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 1.3
+- 433.milc-127B: headroom 28.4%, largest mistake wrong_bypass (14351 of 63506 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 20.2
+
+New words accepted this run, best-scoring first:
+- confident_bypass (condition): True when the entry of the table at the index is present and its value is greater than the threshold, and the entry of the conf table at the index is greater than 1. False otherwise. [used 1, better 0, worse 1, same 0, failed 0]
+- confident_exceeds_victim (condition): True when the entry of the table at the index is present, its value divided by div (integer division) is greater than the absolute value of the victim key of the way the victim search chose, and the e [used 1, better 0, worse 1, same 0, failed 0]
+- overdue_or_furthest (Extremum): Ways are scanned 0 to NUM_WAY-1. If any way has a negative key value, the way with the minimum signed key value is chosen, breaking ties by tie_break. If no way has a negative key value, the way with  [used 1, better 0, worse 1, same 0, failed 0]
+- overdue_then_max (Extremum): Finds the victim way by scanning ways 0 to NUM_WAY-1. Any way with a negative key is prioritized over any way with a non-negative key; among ways with negative keys, the most negative (smallest signed [used 1, better 0, worse 1, same 0, failed 0]
+- bypass_overdue_aware (condition): Evaluates whether an incoming fill should bypass. Returns true only if the table entry at index is present and strictly greater than min_rd, the chosen victim way has a non-negative key (meaning no re [used 1, better 0, worse 1, same 0, failed 0]
+- table_exceeds_positive_victim (condition): True when the entry of the table at the index is present, the chosen victim way's key is greater than or equal to 0, and the table entry divided by div (integer division) is greater than the chosen vi

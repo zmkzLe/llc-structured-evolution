@@ -1,0 +1,47 @@
+Guidance version 22, written after 222 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.99928 (-0.07% against the seed)
+- name: rdp_and_conf_check
+  place: condition
+  params:
+    conf_cmp: {symbol: Comparison}
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_cmp: {symbol: Comparison}
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: True only if both table conditions are met for the given index. It checks if the entry in rdp_table
+    at the index is present and satisfies rdp_cmp against rdp_thresh. It also checks if the entry in conf_table
+    at the same index satisfies conf_cmp against conf_thresh. Both checks must pass. An absent entry in
+    rdp_table makes the whole condition false.
+# used by 1 scored design(s); best 0.99784 (-0.22% against the seed)
+- name: predict_bypass_and_record
+  place: condition
+  params:
+    filter: table
+    index: signature
+    predictor: table
+    threshold:
+      int: [0, 127]
+  means: 'Checks the value in the predictor table at the given index. If the value is greater than the
+    threshold, this condition has a side effect: it trains the filter table at the same index by calling
+    increment. After the potential side effect, it returns true if the predictor''s value was greater
+    than the threshold, and false otherwise. An absent predictor entry is treated as 0 and returns false.
+
+    '
+# used by 1 scored design(s); best 0.99784 (-0.22% against the seed)
+- name: punish_wrong_bypass
+  place: step
+  params: {bypassed_table: table, index: signature, predictor_table: table}
+  means: Provides negative feedback for an incorrect bypass decision. It decrements the entry in the predictor_table
+    at the given index. It also consumes the trigger by decrementing the entry in the bypassed_table at
+    the same index, effectively resetting its flag.
+
+Refused among the last 10 candidates, and why: malformed 3 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; candidate is missing section(s): NEW_WORDS). schema_rejected 5 (Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: "<your complete structure...ng with the 'name' key>"); unhashable type: 'dict'). words_refused 1 (params.`...`.str Input should be a valid string (written: None) params.`...`.IntRange Input should be a valid dictionary or instance of IntRange (written: None) params.`...`.SymbolOf Input should be a valid dictionary or instance of SymbolO)
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 11 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the complete structure ...ription, in valid YAML>'); 11 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+Your progress is stalled because the vast majority of your proposals are refused for basic formatting errors, such as missing sections or invalid YAML syntax; you must resolve these structural problems to make any improvements. The only successful change, though minor, combined modifications to `samplers`, `tables`, and `victim.bypass_when` using the new word `rdp_and_conf_check`, indicating that integrating multiple signals is a promising path. Conversely, you should stop altering `procedures.access`, `state`, and `on_fill`, as these changes have only worsened performance. The largest opportunity is to fix the policy's poor bypass decisions, which manifest as contradictory mistakes: on traces like `605.mcf_s` and `619.lbm_s`, the policy makes hundreds of thousands of `wrong_bypass` errors, yet on `627.cam4_s` the main error is `should_bypass`. Your attempt to address this with `punish_wrong_bypass` failed, suggesting a more direct feedback mechanism is needed. To correct the dominant `wrong_bypass` errors, the policy must learn from its mistakes. When the cache misses on a line it previously bypassed, that is a clear signal the bypass was wrong. The vocabulary currently lacks a way to connect a miss to a prior bypass decision for the same line, so you should propose a new procedure that uses this event to train the bypass predictor to be less aggressive.

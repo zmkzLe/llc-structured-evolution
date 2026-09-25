@@ -1,0 +1,872 @@
+LLM: google/gemini-3.1-pro-preview (weight 0.7), google/gemini-3.8-flash (weight 0.3) via Vertex (a3-chia-hack26ath-7727, global); usage bills that project's credit, token refreshed per request
+seed written to /home/khoile0315/oe_out/arm_gepa_gemini3/seed_candidate.txt (4139 B); evaluator design_evaluator.py
+candidate taken from its markers in: utils.code_utils, search.default_discovery_controller, adaevolve.controller, gepa_native.controller
+guidance: every proposal's prompt carries /home/khoile0315/oe_out/arm_gepa_gemini3/guidance.txt as it stands at that moment
+effective config: search gepa_native (guided evolution, acceptance gating and LLM merge), iterations 100000, evaluator timeout 10800s, parallel 2, diff_based_generation False, cascade False, temperature 0.7, max_tokens 64000, llm timeout 900s, retries 2, proposers [('google/gemini-3.1-pro-preview', 0.7), ('google/gemini-3.8-flash', 0.3)], database GEPANativeDatabaseConfig{'population_size': 40, 'acceptance_gating': True}
+running gepa_native for 100000 iterations
+15:51:55 [search.utils] Logging to /home/khoile0315/oe_out/arm_gepa_gemini3/logs/gepa_native_20260923_155155.log
+15:51:55 [runner] Runner ready: search=gepa_native, program=/home/khoile0315/oe_out/arm_gepa_gemini3/seed_candidate.txt
+15:51:55 [llm] OpenAI LLM: google/gemini-3.1-pro-preview
+15:51:55 [llm] OpenAI LLM: google/gemini-3.8-flash
+15:51:55 [llm] Pool weights: google/gemini-3.1-pro-preview=0.70, google/gemini-3.8-flash=0.30
+15:51:55 [evaluator] Initialized evaluator with /home/khoile0315/chia_native/design_evaluator.py
+15:51:55 [default_discovery_controller] DiscoveryController initialized: num_context_programs=4
+15:51:55 [search.gepa_native] GEPANativeController initialized: acceptance_gating=True, use_merge=True, merge_after_stagnation=15, max_merge_attempts=10
+15:51:55 [runner] Adding initial program to database
+16:26:15 [evaluator] Evaluated program 040a521b-4d82-4604-b96d-5786d42efa06 in 2059.87s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+16:26:15 [base_database] Database has 1 programs, best program score is combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+16:29:49 [evaluator] Evaluated program 3fcb6f67-bf49-4b71-8a60-06ff637b5991 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:29:49 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:29:49 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+16:31:59 [evaluator] Evaluated program b5256035-9efa-4e47-bccd-9e76d20512be in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:31:59 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:31:59 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+16:35:10 [evaluator] Evaluated program 67be76e0-c4a1-4b36-b68c-1085bb50008e in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:35:10 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:35:10 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:35:10 WARNING [search.gepa_native] Iteration 1 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:38:17 [evaluator] Evaluated program fee8ac76-2f3c-46c6-93e9-d892b4543236 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:38:17 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:38:17 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+16:40:33 [evaluator] Evaluated program 42616394-938e-48e8-b6af-79b5a82d317a in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:40:33 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:40:33 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+16:44:16 [evaluator] Evaluated program b4c06d23-6ad7-423e-bded-fffb43325c9f in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:44:16 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:44:16 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:44:16 WARNING [search.gepa_native] Iteration 2 failed: Evaluator failed after 3 attempts: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:44:55 [evaluator] Evaluated program 6283c93a-faf5-4885-a308-c86d9a49316b in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:44:55 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:44:55 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+16:46:56 [evaluator] Evaluated program 7ea7e1f3-adf8-4eb4-8655-e2317d18a6cf in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:46:56 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:46:56 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+16:47:25 [evaluator] Evaluated program f493a92f-ca7f-4139-ab32-a59e725c3f38 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:47:25 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:47:25 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:47:25 WARNING [search.gepa_native] Iteration 3 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:50:18 [evaluator] Evaluated program 2dc1a974-b9b1-4277-9912-4aae898de399 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:50:18 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:50:18 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+16:53:20 [evaluator] Evaluated program 667f23e7-4277-41ec-aa8d-0335dae22405 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:53:20 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:53:20 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+16:56:44 [evaluator] Evaluated program 407eea12-47fc-43b8-909c-62b63a60ef16 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:56:44 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:56:44 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:56:44 WARNING [search.gepa_native] Iteration 4 failed: Evaluator failed after 3 attempts: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:58:31 [evaluator] Evaluated program 9277d902-3a2b-4d98-8e6c-37ac6714c2e4 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:58:31 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:58:31 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+17:01:06 [evaluator] Evaluated program 48d64c02-d0ba-4da0-a06d-c786f05a1631 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<replace this line with ... structure description>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+17:01:06 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<replace this line with ... structure description>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+17:01:06 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+17:01:28 WARNING [llm] Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+17:02:12 [evaluator] Evaluated program d71b733c-480c-415f-87ad-691b7a5db47d in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:02:12 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:02:12 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:02:12 WARNING [search.gepa_native] Iteration 5 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:05:36 [evaluator] Evaluated program 940f8f87-4eaa-4fe6-ab21-337b406b7307 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:05:36 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:05:36 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+17:06:41 [evaluator] Evaluated program 1e1b981d-e37c-40c4-b4b9-5115829d379a in 0.00s: combined_score=0.0000, status=schema_rejected, error=8 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+signatures
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+tables
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+samplers
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+procedures
+  Input should be a valid dictionary [type=dict_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+on_hit
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+on_fill
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+17:06:41 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=8 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+signatures
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+tables
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+samplers
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+procedures
+  Input should be a valid dictionary [type=dict_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+on_hit
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+on_fill
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+17:06:41 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+17:08:34 [evaluator] Evaluated program 74ad9dff-382e-486e-a11d-7da42f779cd0 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:08:34 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:08:34 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:08:34 WARNING [search.gepa_native] Iteration 6 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:10:31 [evaluator] Evaluated program bbad1e61-3ac5-48e2-ac0e-a3e1f128b0af in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:10:31 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:10:31 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+17:12:25 [evaluator] Evaluated program b6ea20d0-df19-474a-b443-9850b8a9d7f0 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:12:25 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:12:25 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+17:13:40 [evaluator] Evaluated program b6dd1cba-c5ed-4ef9-a7d7-4bfd33edbcf6 in 0.00s: combined_score=0.0000, status=schema_rejected, error=5 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+procedures
+  Input should be a valid dictionary [type=dict_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+on_hit
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+on_fill
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+17:13:40 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=5 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+procedures
+  Input should be a valid dictionary [type=dict_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+on_hit
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+on_fill
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+17:13:40 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: 5 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+procedures
+  Input should be a valid dictionary [type=dict_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+on_hit
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+on_fill
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+17:13:40 WARNING [search.gepa_native] Iteration 7 failed: Evaluator failed after 3 attempts: 5 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+procedures
+  Input should be a valid dictionary [type=dict_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+on_hit
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+on_fill
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+17:15:29 [evaluator] Evaluated program 54036261-741a-4ba3-8843-b526b3a92908 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:15:29 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:15:29 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+17:16:01 [evaluator] Evaluated program c1adcde9-879c-42f6-8751-5bca39d994d6 in 0.10s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+17:16:01 [search.gepa_native] Iteration 8: REJECTED child (child_score=1.0000 <= parent_score=1.0000)
+17:18:27 [evaluator] Evaluated program ba546b59-5281-4344-8b65-c60c5efe6ba1 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:18:27 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:18:27 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+17:20:42 [evaluator] Evaluated program 2730958e-9a19-4927-83c0-3ed862ee87fb in 0.00s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Field required [type=missing, input_value={'name': 'improved_mockin...by...\n', 'state': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+17:20:42 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Field required [type=missing, input_value={'name': 'improved_mockin...by...\n', 'state': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+17:20:42 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+17:23:02 [evaluator] Evaluated program 722f0188-4f33-4288-9ac7-8cd1da5e3ad6 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:23:02 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:23:02 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:23:02 WARNING [search.gepa_native] Iteration 9 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:25:12 [evaluator] Evaluated program 5c9d9d1e-fdc1-4dec-89aa-73d0f10c0939 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'improved_mockin...'width': 5, 'init': 0}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+17:25:12 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'improved_mockin...'width': 5, 'init': 0}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+17:25:12 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+17:26:28 [evaluator] Evaluated program 8a5fcc98-d164-436b-9d30-aebf1351e578 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:26:28 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:26:28 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+17:27:17 [evaluator] Evaluated program b5e5eb51-8608-4ce2-9151-cf36abbafd9e in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): NEW_WORDS
+17:27:17 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): NEW_WORDS
+17:27:17 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): NEW_WORDS
+17:27:17 WARNING [search.gepa_native] Iteration 10 failed: Evaluator failed after 3 attempts: candidate is missing section(s): NEW_WORDS
+17:27:50 [evaluator] Evaluated program eaa54164-b42e-49da-ad76-6895f96d7078 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:27:50 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:27:50 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+17:31:30 [evaluator] Evaluated program 98177c3a-3981-4bb8-b783-c6dfe3238afb in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+17:31:30 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+17:31:30 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+17:32:33 [evaluator] Evaluated program b8f278f1-ab18-46e6-906e-c7a53c13a89c in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:32:33 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:32:33 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:32:33 WARNING [search.gepa_native] Iteration 11 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:36:08 [evaluator] Evaluated program f7eb39a7-aa78-4d8c-a3ee-cff24e06feb3 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:36:08 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:36:08 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+17:37:58 [evaluator] Evaluated program c6bebfd9-5a3f-4df3-a00f-d3867eb8cea3 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:37:58 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:37:58 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+18:17:35 [evaluator] Evaluated program 1071e59d-0340-4d05-b5e3-88349f55437e in 2268.21s: combined_score=0.9997, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6620.3668, cacti_node_nm=22.0000
+18:17:35 [search.gepa_native] Iteration 12: REJECTED child (child_score=0.9997 <= parent_score=1.0000)
+18:19:35 [evaluator] Evaluated program 8edf8a2a-0f75-4a3a-91a8-1f2843846b1b in 0.00s: combined_score=0.0000, status=schema_rejected, error=3 validation errors for StructureDescription
+state.0.width
+  Field required [type=missing, input_value={'name': 'example_field'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+state.0.scope
+  Field required [type=missing, input_value={'name': 'example_field'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...ame': 'example_field'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+18:19:35 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=3 validation errors for StructureDescription
+state.0.width
+  Field required [type=missing, input_value={'name': 'example_field'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+state.0.scope
+  Field required [type=missing, input_value={'name': 'example_field'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...ame': 'example_field'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+18:19:35 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+18:20:15 [evaluator] Evaluated program 531023bf-51e5-409f-83a8-0ef24792fdb7 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:20:15 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:20:15 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+18:22:08 [evaluator] Evaluated program 9023fdec-ee69-4093-bcf2-d1f168dd8702 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:22:08 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:22:08 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:22:08 WARNING [search.gepa_native] Iteration 13 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:24:42 [evaluator] Evaluated program 52fb339d-a426-4892-8182-82816ee3591d in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:24:42 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:24:42 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+18:26:41 [evaluator] Evaluated program b1121b70-fee6-4d7d-8ef9-845ce64d2787 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<REPLACE THIS LINE WITH ...TRUNCATE ANY SECTIONS.>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:26:41 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<REPLACE THIS LINE WITH ...TRUNCATE ANY SECTIONS.>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:26:41 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+18:28:39 [evaluator] Evaluated program 98fc8b4f-b3d4-4550-b08b-aa9fd92d34f6 in 0.00s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_design_nam...t changed and why...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...t changed and why...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+18:28:39 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_design_nam...t changed and why...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...t changed and why...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+18:28:39 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: 2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_design_nam...t changed and why...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...t changed and why...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+18:28:39 WARNING [search.gepa_native] Iteration 14 failed: Evaluator failed after 3 attempts: 2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_design_nam...t changed and why...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...t changed and why...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+18:29:08 [evaluator] Evaluated program 8e59dbf2-3081-46e5-977d-69faad7607b3 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:29:08 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:29:08 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+18:32:36 [evaluator] Evaluated program bffc3890-9b02-4bb3-9ae2-281bf3277672 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:32:36 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:32:36 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+18:33:08 [evaluator] Evaluated program b93ceda5-5f3c-43d5-9feb-23b47ce54f3a in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): NEW_WORDS
+18:33:08 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): NEW_WORDS
+18:33:08 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): NEW_WORDS
+18:33:08 WARNING [search.gepa_native] Iteration 15 failed: Evaluator failed after 3 attempts: candidate is missing section(s): NEW_WORDS
+18:34:09 [evaluator] Evaluated program 277a3d29-0a5c-4e2f-b7e8-102977990d5e in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<full concrete YAML structure description>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:34:09 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<full concrete YAML structure description>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:34:09 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+18:34:42 [evaluator] Evaluated program 963c25ae-ccb4-482e-8829-f10cb4233cde in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<valid YAML structure de... following the grammar>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:34:42 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<valid YAML structure de... following the grammar>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:34:42 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+18:36:47 [evaluator] Evaluated program a1bf155e-bca8-4e49-8774-6f228e89a873 in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:36:47 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:36:47 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: 2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:36:47 WARNING [search.gepa_native] Iteration 16 failed: Evaluator failed after 3 attempts: 2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:38:34 [evaluator] Evaluated program 3dd14626-a9a5-4ceb-bb6a-624a375bc4cf in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+18:38:34 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+18:38:34 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+18:42:02 [evaluator] Evaluated program a1edbba9-2b6a-4f71-846b-e2d5c3f1cbd7 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:42:02 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:42:02 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+18:42:45 [evaluator] Evaluated program 0896d53c-e8b2-4644-8da1-82d1bc1d2720 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:42:45 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:42:45 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:42:45 WARNING [search.gepa_native] Iteration 17 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:44:54 [evaluator] Evaluated program 7424f4ec-5a21-41e2-a830-6e79eada372d in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<YOUR COMPLETE YAML STRUCTURE DESCRIPTION HERE>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:44:54 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<YOUR COMPLETE YAML STRUCTURE DESCRIPTION HERE>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:44:54 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+18:45:18 [evaluator] Evaluated program 857fe11f-3c37-4c09-82b6-8f0364d99f45 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:45:18 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:45:18 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+18:46:01 [evaluator] Evaluated program a8e47648-b5ff-49b1-bf15-c6286004eab0 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:46:01 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:46:01 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:46:01 WARNING [search.gepa_native] Iteration 18 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:49:30 [evaluator] Evaluated program ceea4c25-920b-492a-aea9-f9340be0e227 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:49:30 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:49:30 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+18:52:48 [evaluator] Evaluated program ee86fce7-71b6-45a5-b7b9-b73a0410f7ee in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:52:48 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:52:48 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+18:53:19 [evaluator] Evaluated program 558cb405-9a0f-4e60-8ada-c03ec16746cb in 0.01s: combined_score=0.0000, status=schema_rejected, error=8 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+signatures
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+tables
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+samplers
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+procedures
+  Input should be a valid dictionary [type=dict_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+on_hit
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+on_fill
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+18:53:19 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=8 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+signatures
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+tables
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+samplers
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+procedures
+  Input should be a valid dictionary [type=dict_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+on_hit
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+on_fill
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+18:53:19 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: 8 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+signatures
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+tables
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+samplers
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+procedures
+  Input should be a valid dictionary [type=dict_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+on_hit
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+on_fill
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+18:53:19 WARNING [search.gepa_native] Iteration 19 failed: Evaluator failed after 3 attempts: 8 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+signatures
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+tables
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+samplers
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+procedures
+  Input should be a valid dictionary [type=dict_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+on_hit
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+on_fill
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+18:55:42 [evaluator] Evaluated program e89569f0-4a8b-4608-aa18-c00d77c50452 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:55:42 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:55:42 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+18:56:14 [evaluator] Evaluated program 750984a2-0204-4d11-b131-7eb63584ae70 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:56:14 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:56:14 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+18:58:11 [evaluator] Evaluated program e2b938f6-03c4-4e74-a170-98757e596a16 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:58:11 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:58:11 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:58:11 WARNING [search.gepa_native] Iteration 20 failed: Evaluator failed after 3 attempts: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+19:01:34 [evaluator] Evaluated program 1489af2c-17bd-4c40-8d2d-a1de1f1403f7 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the actual, full YAML s... description goes here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+19:01:34 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the actual, full YAML s... description goes here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+19:01:34 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+19:42:36 [evaluator] Evaluated program f927558f-b7c2-4509-8d11-8bb30ca61034 in 2268.99s: combined_score=0.9986, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6869.7572, cacti_node_nm=22.0000
+19:42:36 [search.gepa_native] Iteration 21: REJECTED child (child_score=0.9986 <= parent_score=1.0000)
+19:46:16 [evaluator] Evaluated program f8b94870-4a12-4224-bcf8-6b2e231ab643 in 0.00s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...re...\n', 'state': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+19:46:16 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...re...\n', 'state': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+19:46:16 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+19:48:32 [evaluator] Evaluated program bea20fba-7376-4170-9335-db9ab4e11a4a in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+19:48:32 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+19:48:32 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+19:50:20 [evaluator] Evaluated program 9abc117e-e061-4b5b-94d7-546a525ab7a7 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+19:50:20 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+19:50:20 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: 1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+19:50:20 WARNING [search.gepa_native] Iteration 22 failed: Evaluator failed after 3 attempts: 1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+19:53:45 [evaluator] Evaluated program 750c39b1-ede6-4044-b798-241ef05c59d8 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+19:53:45 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+19:53:45 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+19:56:22 [evaluator] Evaluated program 4cc913d7-df3a-4b16-9aa5-1f4511dc1b3c in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...'width': 5, 'init': 0}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+19:56:22 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...'width': 5, 'init': 0}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+19:56:22 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+20:41:07 [evaluator] Evaluated program ce965865-85b1-4511-999f-76f4be0dec58 in 2542.33s: combined_score=0.9435, status=ok, metadata_kb=30.0000, metadata_flipflop_bits=0.0000, metadata_bits_per_line=5.0000, metadata_area_mm2=0.0226, metadata_energy_uj=4279.6469, cacti_node_nm=22.0000
+20:41:07 [search.gepa_native] Iteration 23: REJECTED child (child_score=0.9435 <= parent_score=1.0000)
+20:41:42 [evaluator] Evaluated program 9202c9e0-2879-4720-860c-4c6e133302a8 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): NEW_WORDS
+20:41:42 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): NEW_WORDS
+20:41:42 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+20:43:38 [evaluator] Evaluated program 4bade4c8-5548-4aa0-904f-ca7d9cffc842 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:43:38 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:43:38 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+20:44:08 [evaluator] Evaluated program cb1ee751-84ea-46e5-89c2-609011e39b7d in 0.15s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+20:44:08 [search.gepa_native] Iteration 24: REJECTED child (child_score=1.0000 <= parent_score=1.0000)
+20:46:25 [evaluator] Evaluated program b9ab9a2b-7c48-4072-be77-062bb368afeb in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the COMPLETE structure ... truncation whatsoever>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:46:25 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the COMPLETE structure ... truncation whatsoever>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:46:25 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+20:48:29 [evaluator] Evaluated program cdc1fe68-633a-4976-b82b-8a9a71d8d7f9 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:48:29 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:48:29 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+20:50:20 [evaluator] Evaluated program b9bdcb81-06d5-4fa8-9d55-e0d13b744c06 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:50:20 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:50:20 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:50:20 WARNING [search.gepa_native] Iteration 25 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:52:38 [evaluator] Evaluated program e8673542-2681-4379-8992-4a81f439a6d9 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ...YAML - NO PLACEHOLDERS>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:52:38 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ...YAML - NO PLACEHOLDERS>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:52:38 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+20:54:25 [evaluator] Evaluated program 42d1ecaa-d01c-47c6-8e92-041ccd99e8c0 in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:54:25 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:54:25 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+20:56:33 [evaluator] Evaluated program b1f8befb-db77-4421-923d-03aedd96b017 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:56:33 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:56:33 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:56:33 WARNING [search.gepa_native] Iteration 26 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:58:33 [evaluator] Evaluated program 8caec6ab-424c-4e67-a6c3-ff39fa3f53b8 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:58:33 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:58:33 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+gemini-3.1-pro-preview: rate limited (429), trying again in 30 s
+21:37:45 [evaluator] Evaluated program 080513ef-c9a3-4c8e-8db3-902e3601ab76 in 2211.16s: combined_score=0.9989, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6613.4832, cacti_node_nm=22.0000
+21:37:45 [search.gepa_native] Iteration 27: REJECTED child (child_score=0.9989 <= parent_score=1.0000)
+21:40:11 [evaluator] Evaluated program 55487a71-7a75-4295-9760-764eee052145 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the COMPLETE structure ... YAML, no placeholders>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:40:11 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the COMPLETE structure ... YAML, no placeholders>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:40:11 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+21:41:16 [evaluator] Evaluated program 49879279-9c23-4ee5-84ce-bade5f6eacd8 in 0.17s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+21:41:16 [search.gepa_native] Iteration 28: REJECTED child (child_score=1.0000 <= parent_score=1.0000)
+21:41:42 [evaluator] Evaluated program 525a2142-9084-4a33-b349-fff6f3da4c41 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+21:41:42 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+21:41:42 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+21:42:09 [evaluator] Evaluated program e61d57fc-ceb6-4ed5-ab2d-29da87a60bcb in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): NEW_WORDS
+21:42:09 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): NEW_WORDS
+21:42:09 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+21:43:12 [evaluator] Evaluated program 05ed10f1-514a-4f4b-a3cf-37c7db2f7f0d in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<full valid YAML structu...ption, NO PLACEHOLDERS>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:43:12 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<full valid YAML structu...ption, NO PLACEHOLDERS>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:43:12 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<full valid YAML structu...ption, NO PLACEHOLDERS>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:43:12 WARNING [search.gepa_native] Iteration 29 failed: Evaluator failed after 3 attempts: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<full valid YAML structu...ption, NO PLACEHOLDERS>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:45:16 [evaluator] Evaluated program f6806f94-014f-4533-ae76-925c2ad1bb39 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ...YAML - NO PLACEHOLDERS>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:45:16 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ...YAML - NO PLACEHOLDERS>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:45:16 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+21:45:59 [evaluator] Evaluated program f806926e-1b98-4619-8642-cb09c827d9b2 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+21:45:59 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+21:45:59 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+21:48:48 [evaluator] Evaluated program 12e87d82-dc9d-435b-b46b-cf1d25332d1f in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete YAML stru...out without truncation>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:48:48 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete YAML stru...out without truncation>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:48:48 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete YAML stru...out without truncation>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:48:48 WARNING [search.gepa_native] Iteration 30 failed: Evaluator failed after 3 attempts: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete YAML stru...out without truncation>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:49:35 [evaluator] Evaluated program 68636122-35c5-450f-bc17-65850aa76f1a in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+21:49:35 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+21:49:35 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+21:51:41 [evaluator] Evaluated program 0815f7f9-ffda-45c3-bcf2-9d678aa78581 in 0.01s: combined_score=0.0000, status=schema_rejected, error=expected '<document start>', but found '<scalar>'
+  in "<unicode string>", line 5, column 5:
+    ... (YOUR ENTIRE VALID YAML HERE - N ... 
+        ^
+21:51:41 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=expected '<document start>', but found '<scalar>'
+  in "<unicode string>", line 5, column 5:
+    ... (YOUR ENTIRE VALID YAML HERE - N ... 
+        ^
+21:51:41 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+21:55:20 [evaluator] Evaluated program aaeecab4-169b-452d-bb5f-8a2b1ef9ec5b in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete, untrunca...cture description here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:55:20 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete, untrunca...cture description here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:55:20 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete, untrunca...cture description here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:55:20 WARNING [search.gepa_native] Iteration 31 failed: Evaluator failed after 3 attempts: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete, untrunca...cture description here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:55:57 [evaluator] Evaluated program 201fdeb0-e16d-4f26-afb1-39c124821de9 in 0.17s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+21:55:57 [search.gepa_native] Iteration 32: REJECTED child (child_score=1.0000 <= parent_score=1.0000)
+21:59:38 [evaluator] Evaluated program 0c908b74-8074-4101-b7eb-51e75ee8aecc in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:59:38 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:59:38 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+22:41:31 [evaluator] Evaluated program aff3a862-f8f6-4b03-b17b-7f261e0c41ef in 2333.58s: combined_score=0.9820, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6757.0683, cacti_node_nm=22.0000
+22:41:31 [search.gepa_native] Iteration 33: REJECTED child (child_score=0.9820 <= parent_score=1.0000)
+22:43:51 [evaluator] Evaluated program 2defb6f0-6e1f-4799-8e85-c903eacd4786 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ...ormat, NO PLACEHOLDERS>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+22:43:51 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ...ormat, NO PLACEHOLDERS>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+22:43:51 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+22:44:35 [evaluator] Evaluated program d457cb6d-fdc5-41e6-86af-0da3aba7f6b1 in 0.20s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+22:44:35 [search.gepa_native] Iteration 34: REJECTED child (child_score=1.0000 <= parent_score=1.0000)
+22:46:27 [evaluator] Evaluated program e5ad9a92-1022-4e42-927f-97cd56c5f9f1 in 0.01s: combined_score=0.0000, status=schema_rejected, error=3 validation errors for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='<your_short_policy_name>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+22:46:27 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=3 validation errors for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='<your_short_policy_name>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+22:46:27 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+22:47:23 [evaluator] Evaluated program 641cce9c-c386-49e2-944e-1177dfcc0f05 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:47:23 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:47:23 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+22:51:40 [evaluator] Evaluated program eb3ed861-cc36-48b3-9ecb-180db127edfa in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:51:40 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:51:40 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:51:40 WARNING [search.gepa_native] Iteration 35 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:52:28 [evaluator] Evaluated program 40b5a67d-baac-4725-a06e-5a6aa384d505 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:52:28 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:52:28 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+22:53:10 [evaluator] Evaluated program 1130ed36-5f12-44d7-931b-63bb7009eb3d in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<valid YAML structure description>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+22:53:10 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<valid YAML structure description>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+22:53:10 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+22:56:48 [evaluator] Evaluated program 8320f260-c360-4728-99c0-b4ba4f4b6550 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:56:48 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:56:48 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:56:48 WARNING [search.gepa_native] Iteration 36 failed: Evaluator failed after 3 attempts: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:57:42 [evaluator] Evaluated program 0af9e4f7-9e31-4ae8-9e44-98dc96eca54e in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:57:42 WARNING [default_discovery_controller] Evaluation failed (attempt 1/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:57:42 [default_discovery_controller] Retry 2/3: rebuilding prompt with 1 failed attempt(s)
+22:59:52 [evaluator] Evaluated program 8e42e761-536e-4020-bbac-9297ba979edb in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:59:52 WARNING [default_discovery_controller] Evaluation failed (attempt 2/3): validity=None, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:59:52 [default_discovery_controller] Retry 3/3: rebuilding prompt with 2 failed attempt(s)
+23:00:03 [runner] Signal 15 received, shutting down...
+23:00:03 [default_discovery_controller] Graceful shutdown requested...
+23:03:07 [evaluator] Evaluated program 51d55c19-e510-4a9a-98b4-310a0af7f827 in 0.01s: combined_score=0.0000, status=schema_rejected, error=expected '<document start>', but found '<scalar>'
+  in "<unicode string>", line 8, column 5:
+    ... (all other necessary sections: t ... 
+        ^
+23:03:07 WARNING [default_discovery_controller] Evaluation failed (attempt 3/3): validity=None, error=expected '<document start>', but found '<scalar>'
+  in "<unicode string>", line 8, column 5:
+    ... (all other necessary sections: t ... 
+        ^
+23:03:07 ERROR [default_discovery_controller] All 3 retry attempts failed. Final error: expected '<document start>', but found '<scalar>'
+  in "<unicode string>", line 8, column 5:
+    ... (all other necessary sections: t ... 
+        ^
+23:03:07 WARNING [search.gepa_native] Iteration 37 failed: Evaluator failed after 3 attempts: expected '<document start>', but found '<scalar>'
+  in "<unicode string>", line 8, column 5:
+    ... (all other necessary sections: t ... 
+        ^
+23:03:07 [search.gepa_native] Shutdown requested, stopping discovery loop early
+23:03:07 [search.gepa_native] Discovery completed (search strategy = gepa_native) - Shutdown requested
+23:03:07 [search.utils] [CHECKPOINT] Saved database with 1 programs to /home/khoile0315/oe_out/arm_gepa_gemini3/checkpoints/checkpoint_100000
+23:03:07 [runner] Checkpoint 100000: best=combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+23:03:07 [runner] Checkpoint saved to /home/khoile0315/oe_out/arm_gepa_gemini3/checkpoints/checkpoint_100000
+23:03:07 [evaluator] Evaluated program 040a521b-4d82-4604-b96d-5786d42efa06 in 0.20s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+23:03:07 [runner] Test evaluation for best program: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+23:03:07 [runner] Best program saved to /home/khoile0315/oe_out/arm_gepa_gemini3/best
+23:03:07 [runner] Discovery completed. Best: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000, test_combined_score=1.0000, test_status=ok, test_metadata_kb=47.3750, test_metadata_flipflop_bits=0.0000, test_metadata_bits_per_line=7.8958, test_metadata_area_mm2=0.0379, test_metadata_energy_uj=6604.4185, test_cacti_node_nm=22.0000
+23:03:07 [runner] Best program saved to /home/khoile0315/oe_out/arm_gepa_gemini3/best
+
+=== result ===
+DiscoveryResult(best_score=1.0000, initial_score=1.0000)

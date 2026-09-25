@@ -1,0 +1,9 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: while parsing a block collection
+  in "<unicode string>", line 89, column 7:
+          - train: {table: rdp, index: sig ... 
+          ^
+expected <block end>, but found '?'
+  in "<unicode string>", line 91, column 7:
+          train_long_reuse_confidence: {co ... 
+          ^

@@ -1,0 +1,14 @@
+Guidance version 47, written after 473 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.98046 (-1.95% against the seed)
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the
+    fill was bypassed.
+
+Refused among the last 10 candidates, and why: malformed 5 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 4 (Input should be a valid dictionary or instance of StructureDescription (written: '<the complete structure description, in YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, in YAML>'))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 14 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 11 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 2 times (words_refused): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'rdp_predicts_scan_and_no_bad_history')
+
+Your progress is stalled because the vast majority of your proposals are refused for fundamental formatting errors, like providing invalid YAML or omitting the required `STRUCTURE_DESCRIPTION` and `NEW_WORDS` sections. You must stop submitting syntactically invalid designs. The few candidates that were scored, which modified `on_access`, `on_fill`, and `state`, all failed to improve upon Mockingjay, showing these changes were not beneficial. Significant opportunity remains, as seen on traces with high OPT headroom. The largest mistakes are conflicting bypass decisions: on `605.mcf_s` and `619.lbm_s` the main error is `wrong_bypass`, while on `627.cam4_s` it is `should_bypass`. To correct both error types, the policy must remember the access patterns of lines that are not in the cache, which the current vocabulary cannot express. You should propose a new word that declares a stateful structure to track the history of bypassed lines that are later requested. This would allow the `on_fill` logic to make more intelligent bypass decisions. Also, stop attempting to redefine existing words like `is_bypassed_fill`; you must declare a new name for any new concept.

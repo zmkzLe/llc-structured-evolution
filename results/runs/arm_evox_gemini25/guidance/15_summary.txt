@@ -1,0 +1,39 @@
+Run so far: 152 candidates, 14 scored, 138 refused or failed (malformed 46, schema_rejected 89, too_much_storage 1, words_refused 2).
+Refusal kinds seen more than once this run (a pattern, not a one-off): 66 times, schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 41 times, malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 6 times, schema_rejected: state Field required (written: {'name': 'your_new_design...d on the feedback...\n'}) victim Field required (written: {'name': 'your_new_design...d on the feedback...\n'}); 5 times, malformed: candidate is missing section(s): NEW_WORDS; 2 times, schema_rejected: victim Field required (written: {'name': 'mockingjay_v2',...'width': 5, 'init': 0}]})
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 66 x schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+- 41 x malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+- 6 x schema_rejected: state Field required (written: {'name': 'your_new_design...d on the feedback...\n'}) victim Field required (written: {'name': 'your_new_design...d on the feedback...\n'})
+- 5 x malformed: candidate is missing section(s): NEW_WORDS
+- 2 x schema_rejected: victim Field required (written: {'name': 'mockingjay_v2',...'width': 5, 'init': 0}]})
+- 2 x schema_rejected: duplicate key 'when' at line 121, column 7. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+- 1 x words_refused: params.bypassed_flag_field.str Input should be a valid string (written: {'sampler_field': 'flag'}) params.bypassed_flag_field.IntRange.int Field required (written: {'sampler_field': 'flag'}) params.bypassed_flag_field.IntRange.sampler_field
+- 1 x words_refused: params Value error, parameter 'flag_field': type 'sampler_field' is not one of state, table, signature, sampler, access_types, {int: [lo, hi]} or {symbol: <list>} (written: {'sampler': 'sampler', 'f...field': 'sampler_field'})
+- 1 x too_much_storage: this design declares 384.0 KB of replacement metadata at this LLC; the budget is 48 KB (the seed declares 47.4 KB): pay for new state by narrowing or removing state elsewhere
+- 1 x schema_rejected: while parsing a block mapping in "<unicode string>", line 138, column 5: - when: {not_a_hit: true} # This i ... ^ expected <block end>, but found '-' in "<unicode string>", line 139, column 5: - when: {check_bypassed_signatur ... ^
+- 1 x schema_rejected: victim.key Field required (written: {'bypass_when': [{'table'...gt', 'threshold': 80}}]}) victim.extremum Field required (written: {'bypass_when': [{'table'...gt', 'threshold': 80}}]})
+- 1 x schema_rejected: victim.extremum Field required (written: {'key': 'my_counter'})
+The seed scored 1.00000.
+Best so far: c41837327dd0 at 1.00000, +0.00% over Mockingjay.
+
+The last 10 candidates, oldest first:
+143. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+144. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+145. the seed, scored 1.00000
+146. the seed, scored 1.00000
+147. refused (schema_rejected): state Field required (written: {'name': 'your_policy_nam...wrong_bypass errors.\n'}) victim Field required (written: {'name': 'your_policy_nam...wrong_bypass errors.\n'})
+148. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+149. refused (schema_rejected): duplicate key 'train' at line 130, column 7. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+150. refused (schema_rejected): while parsing a block mapping in "<unicode string>", line 138, column 5: - when: {not_a_hit: true} # This i ... ^ expected <block end>, but found '-' in "<unicode string>", line 139, column 5: - when:
+151. the seed, scored 1.00000
+152. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 52.4%, largest mistake should_bypass (53 of 550 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.4%, largest mistake wrong_bypass (213210 of 430741 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 137.6
+- 619.lbm_s-2677B: headroom 43.9%, largest mistake wrong_bypass (109263 of 258760 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 82.6
+- 459.GemsFDTD-1491B: headroom 33.3%, largest mistake wrong_bypass (28218 of 86909 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 27.6
+- 657.xz_s-2302B: headroom 32.2%, largest mistake kept_dead (991 of 3706 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 1.3
+- 433.milc-127B: headroom 28.4%, largest mistake wrong_bypass (14351 of 63506 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 20.2
+
+New words accepted this run: none yet.

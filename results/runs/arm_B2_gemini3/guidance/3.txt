@@ -1,0 +1,95 @@
+Guidance version 3, written after 30 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 10 scored design(s); best 1.00084 (+0.08% against the seed)
+- name: better_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    limit:
+      int: [0, 127]
+    table: table
+  means: True when the entry of the table at the index is present and either its value is strictly greater
+    than the limit, or both the field of the victim way chosen by find_victim is greater than or equal
+    to zero and the table entry divided by div (integer division) is strictly greater than that field
+    of the victim way. False otherwise. Nothing is written.
+# used by 1 scored design(s); best 0.99997 (-0.00% against the seed)
+- name: dynamic_resident_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    stream_thresh:
+      int: [0, 127]
+    table: table
+  means: True when the entry of the table at the index is present and either its value is greater than
+    or equal to stream_thresh, or every way in the access's set has its field greater than or equal to
+    zero and the maximum of that field across all ways of the set is strictly greater than zero and the
+    table entry divided by div (integer division) is greater than or equal to that maximum. False otherwise.
+    Nothing is written.
+# used by 1 scored design(s); best 0.99977 (-0.02% against the seed)
+- name: dynamic_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    limit:
+      int: [0, 127]
+    min_live:
+      int: [1, 12]
+    table: table
+  means: 'True when the entry of the table at the index is present and either: (1) the field of the victim
+    way chosen by find_victim is greater than or equal to zero and either the table entry is strictly
+    greater than limit or the table entry divided by div (integer division) is strictly greater than that
+    field of the victim way; or (2) the field of the victim way is strictly less than zero, the table
+    entry is strictly greater than limit, and the number of ways in the access set whose field is greater
+    than or equal to zero is greater than or equal to min_live. False otherwise. Nothing is written.'
+# used by 4 scored design(s); best 0.99975 (-0.03% against the seed)
+- name: signed_gt
+  place: condition
+  params:
+    field: state
+    min_val:
+      int: [-16, 0]
+  means: True when the signed per_line field of the way being visited is strictly greater than min_val.
+    False otherwise. Nothing is written.
+# used by 1 scored design(s); best 0.99843 (-0.16% against the seed)
+- name: safe_exceeds_victim
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    table: table
+  means: True when the entry of the table at the index is present, the field of the victim way chosen
+    by find_victim is greater than or equal to zero, and the table entry divided by div (integer division)
+    is strictly greater than that field of the victim way. False otherwise. Nothing is written.
+# used by 1 scored design(s); best 0.99746 (-0.25% against the seed)
+- name: resident_aware_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    limit:
+      int: [0, 127]
+    table: table
+  means: True when the entry of the table at the index is present and either its value is strictly greater
+    than the limit, or no way of the set has its field strictly less than zero and the table entry divided
+    by div is strictly greater than the maximum of that field across all ways of the set. False otherwise.
+    Nothing is written.
+Names also taken (declared by a design not scored yet, or not shown above): predicted_exceeds_live_victim, smart_bypass, strict_bypass, bypass_exceeds_average, tick_mockingjay
+
+Refused among the last 10 candidates: none.
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 2 times (words_refused): signed_gt: already declared in this run with another definition; a word is never changed, so declare a new name
+
+The best design is d743d8dd1193, scoring 1.00084 over Mockingjay. Changes to victim.bypass_when, procedures.access, and new_words paid off the most, yielding the highest score improvements. Conversely, modifications to on_hit, victim.extremum, victim.key, and victim.tie_break caused severe score drops, and changes to on_fill also lost heavily. You must stop redeclaring existing words like signed_gt; because a word is never changed, you must declare a new name for a different definition. You should also stop altering on_hit, victim.extremum, victim.key, and victim.tie_break. On the traces with the most headroom, the largest remaining mistake is overwhelmingly wrong_bypass, which dominates on 605.mcf_s-1644B, 619.lbm_s-2677B, 459.GemsFDTD-1491B, and 433.milc-127B. Meanwhile, 627.cam4_s-573B suffers from should_bypass, and 657.xz_s-2302B struggles with kept_dead. To address the dominant wrong_bypass errors without worsening should_bypass, you should adjust how the policy decides in victim.bypass_when and what it remembers in samplers to ensure lines are only bypassed when their predicted reuse is definitively worse than the resident lines. A new word could express a dynamic bypass condition that compares the incoming line's predicted reuse distance against the maximum or average predicted reuse distance of the resident lines in the set, which the fixed vocabulary cannot easily represent.

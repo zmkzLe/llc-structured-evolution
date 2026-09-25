@@ -1,0 +1,127 @@
+name: mj_confidence_rework
+doc: >
+  Reworks confidence integration to address performance degradation and specific
+  error types. `etr_clock` granularity is reverted to original Mockingjay (8)
+  to prevent overly fast aging leading to `evicted_sooner`. Confidence for bypass
+  is now an explicit check (rdp > threshold AND confidence > 0) to reduce `wrong_bypass`.
+  ETR calculation is modified to *amplify* the ETR of low-confidence lines, making
+  them more susceptible to eviction and thus reducing `kept_dead` errors.
+  `bypass_confidence` initializes to ZERO to be more conservative initially.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: reverted to original Mockingjay
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    # Bypass if RDP is high AND confidence is not zero
+    - confident_high_rdp_gt: {rdp_table: rdp, conf_table: bypass_confidence, index: pc_sig, rdp_thresh: 73, conf_thresh: 0}
+    # Bypass if RDP exceeds victim ETR AND confidence is not zero
+    - confident_exceeds_victim: {rdp_table: rdp, conf_table: bypass_confidence, index: pc_sig, div: 8, conf_thresh: 0}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bypass_confidence
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO                # Revert to ZERO for initial conservatism
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - train: {table: bypass_confidence, index: signature, op: increment} # Reuse -> increase confidence
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 8}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 8}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: bypass_confidence, index: signature, op: decrement} # Old -> decrease confidence
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: bypass_confidence, index: signature, op: decrement} # Replaced before use -> decrease confidence
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}} # Reverted to 8
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}} # Reverted to 8
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    # Use the new confident high RDP check for immediate high ETR assignment
+    - when:
+        confident_high_rdp_gt: {rdp_table: rdp, conf_table: bypass_confidence, index: pc_sig, rdp_thresh: 73, conf_thresh: 0}
+      set: {etr: {const: 11}}
+      stop: true
+    # Use the new confidence-amplified ETR calculation
+    - set: {etr: {confidence_amplified_etr: {rdp_table: rdp, conf_table: bypass_confidence, index: pc_sig, div: 8, scale: 4, max_etr: 11}}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access

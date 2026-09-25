@@ -1,0 +1,2 @@
+===== STRUCTURE_DESCRIPTION =====` block contains ONLY valid YAML for your policy.** No placeholder text or comments outside the YAML structure.
+3.  **The `===== NEW_WORDS =====

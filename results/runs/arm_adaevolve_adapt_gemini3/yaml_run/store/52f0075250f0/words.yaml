@@ -1,0 +1,8 @@
+- name: table_exceeds_positive_victim
+  place: condition
+  params: {table: table, index: signature, div: {int: [1, 16]}}
+  means: >
+    True when the entry of the table at the index is present, the chosen victim
+    way's key is greater than or equal to 0, and the table entry divided by div
+    (integer division) is greater than the chosen victim way's key. False on an
+    absent entry or if the victim key is negative. Only inside victim.bypass_when.

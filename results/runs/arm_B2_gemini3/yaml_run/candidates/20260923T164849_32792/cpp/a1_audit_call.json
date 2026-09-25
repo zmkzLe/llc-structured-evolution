@@ -1,0 +1,17 @@
+{
+  "model": "gemini-3.1-pro-preview",
+  "usage": {
+    "completion_tokens": 4009,
+    "completion_tokens_details": {
+      "reasoning_tokens": 3728
+    },
+    "extra_properties": {
+      "google": {
+        "traffic_type": "ON_DEMAND"
+      }
+    },
+    "prompt_tokens": 19602,
+    "total_tokens": 27339
+  },
+  "seconds": 61.9
+}

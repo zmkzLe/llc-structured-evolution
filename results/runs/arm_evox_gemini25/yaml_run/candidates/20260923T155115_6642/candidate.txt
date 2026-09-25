@@ -1,0 +1,183 @@
+===== STRUCTURE_DESCRIPTION =====
+# Reference: DPC4-ChampSim/replacement/mockingjay, single-core build. Sizes are for
+# the DPC4 LLC, 4096 x 12: INF_RD 95, INF_ETR 11, MAX_RD 73, 11-bit signatures,
+# 32 sampled sets. The multi-core build folds the core id instead of the hit bit,
+# inserts an unknown signature at INF_ETR, and scales prefetch samples by less.
+name: mockingjay_wrong_bypass_fix
+doc: >
+  Mockingjay with a Bypass History Buffer (BHB) to learn from wrong_bypass errors.
+  The BHB tracks recently bypassed lines. On a subsequent miss to a line in the BHB,
+  the RDP table is decremented for that line's PC signature, making future bypasses
+  for similar patterns less likely.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+  # New state for Bypass History Buffer (BHB) to track recently bypassed lines
+  - name: bhb_valid
+    scope: global
+    kind: flag
+    width: 1
+    entries: 32 # 32 entries for the BHB
+    init: ZERO
+  - name: bhb_pc_sig
+    scope: global
+    kind: counter
+    width: 11     # Stores the PC signature of the bypassed instruction
+    entries: 32
+    init: ZERO
+  - name: bhb_tag
+    scope: global
+    kind: counter
+    width: 46     # Stores the line tag (address >> 18) of the bypassed line
+    entries: 32
+    init: ZERO
+  - name: bhb_lru
+    scope: global
+    kind: counter
+    width: 5      # For LRU replacement within the BHB (log2(32) = 5)
+    entries: 32
+    init: ZERO
+  - name: bhb_clock
+    scope: global
+    kind: counter
+    width: 5      # Global clock for BHB LRU, wraps around 32
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    # Original Mockingjay ETR calculation
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_access: # This is the event update_replacement_state
+  # Check for wrong_bypass only on a miss (way == NUM_WAY)
+  - when: {way: NUM_WAY}
+    check_and_train_wrong_bypass: {bhb_valid: bhb_valid, bhb_pc_sig: bhb_pc_sig, bhb_tag: bhb_tag, bhb_lru: bhb_lru, bhb_clock: bhb_clock, rdp_table: rdp, current_pc_sig: pc_sig, access_address: address}
+  - run: access
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  # Record bypassed lines into BHB when a fill is bypassed
+  - when: {way: NUM_WAY} # If this fill was bypassed
+    record_bypassed_line: {bhb_valid: bhb_valid, bhb_pc_sig: bhb_pc_sig, bhb_tag: bhb_tag, bhb_lru: bhb_lru, bhb_clock: bhb_clock, current_pc_sig: pc_sig, access_address: address}
+  - run: access
+===== NEW_WORDS =====
+
+- name: record_bypassed_line
+  place: step
+  params: {bhb_valid: state, bhb_pc_sig: state, bhb_tag: state, bhb_lru: state, bhb_clock: state, current_pc_sig: signature, access_address: {int: [0, 2**64-1]}}
+  means: >
+    Derives the line tag as (access_address >> 18).
+    Searches the Bypass History Buffer (BHB) bhb_valid for a free entry (value 0).
+    If a free entry is found:
+      The chosen entry's bhb_valid is set to 1. Its bhb_pc_sig is set to current_pc_sig.
+      Its bhb_tag is set to the derived line tag. Its bhb_lru is updated with the current bhb_clock value.
+    If no free entry is found:
+      It selects the entry with the minimum bhb_lru value for replacement.
+      The chosen entry's bhb_valid is set to 1. Its bhb_pc_sig is set to current_pc_sig.
+      Its bhb_tag is set to the derived line tag. Its bhb_lru is updated with the current bhb_clock value.
+    Finally, bhb_clock is incremented.
+
+- name: check_and_train_wrong_bypass
+  place: step
+  params: {bhb_valid: state, bhb_pc_sig: state, bhb_tag: state, bhb_lru: state, bhb_clock: state, rdp_table: table, current_pc_sig: signature, access_address: {int: [0, 2**64-1]}}
+  means: >
+    Derives the line tag as (access_address >> 18).
+    Searches the Bypass History Buffer (BHB) bhb_tag for the derived line tag among valid entries.
+    If a match is found:
+    1.  The rdp_table entry at the corresponding bhb_pc_sig is decremented (clamped at 0).
+    2.  The matched bhb_valid entry is invalidated (set to 0).
+    3.  The matched bhb_lru entry is updated with the current bhb_clock value.
+    4.  Finally, bhb_clock is incremented.

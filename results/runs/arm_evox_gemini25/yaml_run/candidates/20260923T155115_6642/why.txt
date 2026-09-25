@@ -1,0 +1,14 @@
+Candidate ? FAILED at words_refused; it was not scored.
+Reason: 4 validation errors for NewWord
+params.access_address.str
+  Input should be a valid string [type=string_type, input_value={'int': [0, '2**64-1']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.access_address.IntRange.int.1
+  Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='2**64-1', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/int_parsing
+params.access_address.SymbolOf.symbol
+  Field required [type=missing, input_value={'int': [0, '2**64-1']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.access_address.SymbolOf.int
+  Extra inputs are not permitted [type=extra_forbidden, input_value=[0, '2**64-1'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden

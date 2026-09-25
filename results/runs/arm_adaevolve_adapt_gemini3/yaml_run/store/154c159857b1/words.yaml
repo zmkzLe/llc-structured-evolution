@@ -1,0 +1,16 @@
+- name: confident_bypass
+  place: condition
+  params: {table: table, conf: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    True when the entry of the table at the index is present and its value is
+    greater than the threshold, and the entry of the conf table at the index
+    is greater than 1. False otherwise.
+- name: confident_exceeds_victim
+  place: condition
+  params: {table: table, conf: table, index: signature, div: {int: [1, 16]}}
+  means: >
+    True when the entry of the table at the index is present, its value divided
+    by div (integer division) is greater than the absolute value of the victim
+    key of the way the victim search chose, and the entry of the conf table at
+    the index is greater than 1. False on an absent entry. Only inside
+    victim.bypass_when.

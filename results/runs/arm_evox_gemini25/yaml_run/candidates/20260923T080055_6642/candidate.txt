@@ -1,0 +1,13 @@
+===== STRUCTURE_DESCRIPTION =====
+# IMPORTANT: Replace the entire content of this block with your new,
+# complete YAML policy description. Your first line should be 'name:'.
+name: your_new_design_name_here
+doc: >
+  My one-sentence justification for this change, based on the feedback...
+
+# ... followed by the rest of your YAML policy description (state, victim, etc.).
+
+===== NEW_WORDS =====
+
+# If you use new words, declare them here. Otherwise, leave this section empty.
+# The marker line MUST be present, even if this section is empty.

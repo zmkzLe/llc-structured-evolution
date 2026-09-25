@@ -1,0 +1,19 @@
+{
+  "id": "75935cd5-e077-4c9b-af24-423ce610bbe2",
+  "generation": 2,
+  "iteration": 15,
+  "timestamp": 1790164855.6621356,
+  "parent_id": "9f4cafbc-f3bd-470f-bff3-0f8503760594",
+  "metrics": {
+    "combined_score": 1.0008423567196187,
+    "status": "ok",
+    "metadata_kb": 47.75,
+    "metadata_flipflop_bits": 0,
+    "metadata_bits_per_line": 7.958333333333333,
+    "metadata_area_mm2": 0.038528111396839995,
+    "metadata_energy_uj": 6806.914433597129,
+    "cacti_node_nm": 22
+  },
+  "language": "unknown",
+  "saved_at": 1790200802.5900285
+}

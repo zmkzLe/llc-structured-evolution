@@ -1,0 +1,32 @@
+Candidate 3414f95aac26: score 0.99977, the geometric mean over 17 traces of its IPC over Mockingjay's on the same trace (20M warm-up + 50M measured); Mockingjay, the seed and the design to beat, scores 1.0: behind.
+Closest earlier design: d743d8dd1193 (similarity 0.947, score 1.00084, change -0.00108). Parts changed: victim.bypass_when, new_words.
+New words: dynamic_bypass (condition).
+
+Per trace. vs MJ: IPC over Mockingjay's on that trace. change: minus the closest design's.
+MPKI: LLC misses per 1000 instructions. memory: share of all cycles stalled on the memory
+hierarchy at any level; LLC: the part of it stalled on LLC hits; DRAM: the part stalled on
+DRAM. retire: share of all cycles spent retiring instructions, which no replacement policy
+changes. headroom: share of the sampled misses Belady's MIN avoids on this candidate's own
+stream. Then the sampled fills judged against MIN: kept a dead line, evicted a line reused
+sooner, should have bypassed, bypassed wrongly (change from the closest design in brackets).
+trace                      vs MJ   change   MPKI  memory   LLC   DRAM  retire headroom       kept_dead  evicted_sooner  should_bypass   wrong_bypass
+410.bwaves-1963B          0.9997  -0.0016  17.92   76.8%  1.2%  60.0%   20.7%     2.8%        85 (+85)          0 (+0)     873 (+873)     600 (-954)
+429.mcf-192B              0.9999  -0.0002  52.01   90.3%  6.7%  73.4%    6.4%     0.5%       292 (-14)         65 (-8)      194 (+73)       260 (-9)
+433.milc-127B             1.0025  +0.0023  20.64   82.9%  0.0%  77.2%   12.6%    29.9%  15556 (+13365)        201 (-5)    2390 (+845)  2135 (-14192)
+434.zeusmp-10B            1.0004  +0.0000   2.38   63.3%  0.0%  44.4%   33.3%    14.2%      199 (+185)          0 (+0)     285 (+214)     556 (-396)
+437.leslie3d-149B         1.0049  -0.0016   7.94   84.1%  0.0%  76.4%   14.0%    22.8%    1841 (+1114)          0 (+0)   2108 (+1466)   1291 (-2589)
+450.soplex-247B           1.0300  -0.0018  20.19   83.7%  4.6%  75.7%   12.5%    17.0%     2155 (+120)     10925 (+67)    3093 (+254)   10280 (-241)
+459.GemsFDTD-1491B        1.0027  -0.0006  27.61   89.8%  0.8%  86.3%    9.1%    33.2%    4210 (+4186)          0 (+0)     666 (+666)  23346 (-4884)
+470.lbm-1274B             1.0050  +0.0007  26.10   86.8%  0.0%  86.8%   12.8%    20.6%   10570 (-1152)    20225 (+919)      210 (-73)     3383 (-73)
+483.xalancbmk-127B        0.9666  -0.0056  19.87   85.5%  4.4%  78.6%   10.5%    15.7%      2401 (+39)     5500 (+202)    6218 (+392)   20426 (-341)
+603.bwaves_s-1740B        1.0024  -0.0003  19.38   78.4%  0.1%  55.0%   19.7%     6.7%      282 (+282)          0 (+0)   3083 (+3083)      7 (-3335)
+605.mcf_s-1644B           0.9990  -0.0011 137.70   87.8%  1.3%  67.3%    8.0%    44.4%   19908 (+3305)     2117 (-267)        21 (+2) 210838 (-2437)
+619.lbm_s-2677B           0.9980  +0.0005  82.87   91.5%  0.0%  87.5%    8.0%    44.1%  148735 (+85840)          0 (+0) 24002 (+23968)    0 (-109786)
+623.xalancbmk_s-10B       0.9895  -0.0037   4.75   72.0% 17.3%  48.1%   23.0%    23.3%       930 (-85)     1968 (+163)    5891 (+236)     1652 (-83)
+625.x264_s-20B            1.0000  +0.0000   1.41   42.1%  0.0%  25.3%   54.0%     4.7%         37 (+0)          0 (+0)       159 (+0)         0 (+0)
+627.cam4_s-573B           1.0000  +0.0000   0.16   23.6%  0.0%   0.8%   60.4%    52.4%         32 (+0)          0 (+0)        53 (+0)         0 (+0)
+654.roms_s-1390B          0.9973  -0.0051  33.66   90.9%  0.0%  88.2%    8.3%    26.4%  29343 (+12009)       320 (+31)  12533 (+9033)  4950 (-21149)
+657.xz_s-2302B            0.9994  +0.0000   1.34   48.5%  1.8%  27.7%   33.6%    32.3%       1051 (+0)         25 (+0)       396 (+0)         9 (+0)
+
+All traces, sampled fills: kept_dead 237627 (+119279), evicted_sooner 41346 (+1102), should_bypass 62175 (+41032), wrong_bypass 279733 (-160469). The largest kind of mistake is wrong_bypass. Mistakes of every kind are addressed by changing what the policy remembers or how it decides, not by moving one threshold.
+Metadata: 47.75 KB SRAM, 0.0385 mm2 at 22 nm (reported, not scored).

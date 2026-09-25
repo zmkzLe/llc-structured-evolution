@@ -1,0 +1,8 @@
+validator: /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/yaml_run
+  tree /home/khoile0315/champsim_validate module validate_policy
+  33 traces at 50000000 + 100000000, 8 workers, sim timeout 18000 s
+  search stop 2026-09-23T23:00:00Z, deadline 2026-09-24T04:00:00Z, drain False, fake None
+waiting for /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/yaml_run/store
+[2026-09-23T16:25:49Z] started {"id": "c41837327dd0", "score": 1.0}
+[2026-09-23T19:25:41Z] validated {"id": "c41837327dd0", "score": {"all": 1.0, "training": 1.0, "held_out": 1.0}, "gap": {"difference": 0.0, "ratio": 1.0}, "seconds": 10792.2}
+[2026-09-24T04:00:36Z] past the deadline with nothing running: done

@@ -1,0 +1,165 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_comprehensive_confidence
+doc: >
+  Integrates confidence into all prediction aspects: eviction priority (ETR) and
+  bypass decisions. A new value word calculates ETR from a confidence-adjusted RDP,
+  making lines with low-confidence predictions easier to evict, combating kept_dead
+  errors. Bypass logic uses confidence-adjusted RDP for both absolute and relative
+  tests to reduce wrong_bypasses. Faster aging and sensitive RDP training are retained.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 4                   # GRANULARITY: age faster
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - deconfident_rdp_gt: {rdp_table: rdp, conf_table: bypass_confidence, index: pc_sig, scale: 4, threshold: 73}
+    - deconfident_exceeds_victim: {rdp_table: rdp, conf_table: bypass_confidence, index: pc_sig, div: 8, scale: 4}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bypass_confidence
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: 1                   # Start with neutral confidence
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - train: {table: bypass_confidence, index: signature, op: increment} # Reuse -> increase confidence
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 8}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 8}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: bypass_confidence, index: signature, op: decrement} # Old -> decrease confidence
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: bypass_confidence, index: signature, op: decrement} # Replaced before use -> decrease confidence
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 4}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 4}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when:
+        deconfident_rdp_gt: {rdp_table: rdp, conf_table: bypass_confidence, index: pc_sig, scale: 4, threshold: 73}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {deconfident_etr_from_rdp: {rdp_table: rdp, conf_table: bypass_confidence, index: pc_sig, div: 8, scale: 4}}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: deconfident_rdp_gt
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+    threshold:
+      int: [0, 127]
+  means: 'Reads the value ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An
+    absent entry in rdp_table is treated as a value of 0. The conf_table is assumed to be fully initialized,
+    and its maximum value is 3. Calculates an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val)
+    * scale). If the result of the subtraction is negative, it is treated as 0. Returns true if this adjusted_rdp
+    is greater than the threshold.
+
+    '
+- name: deconfident_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent rdp_val
+    is treated as 0. The conf_table is assumed to be fully initialized, and its maximum value is 3. Calculates
+    an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val) * scale). If the result of the subtraction
+    is negative, it is treated as 0. Calculates a predicted_etr value as adjusted_rdp divided by div,
+    using integer division. Returns true if predicted_etr is greater than the absolute value of the victim
+    way''s key.'
+- name: deconfident_etr_from_rdp
+  place: value
+  params: {rdp_table: table, conf_table: table, index: signature, div: {int: [1, 128]}, scale: {int: [0, 16]}}
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent rdp_val is 0.
+    An absent conf_val is its init value (0). Max confidence is 3.
+    Calculates adjusted_rdp = rdp_val - ((3 - conf_val) * scale). If negative, adjusted_rdp is 0.
+    The final value is adjusted_rdp / div, using integer division.

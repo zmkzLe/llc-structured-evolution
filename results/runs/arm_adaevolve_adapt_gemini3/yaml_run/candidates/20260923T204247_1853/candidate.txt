@@ -1,0 +1,8 @@
+===== STRUCTURE_DESCRIPTION =====
+name: <policy_name>
+doc: >
+  1. Budget: <bit-budget reconciliation>
+  2. Target: <single subsystem altered>
+  3. Invariant: <preserved from Mockingjay>
+<the rest of the actual YAML structure description>
+===== NEW_WORDS =====

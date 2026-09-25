@@ -1,0 +1,93 @@
+Guidance version 5, written after 52 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 7 scored design(s); best 1.00252 (+0.25% against the seed)
+- name: deconfident_rdp_gt
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+    threshold:
+      int: [0, 127]
+  means: 'Reads the value ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An
+    absent entry in rdp_table is treated as a value of 0. The conf_table is assumed to be fully initialized,
+    and its maximum value is 3. Calculates an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val)
+    * scale). If the result of the subtraction is negative, it is treated as 0. Returns true if this adjusted_rdp
+    is greater than the threshold.
+
+    '
+# used by 7 scored design(s); best 1.00252 (+0.25% against the seed)
+- name: deconfident_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent rdp_val
+    is treated as 0. The conf_table is assumed to be fully initialized, and its maximum value is 3. Calculates
+    an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val) * scale). If the result of the subtraction
+    is negative, it is treated as 0. Calculates a predicted_etr value as adjusted_rdp divided by div,
+    using integer division. Returns true if predicted_etr is greater than the absolute value of the victim
+    way''s key.'
+# used by 1 scored design(s); best 1.00252 (+0.25% against the seed)
+- name: train_sampler_match
+  place: step
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 127]
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    sample: state
+    scale:
+      int: [1, 2]
+  means: Performs training for a sampler match based on the reuse distance 'sample' (age). First, it trains
+    the rdp_table using the 'toward' operation. The target value is min(sample * scale, rdp_table.max).
+    The entry moves one step toward the target if the difference from the target is at least min_diff.
+    Second, if the 'sample' value is less than conf_thresh, it increments the conf_table entry at the
+    same index.
+# used by 1 scored design(s); best 1.00159 (+0.16% against the seed)
+- name: confidence_ranked_etr
+  place: value
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+  means: Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val'
+    is treated as 0. 'conf_val' is read from its table, with an absent entry read as its init value (0).
+    The maximum value for confidence is 3. If rdp_val is greater than 73, the function returns max_etr.
+    Otherwise, it calculates a base_etr = rdp_val / div using integer division. It calculates an adjustment
+    = (3 - conf_val). The final returned value is min(max_etr, base_etr + adjustment).
+# used by 1 scored design(s); best 1.00055 (+0.05% against the seed)
+- name: high_rdp_and_confident_bypass
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: True when the entry for the index in rdp_table is present and its value is greater than rdp_thresh,
+    AND the entry for the same index in conf_table has a value greater than conf_thresh. An absent entry
+    in rdp_table makes the condition false. An absent entry in conf_table is read as its init value.
+Names also taken (declared by a design not scored yet, or not shown above): confidence_adjusted_etr, train_rdp_and_rpc_on_match, high_rdp_and_confident, confident_victim_exceed, is_confident, moving_average_train, high_rdp_and_low_conf, lrh_adjusted_etr, deconfident_etr_from_rdp, confidence_penalized_etr
+
+Refused among the last 10 candidates, and why: schema_rejected 2 (name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mj_agile_rdp_lenient_conf_revert'); victim.bypass_when.0 Value error, 'high_rdp_and_confident_bypass': not a word of the grammar here, nor a declared condition word (written: {'high_rdp_and_confident_...: 73, 'conf_thresh': 1}}) victim.bypass_when.1 Value error, 'confident_vi). words_refused 6 (the new words must be a YAML list of words; name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'high_rdp_and_confident_bypass_v2'); train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name)
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 12 times (words_refused): high_rdp_and_confident_bypass: already declared in this run with another definition; a word is never changed, so declare a new name; 2 times (words_refused): the new words must be a YAML list of words; 2 times (words_refused): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'high_rdp_and_confident_bypass_v2')
+
+Your most successful changes, leading to design 629f9c3972a2, have modified `samplers` and `procedures.access` by introducing new words like `deconfident_exceeds_victim` that combine reuse prediction with confidence. In contrast, your single attempt to alter `on_hit` and `signatures` caused a large performance loss. You must stop submitting proposals that are guaranteed to be refused; you have been rejected sixteen times for trying to redefine `high_rdp_and_confident_bypass` and several times for using invalid names. To reuse an idea, you must declare it with a new, valid name. The largest remaining challenge is a conflict in your policy's decisions. On traces like `605.mcf_s` and `619.lbm_s`, the dominant mistake is `wrong_bypass`, showing your bypass logic is too aggressive. Yet on `627.cam4_s` and `654.roms_s`, the main error is `kept_dead`, indicating your eviction choices are poor at identifying lines with no future reuse. This suggests the policy needs a more unified way to rank lines. The success of `confidence_ranked_etr` points to a solution. You should focus on creating a single value function that calculates an eviction rank from both predicted reuse distance and its confidence. The current vocabulary may not be able to directly compare the rank of an incoming line to the rank of a potential victim within a bypass condition, so a new word could express this comparison to fix both `wrong_bypass` and `kept_dead` mistakes.

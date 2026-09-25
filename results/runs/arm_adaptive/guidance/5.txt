@@ -1,0 +1,109 @@
+Guidance version 5, written after 50 candidates.
+
+New words accepted this run, with the declaration to repeat verbatim to reuse one (the same name with another definition is refused; for another meaning choose a name none of these use):
+- name: train_rdp_inc_conf_inc
+  place: step
+  params: {conf_table: table, index: signature, rdp_table: table}
+  means: Increments the rdp_table entry at the given index. Simultaneously, increments the conf_table
+    entry at the same index. The training for each table is identical to the 'increment' TrainOp.
+- name: train_rdp_toward_conf_dec
+  place: step
+  params:
+    conf_table: table
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    scale:
+      int: [1, 10]
+  means: 'Trains the rdp_table toward the value ''age'', scaled by scale, with a minimum difference of
+    min_diff. Simultaneously, decrements the conf_table entry at the same index. The rdp_table training
+    is identical to the ''toward'' TrainOp. The conf_table training is identical to the ''decrement''
+    TrainOp.
+
+    '
+- name: my_confident_rdp_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+  means: 'True when the rdp_table entry at the index is present, its value divided by div (integer division)
+    is greater than the absolute value of the chosen victim''s key, AND the conf_table entry at the index
+    is present and its value is its maximum value (2^width - 1). False otherwise. Only for use in bypass_when.
+
+    '
+- name: my_confident_rdp_gt_threshold
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: 'True when the rdp_table entry at the index is present and its value is greater than rdp_thresh,
+    AND the conf_table entry at the same index is present and its value is its maximum value (2^width
+    - 1). False otherwise.
+
+    '
+- name: confident_bypass_victim
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    div:
+      int: [1, 1024]
+    index: signature
+    rdp_table: table
+  means: Reads the victim key of the chosen victim way. Reads the rdp_table entry at the given index;
+    if absent, the value is 0. True if this rdp value, divided by div (integer division), is greater than
+    the absolute value of the victim key, AND the entry in conf_table at the given index has a value greater
+    than or equal to conf_thresh. This word can only be used in bypass_when.
+- name: confident_bypass_rdp
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: 'True when the entry in rdp_table at the given index is present and its value is greater than
+    rdp_thresh, AND the entry in conf_table at the given index has a value greater than or equal to conf_thresh.
+    False if the rdp_table entry is absent. An entry in conf_table always exists and is initialized to
+    zero.
+
+    '
+- name: confident_table_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 1024]
+    index: signature
+    rdp_table: table
+  means: True if the entry for the index in conf_table is present and at its maximum value, AND the value
+    from rdp_table[index]/div (integer division) is greater than the absolute value of the victim key
+    of the way the victim search chose. An absent entry in rdp_table is treated as a value of 0. False
+    otherwise.
+- name: confident_rdp_greater_than
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    threshold:
+      int: [0, 127]
+  means: 'True if the entry for the index in conf_table is present and at its maximum value, AND the entry
+    for the same index in rdp_table is present and has a value greater than the threshold. False otherwise.
+
+    '
+
+Refused among the last 10 candidates, and why: schema_rejected 1 (1 validation error for StructureDescription victim.bypass_when.1 Value error, 'confident_bypass_rdp': not a word of the grammar here, nor a declared condition w). words_refused 2 (the new words must be a YAML list of words)
+Refusal kinds seen more than once this run, a pattern to stop: 6 times (schema_rejected): duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.; 3 times (words_refused): the new words must be a YAML list of words; 3 times (words_refused): confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name; 2 times (words_refused): 4 validation errors for NewWord params.cmp.str Input should be a valid string [type=string_type, input_value={'symbol': ['Comparison']}, input_type=dict] For fu; 2 times (schema_rejected): 1 validation error for StructureDescription name String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_dea
+
+Your most successful changes, leading to the best design `c8957d2b2855`, have been modifications to `procedures.access` and `samplers`. In contrast, altering `state` has consistently degraded performance and should be avoided. You must stop submitting invalid designs, as almost half of your proposals are rejected for recurring issues like the `duplicate key 'train'` syntax error and attempts to redefine existing words. Your best policy's largest mistake on high-headroom traces like `605.mcf_s` and `619.lbm_s` is `wrong_bypass`, showing that your bypass conditions in `victim.bypass_when` are too aggressive and discard useful data. On other traces such as `627.cam4_s` and `654.roms_s`, the main error is `kept_dead`, which points to poor victim selection logic within `procedures.access`. To address the prevalent `wrong_bypass` mistake, the policy needs to better judge if an incoming line will be reused sooner than the chosen victim. While words like `confident_bypass_victim` have shown some promise, the vocabulary lacks a way to directly compare a predicted value from a table for the incoming line against the same table's value for the victim. A new condition word enabling this direct comparison of predicted characteristics could create a more discerning and effective bypass decision.

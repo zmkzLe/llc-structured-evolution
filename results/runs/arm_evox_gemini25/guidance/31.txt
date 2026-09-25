@@ -1,0 +1,14 @@
+Guidance version 31, written after 312 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.98046 (-1.95% against the seed)
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the
+    fill was bypassed.
+
+Refused among the last 10 candidates, and why: malformed 1 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 8 (Input should be a valid dictionary or instance of StructureDescription (written: '<the complete structure ...ing the strategy above>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the complete structure description, in YAML>'))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 17 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the complete structure description, in YAML>'); 5 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+You must stop submitting placeholder text like `<the structure description, YAML>`, as this has caused nearly all recent proposals to be refused and is preventing any progress. The few scored attempts have not improved upon the seed; the one that modified `on_access`, `on_fill`, `samplers`, and `state` simultaneously performed worse, indicating that broad, simultaneous changes are not effective. The largest opportunity for improvement is on traces with significant headroom like `605.mcf_s`, `619.lbm_s`, and `459.GemsFDTD`, where the dominant mistake is `wrong_bypass`. This error, along with the `should_bypass` mistakes on `627.cam4_s`, shows the bypass decision is flawed. To fix this, the policy must remember which lines it bypasses to learn from these errors. The vocabulary lacks a way to declare state for addresses not in the cache. You should propose a new word to define a structure that tracks recently bypassed lines, perhaps by their address hash. This new state would allow the policy to detect when a bypassed line is accessed again, enabling it to learn from its `wrong_bypass` errors and refine its insertion logic.

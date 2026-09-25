@@ -1,0 +1,15 @@
+- name: dynamic_max_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    limit:
+      int: [0, 127]
+    table: table
+  means: >
+    True when the entry of the table at the index is present and either its value is strictly greater
+    than the limit, or no way in the access's set has its field strictly less than zero and the table
+    entry divided by div (integer division) is strictly greater than the maximum of that field across
+    all ways of the access's set. False otherwise. Nothing is written.

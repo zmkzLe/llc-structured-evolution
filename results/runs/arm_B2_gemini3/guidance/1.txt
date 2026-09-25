@@ -1,0 +1,65 @@
+Guidance version 1, written after 10 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.99975 (-0.03% against the seed)
+- name: signed_gt
+  place: condition
+  params:
+    field: state
+    min_val:
+      int: [-16, 0]
+  means: True when the signed per_line field of the way being visited is strictly greater than min_val.
+    False otherwise. Nothing is written.
+# used by 1 scored design(s); best 0.99910 (-0.09% against the seed)
+- name: better_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    limit:
+      int: [0, 127]
+    table: table
+  means: True when the entry of the table at the index is present and either its value is strictly greater
+    than the limit, or both the field of the victim way chosen by find_victim is greater than or equal
+    to zero and the table entry divided by div (integer division) is strictly greater than that field
+    of the victim way. False otherwise. Nothing is written.
+# used by 1 scored design(s); best 0.99702 (-0.30% against the seed)
+- name: predicted_exceeds_live_victim
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    table: table
+  means: True when the entry of the table at the index is present, the victim way chosen by find_victim
+    has its field greater than or equal to zero, and the table entry divided by div is strictly greater
+    than that victim way's field. False if the table entry is absent or if the victim way's field is strictly
+    less than zero. Nothing is written.
+# used by 1 scored design(s); best 0.99657 (-0.34% against the seed)
+- name: smart_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    table: table
+  means: True when the entry of the table at the index is present, and either the table entry is greater
+    than or equal to 95, or the victim way chosen by find_victim has its field greater than or equal to
+    0 and the table entry divided by div is strictly greater than that victim way's field. False if the
+    table entry is absent or if neither condition holds. Nothing is written.
+# used by 1 scored design(s); best 0.95113 (-4.89% against the seed)
+- name: tick_mockingjay
+  place: value
+  params: {state: state}
+  means: Reads the state field. If the value is between 1 and 15 inclusive, returns the value minus 1.
+    If the value is 0, returns 16. If the value is 16 or greater, returns the value plus 1, clamped to
+    31.
+Names also taken (declared by a design not scored yet, or not shown above): safe_exceeds_victim
+
+Refused among the last 10 candidates: none.
+
+The best design remains the seed, Mockingjay. Your most successful modification improved upon its parent by changing procedures.access, samplers, signatures, tables, victim.bypass_when, and introducing the new word better_bypass. Conversely, broad changes to on_fill, on_hit, victim.extremum, victim.key, and victim.tie_break resulted in significant performance drops, so you should stop altering these core replacement mechanisms. The largest remaining mistake on the traces with the most headroom (605.mcf_s-1644B, 619.lbm_s-2677B, 459.GemsFDTD-1491B, and 433.milc-127B) is wrong_bypass, meaning the policy frequently bypasses lines that are reused before any resident line. To address this, you should make victim.bypass_when more conservative, ensuring lines are inserted rather than bypassed when their predicted reuse is uncertain. On 627.cam4_s-573B, the main issue is should_bypass, while 657.xz_s-2302B suffers from kept_dead. To balance these conflicting bypass errors, focus on refining what the policy remembers in its tables and samplers, and how it decides to bypass in victim.bypass_when. A new word could be declared to express a dynamic bypass threshold that compares the incoming line's predicted reuse distance against the maximum or average predicted reuse distance of the resident lines, which the fixed vocabulary cannot easily represent.

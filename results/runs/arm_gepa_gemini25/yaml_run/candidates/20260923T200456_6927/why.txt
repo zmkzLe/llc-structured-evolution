@@ -1,0 +1,2 @@
+Candidate 1660886915c8 FAILED at words_refused; it was not scored.
+Reason: record_bypass_on_predict: already declared in this run with another definition; a word is never changed, so declare a new name

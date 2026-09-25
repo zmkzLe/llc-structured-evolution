@@ -1,0 +1,10 @@
+===== STRUCTURE_DESCRIPTION =====
+# A one-line comment explaining what your design does and why.
+name: a_short_descriptive_name
+doc: >
+  A more detailed explanation of the design choices, the problem being
+  addressed, and how the new mechanism works. This is for human readers and
+
+  does not affect the simulation.
+<the complete structure description, in valid YAML>
+===== NEW_WORDS =====

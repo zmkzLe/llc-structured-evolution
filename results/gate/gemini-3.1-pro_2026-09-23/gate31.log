@@ -1,0 +1,19 @@
+=== attempt 1 03:33:55
+exit 0
+  483.xalancbmk-127B     IDENTICAL  343144 log lines, 0 differ, 53957 bypasses in the port, cycles (22154479, 22154479)
+  450.soplex-247B        IDENTICAL  254497 log lines, 0 differ, 0 bypasses in the port, cycles (7347097, 7347097)
+repairs: 0
+PASS: the generated C++ makes the port's decisions
+=== attempt 2 03:44:42
+exit 0
+  483.xalancbmk-127B     IDENTICAL  343144 log lines, 0 differ, 53957 bypasses in the port, cycles (22154479, 22154479)
+  450.soplex-247B        IDENTICAL  254497 log lines, 0 differ, 0 bypasses in the port, cycles (7347097, 7347097)
+repairs: 0
+PASS: the generated C++ makes the port's decisions
+=== attempt 3 03:55:10
+exit 0
+  483.xalancbmk-127B     IDENTICAL  343144 log lines, 0 differ, 53957 bypasses in the port, cycles (22154479, 22154479)
+  450.soplex-247B        IDENTICAL  254497 log lines, 0 differ, 0 bypasses in the port, cycles (7347097, 7347097)
+repairs: 0
+PASS: the generated C++ makes the port's decisions
+=== done 04:05:45

@@ -1,0 +1,15 @@
+===== STRUCTURE_DESCRIPTION =====
+# Your design's name, documentation, and complete YAML structure go here.
+# Start by modifying the `mockingjay` design provided in the examples.
+name: my_new_design
+doc: >
+  A one-line explanation of what this design changes and why.
+# ... the rest of your complete YAML description, modified from mockingjay ...
+victim:
+  key: etr
+  # ... etc.
+
+===== NEW_WORDS =====
+
+# If your design requires new vocabulary, define it here as a YAML list.
+# If not, leave this section empty as shown below.

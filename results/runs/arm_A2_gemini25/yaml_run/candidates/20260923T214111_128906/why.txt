@@ -1,0 +1,2 @@
+Candidate 0704927c8a81 FAILED at words_refused; it was not scored.
+Reason: confident_pred_gt_victim_etr, pred_exceeds_blended_etr: already declared in this run with another definition; a word is never changed, so declare a new name

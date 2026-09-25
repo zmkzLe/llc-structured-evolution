@@ -1,0 +1,21 @@
+- name: train_rdp_hit
+  place: step
+  params: {rdp_table: table, conf_table: table, index: signature, age: state, scale: {int: [1,10]}, min_diff: {int: [0, 127]}}
+  means: >
+    Trains the rdp_table at the given index with the 'toward' op, using the provided age, scale, and min_diff.
+    The rdp_table must be 'unset'. Then, increments the conf_table entry at the same index.
+
+- name: train_rdp_miss
+  place: step
+  params: {rdp_table: table, conf_table: table, index: signature}
+  means: >
+    Increments the rdp_table entry at the given index. The rdp_table must be 'unset', so an absent entry
+    becomes rdp_table.max. Then, decrements the conf_table entry at the same index.
+
+- name: confident_long_reuse
+  place: condition
+  params: {rdp_table: table, conf_table: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    True if the rdp_table entry at index is present and its value is greater than the threshold,
+    AND the conf_table entry at the same index is at its maximum value. False otherwise.
+    The rdp_table must be 'unset'.

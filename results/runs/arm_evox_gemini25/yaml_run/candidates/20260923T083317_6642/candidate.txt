@@ -1,0 +1,204 @@
+===== STRUCTURE_DESCRIPTION =====` with the correct parameters.
+
+**Example Idea:** To address the `wrong_bypass` problem, you could invent a new table to store signatures of bypassed lines. Then, on a cache miss, you check if the miss's signature is in that table. If it is, it means a previous bypass decision for that signature was likely wrong. You can then use a `train` rule to update the main `rdp` table to be more conservative for that signature.
+
+#### **2. OTHER DESIGN EXAMPLES**
+These complete, validated designs show different ways to use the vocabulary. Do not copy them, but learn from their structures.
+
+--- LRU: recency stamps, the oldest evicted ---
+```yaml
+# Reference: DPC4-ChampSim/replacement/lru
+name: lru
+doc: >
+  Least recently used: a global clock is stamped into a line on fill and on
+  non-write hits; the victim is the smallest stamp.
+
+state:
+  - name: recency
+    scope: per_line
+    kind: counter
+    width: 64
+    init: ZERO
+  - name: clock
+    scope: global
+    kind: counter
+    width: 64
+    init: ZERO
+
+victim:
+  key: recency
+  extremum: min
+  tie_break: first
+  on_search: none
+
+on_fill:
+  - set: {recency: {tick: clock}}
+
+on_hit:
+  - when: {type_not_in: [WRITE]}
+    set: {recency: {tick: clock}}
+```
+--- SRRIP: re-reference intervals, aged on a miss ---
+```yaml
+# Textbook SRRIP. ChampSim's srrip module (archived) never receives fill events,
+# so it does not match this description.
+name: srrip
+doc: >
+  Static RRIP: a 2-bit RRPV per line; evict the first way at the maximum, aging
+  the set by the shortfall if none has reached it. Insert at MAX-1, promote to 0.
+
+state:
+  - name: rrpv
+    scope: per_line
+    kind: counter
+    width: 2
+    init: MAX
+
+victim:
+  key: rrpv
+  extremum: max
+  tie_break: first
+  on_search: age_to_max
+
+on_fill:
+  - set: {rrpv: {const: MAX_MINUS_1}}
+
+on_hit:
+  - set: {rrpv: {const: ZERO}}
+```
+--- DRRIP: two insertion rules the sets choose between by set dueling ---
+```yaml
+# Reference: DPC4-ChampSim/replacement/drrip
+name: drrip
+doc: >
+  Dynamic RRIP: set dueling between SRRIP insertion (MAX-1) and BRRIP insertion
+  (MAX, every 32nd fill at MAX-1), arbitrated by a per-CPU saturating PSEL counter.
+
+state:
+  - name: rrpv
+    scope: per_line
+    kind: counter
+    width: 2
+    init: ZERO
+  - name: psel
+    scope: per_cpu
+    kind: saturating
+    width: 10
+    init: MID
+  - name: brrip_ctr
+    scope: global
+    kind: counter
+    width: 6
+    init: ZERO
+
+victim:
+  key: rrpv
+  extremum: max
+  tie_break: first
+  on_search: age_to_max
+
+duel:
+  selector: psel
+  arm_a:                  # SRRIP
+    set: {rrpv: {const: MAX_MINUS_1}}
+  arm_b:                  # BRRIP
+    set:
+      rrpv:
+        default: {const: MAX}
+        counter: brrip_ctr
+        every_n: 32
+        then: {const: MAX_MINUS_1}
+  leader_a_category: 1
+  leader_b_category: 0
+  leader_a_delta: 1
+  leader_b_delta: -1
+  follower_uses_b_when: {counter: psel, cmp: gt, threshold: MAX_OVER_2}  # 512 > 511: followers start on BRRIP
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {rrpv: {const: MAX_MINUS_1}}
+    stop: true
+  - use_duel: true
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    set: {rrpv: {const: MAX_MINUS_1}}
+    stop: true
+  - set: {rrpv: {const: ZERO}}
+```
+--- SHiP: a PC-signature table trained by a sampler, deciding insertion ---
+```yaml
+# Reference: DPC4-ChampSim/replacement/ship. Sizes are for the DPC4 LLC, 4096 x 12.
+name: ship
+doc: >
+  SHiP: a per-CPU table of 3-bit saturating counters, indexed by the instruction
+  address, predicts whether a filled line will be reused. A shadow LRU sampler on
+  the sampled sets trains it: a matched entry counts its signature down, and an
+  entry replaced before it was ever matched counts it up. A fill whose counter is
+  at its maximum goes in at MAX, any other at MAX-1, a writeback always at MAX-1;
+  a hit resets to 0; the victim is RRIP's.
+
+state:
+  - name: rrpv
+    scope: per_line
+    kind: counter
+    width: 2
+    init: MAX
+  - name: access_count
+    scope: global
+    kind: counter
+    width: 64
+    init: ZERO
+
+victim:
+  key: rrpv
+  extremum: max
+  tie_break: first
+  on_search: age_to_max
+
+signatures:
+  - name: pc_sig
+    source: ip
+    low_bits: 32
+    modulo: 16381
+
+tables:
+  - name: shct
+    scope: per_cpu
+    kind: saturating
+    entries: 16384
+    width: 3
+    init: ZERO
+
+samplers:
+  - name: sampler
+    scope: per_cpu
+    sets: category_zero
+    ways: 12
+    tag_bits: 46              # the line address above the LLC set index
+    fields:
+      - {name: used, kind: flag, width: 1, init: ZERO}
+      - {name: sig, kind: counter, width: 14, init: ZERO}   # ChampSim keeps the IP; only its signature is read
+      - {name: last_used, kind: counter, width: 64, init: ZERO}
+    victim: {key: last_used, extremum: min, tie_break: first}
+    on_match:
+      - train: {table: shct, index: sig, op: decrement}
+      - set: {used: {const: 1}, last_used: {tick: access_count}}
+    on_replace:
+      - when: {counter: {counter: used, cmp: eq, threshold: ZERO}}
+        train: {table: shct, index: sig, op: increment}
+    install: {used: {const: ZERO}, sig: {signature: pc_sig}, last_used: {tick: access_count}}
+
+on_access:
+  - sample: sampler
+
+on_hit:
+  - set: {rrpv: {const: ZERO}}
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {rrpv: {const: MAX_MINUS_1}}
+    stop: true
+  - set: {rrpv: {const: MAX_MINUS_1}}
+  - when: {table: {table: shct, index: pc_sig, cmp: is_max, threshold: MAX}}
+    set: {rrpv: {const: MAX}}

@@ -1,0 +1,8 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Summary of what changed and the architectural rationale.
+# [YOUR ACTUAL YAML STRUCTURE DESCRIPTION GOES HERE. NO PLACEHOLDERS!]
+===== NEW_WORDS =====
+
+# [YOUR ACTUAL YAML LIST OF NEW WORDS GOES HERE, OR NOTHING IF NONE]

@@ -1,0 +1,13 @@
+===== STRUCTURE_DESCRIPTION =====
+# Docstring explaining your change, e.g., "Increased bypass threshold to reduce wrong_bypasses."
+name: your_policy_name
+doc: >
+  Increased bypass threshold from 73 to 80 to make the policy more
+  conservative and reduce wrong_bypass errors.
+...
+# The rest of the complete, modified YAML description goes here.
+# Make sure to find and change the threshold in the victim -> bypass_when section.
+...
+===== NEW_WORDS =====
+
+# This design does not require new words, so this section will be empty.

@@ -1,0 +1,10 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_design_name
+doc: >
+  One line saying what changed and why.
+  Additional details here.
+# ... the ENTIRE complete valid YAML structure description ...
+# Do NOT use placeholders like <the structure description>.
+===== NEW_WORDS =====
+
+# Leave empty to follow the Grammar-Native Composition strategy.

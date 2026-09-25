@@ -1,0 +1,26 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 18 validation errors for StructureDescription
+procedures.access.6.set.etr.ConstValue.const
+  Field required [type=missing, input_value={'table': {'table': 'rdp'...x': 'pc_sig', 'div': 8}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+procedures.access.6.set.etr.ConstValue.table
+  Extra inputs are not permitted [type=extra_forbidden, input_value={'table': 'rdp', 'index': 'pc_sig', 'div': 8}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+procedures.access.6.set.etr.TickValue.tick
+  Field required [type=missing, input_value={'table': {'table': 'rdp'...x': 'pc_sig', 'div': 8}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+procedures.access.6.set.etr.TickValue.table
+  Extra inputs are not permitted [type=extra_forbidden, input_value={'table': 'rdp', 'index': 'pc_sig', 'div': 8}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+procedures.access.6.set.etr.CounterGatedValue.default
+  Field required [type=missing, input_value={'table': {'table': 'rdp'...x': 'pc_sig', 'div': 8}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+procedures.access.6.set.etr.CounterGatedValue.counter
+  Field required [type=missing, input_value={'table': {'table': 'rdp'...x': 'pc_sig', 'div': 8}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+procedures.access.6.set.etr.CounterGatedValue.every_n
+  Field required [type=missing, input_value={'table': {'table': 'rdp'...x': 'pc_sig', 'div': 8}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+procedures.access.6.set.etr.CounterGatedValue.then
+  Field required [type=missing, input_value={'table': {'table': 'rdp'...x': 'pc_sig', 'div': 8}}, input_type=dict]
+    For further information visit https://errors.pydant

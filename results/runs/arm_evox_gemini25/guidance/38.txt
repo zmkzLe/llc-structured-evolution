@@ -1,0 +1,14 @@
+Guidance version 38, written after 382 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.98046 (-1.95% against the seed)
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the
+    fill was bypassed.
+
+Refused among the last 10 candidates, and why: malformed 4 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; candidate is missing section(s): NEW_WORDS). schema_rejected 6 (Input should be a valid dictionary or instance of StructureDescription (written: '<your complete and valid... description goes here>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the complete and valid ... description goes here>'))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 13 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 10 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+You must stop submitting invalid proposals, as nearly all your attempts, including the last ten, are refused for containing placeholder text, missing required sections like `STRUCTURE_DESCRIPTION`, or using invalid syntax such as in your attempt to check the way index. This has prevented any evaluation of your ideas, and your best score remains no better than Mockingjay. The few valid candidates that were scored show that your changes to `on_access` and `on_fill`, and your new word `is_bypassed_fill`, have failed to improve performance. The largest opportunity for improvement remains the bypass decision. On traces with high headroom like `605.mcf_s` and `619.lbm_s`, the dominant error is `wrong_bypass`, while on `627.cam4_s` it is `should_bypass`. These opposing mistakes show the policy cannot distinguish good bypasses from bad ones because it does not remember what it has bypassed. To correct the numerous `wrong_bypass` errors, the policy needs to remember addresses it previously chose not to insert. Since the vocabulary lacks a way to declare state for addresses not in the cache, you should propose a new word to define a structure that tracks recently bypassed lines, enabling the policy to learn when a bypassed line is requested again.

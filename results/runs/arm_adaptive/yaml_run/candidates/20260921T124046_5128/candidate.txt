@@ -1,0 +1,157 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_fl_conf_bypass
+doc: >
+  Builds on mockingjay_faster_learning (the best-performing design) by adding a
+  confidence mechanism to the bypass logic. This is intended to reduce wrong_bypass
+  errors, a key weakness of the parent design. A new 2-bit confidence counter is
+  added for each RDP entry. Confidence increases on a sampled reuse hit and
+  decreases on an eviction or timeout. The bypass conditions are then gated by
+  this confidence, requiring a prediction to be confident (value >= 2) before a
+  bypass can occur.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - confident_bypass_rdp: {conf_table: rdp_confidence, conf_thresh: 2, index: pc_sig, rdp_table: rdp, rdp_thresh: 73}
+    - confident_bypass_victim: {conf_table: rdp_confidence, conf_thresh: 2, div: 8, index: pc_sig, rdp_table: rdp}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+  - name: rdp_confidence
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 4}
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp_confidence, index: signature, op: increment}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 4}
+      - train: {table: rdp_confidence, index: signature, op: increment}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp_confidence, index: signature, op: decrement}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+      - train: {table: rdp_confidence, index: signature, op: decrement}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 4}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: confident_bypass_victim
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    div:
+      int: [1, 1024]
+    index: signature
+    rdp_table: table
+  means: Reads the victim key of the chosen victim way. Reads the rdp_table entry at the given index;
+    if absent, the value is 0. True if this rdp value, divided by div (integer division), is greater than
+    the absolute value of the victim key, AND the entry in conf_table at the given index has a value greater
+    than or equal to conf_thresh. This word can only be used in bypass_when.
+- name: confident_bypass_rdp
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: 'True when the entry in rdp_table at the given index is present and its value is greater than
+    rdp_thresh, AND the entry in conf_table at the given index has a value greater than or equal to conf_thresh.
+    False if the rdp_table entry is absent. An entry in conf_table always exists and is initialized to
+    zero.
+
+    '

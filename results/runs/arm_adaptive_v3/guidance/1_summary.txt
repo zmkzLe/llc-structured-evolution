@@ -1,0 +1,42 @@
+Run so far: 10 candidates, 8 scored, 2 refused or failed (schema_rejected 1, words_refused 1).
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 1 x words_refused: confident_victim_exceed, high_rdp_and_confident: already declared in this run with another definition; a word is never changed, so declare a new name
+- 1 x schema_rejected: Value error, on_hit[1] -> procedures.access[5]: 'etr' is signed; write the literal, MAX has no meaning for it (written: {'name': 'mockingjay_inse...ue}, {'run': 'access'}]})
+The seed scored 1.00000.
+Best so far: bf70261db6bb at 1.00000, +0.00% over Mockingjay.
+
+Parts of the design changed so far (candidates that changed it, how many beat their closest earlier design, best and mean change of the score):
+- samplers: 5 tried, 3 improved, best +0.00186, mean -0.01061
+- victim.bypass_when: 5 tried, 2 improved, best +0.00186, mean -0.01022
+- new_words: 4 tried, 2 improved, best +0.00186, mean -0.00207
+- tables: 2 tried, 2 improved, best +0.00186, mean +0.00136
+- state: 1 tried, 1 improved, best +0.00087, mean +0.00087
+- on_hit: 1 tried, 0 improved, best -0.04786, mean -0.04786
+- procedures.access: 1 tried, 0 improved, best -0.04786, mean -0.04786
+- signatures: 1 tried, 0 improved, best -0.04786, mean -0.04786
+
+The last 10 candidates, oldest first:
+1. the seed, scored 1.00000
+2. scored a4fd479372a7 at 0.99715, changed 2 canonical lines in victim.bypass_when: -0.00285 against its closest earlier design
+3. scored 4f5689376c20 at 0.95214, changed 19 canonical lines in on_hit, procedures.access, samplers, signatures, victim.bypass_when: -0.04786 against its closest earlier design
+4. scored b43eb47d8ec2 at 0.99901, changed 75 canonical lines in samplers, tables, victim.bypass_when, new_words, new words high_rdp_and_confident, confident_victim_exceed: +0.00186 against its closest earlier design
+5. scored bf70261db6bb at 1.00000, changed 4 canonical lines in samplers: +0.00000 against its closest earlier design
+6. scored acfd5a0abe3a at 0.99802, changed 67 canonical lines in samplers, state, tables, victim.bypass_when, new_words, new words is_confident: +0.00087 against its closest earlier design
+7. scored b2a3b3a5095b at 0.99211, changed 33 canonical lines in samplers, new_words, new words moving_average_train: -0.00790 against its closest earlier design
+8. refused (words_refused), changed 46 canonical lines in samplers, victim.bypass_when, new_words, new words high_rdp_and_confident, confident_victim_exceed: confident_victim_exceed, high_rdp_and_confident: already declared in this run with another definition; a word is never changed, so declare a new name
+9. refused (schema_rejected): Value error, on_hit[1] -> procedures.access[5]: 'etr' is signed; write the literal, MAX has no meaning for it (written: {'name': 'mockingjay_inse...ue}, {'run': 'access'}]})
+10. scored 3363e9b1a886 at 0.99590, changed 21 canonical lines in victim.bypass_when, new_words, new words confident_victim_exceed: -0.00311 against its closest earlier design
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 52.4%, largest mistake should_bypass (53 of 550 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.3%, largest mistake wrong_bypass (212356 of 430411 sampled fills), IPC over Mockingjay's 1.0007, LLC MPKI 137.4
+- 619.lbm_s-2677B: headroom 43.9%, largest mistake wrong_bypass (109263 of 258760 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 82.6
+- 459.GemsFDTD-1491B: headroom 33.3%, largest mistake wrong_bypass (28218 of 86850 sampled fills), IPC over Mockingjay's 1.0008, LLC MPKI 27.6
+- 657.xz_s-2302B: headroom 32.1%, largest mistake kept_dead (985 of 3699 sampled fills), IPC over Mockingjay's 0.9997, LLC MPKI 1.3
+- 433.milc-127B: headroom 28.4%, largest mistake wrong_bypass (14351 of 63506 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 20.2
+
+New words accepted this run, best-scoring first:
+- high_rdp_and_confident (condition): True when the entry for the index in rdp_table is present and its value is greater than rdp_thresh, AND the entry for the same index in conf_table has reached its maximum value. An absent entry in rdp [used 2, better 1, worse 0, same 0, failed 1]
+- confident_victim_exceed (condition): A condition for use inside bypass_when. It is true when the entry for the index in conf_table has reached its maximum value, AND the value of rdp_table[index] divided by div is greater than the absolu [used 3, better 1, worse 1, same 0, failed 1]
+- is_confident (condition): True when the entry of the table at the index is greater than or equal to the threshold. The table is expected to be fully initialized (not 'unset'). [used 1, better 1, worse 0, same 0, failed 0]
+- moving_average_train (step): Reads the sample value, s, which is an age or state field. The table's maximum value, max_val, is read from its declaration. Computes the target value as T = min(s * scale, max_val). If the table entr [used 1, better 0, worse 1, same 0, failed 0]

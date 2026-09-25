@@ -1,0 +1,14 @@
+Candidate ? FAILED at words_refused; it was not scored.
+Reason: 4 validation errors for NewWord
+params.cmp.str
+  Input should be a valid string [type=string_type, input_value={'symbol': ['Comparison']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.cmp.IntRange.int
+  Field required [type=missing, input_value={'symbol': ['Comparison']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.cmp.IntRange.symbol
+  Extra inputs are not permitted [type=extra_forbidden, input_value=['Comparison'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.cmp.SymbolOf.symbol
+  Input should be a valid string [type=string_type, input_value=['Comparison'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type

@@ -1,0 +1,39 @@
+===== STRUCTURE_DESCRIPTION =====
+name: my_first_improvement
+doc: >
+  I am adding a confidence counter to the bypass mechanism. The feedback showed many
+  'wrong_bypass' errors, suggesting the current prediction is too simple. This change
+  will make the policy more conservative about bypassing.
+
+# --- PASTE THE COMPLETE, MODIFIED MOCKINGJAY YAML HERE ---
+# For example, to add a new state field, you would modify the 'state' list:
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+  # My new state field to track bypass confidence
+  - name: bypass_confidence
+    scope: per_cpu
+    kind: saturating
+    width: 4
+    init: MID
+# --- AND THEN MODIFY THE RULES THAT USE IT ---
+# ... etc. ...
+# The rest of the complete YAML description goes here.
+
+===== NEW_WORDS =====
+
+# If your design introduces new words, declare them here as a YAML list.
+# If not, leave this section empty, but KEEP THE MARKER LINE.

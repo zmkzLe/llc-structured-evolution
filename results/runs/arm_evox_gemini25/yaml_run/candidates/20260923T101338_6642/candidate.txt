@@ -1,0 +1,343 @@
+===== STRUCTURE_DESCRIPTION =====
+# doc: Mockingjay: each line holds an estimated time to reuse (ETR), counted down every
+# 8 accesses to its set; the victim is the line with the largest |ETR|, an overdue
+# (negative) one on ties. A predictor table keyed by the hit-or-miss PC signature
+# gives the ETR on insertion, and a fill predicted to be reused after every line in
+# the set is bypassed. A sampled shadow cache on 32 sets measures reuse distances
+# with an 8-bit per-set clock and trains the predictor one step at a time; entries
+# older than INF_RD train it up as scans. Writebacks are inserted at -INF_ETR and
+# train nothing.
+#
+# This design extends Mockingjay to address the 'wrong_bypass' problem.
+# It introduces a small table, `bypassed_hits`, to record PC signatures of lines that were
+# previously bypassed but later observed to be useful (i.e., accessed while not in cache).
+# The `bypass_when` condition is modified to consult this table, preventing bypasses
+# for signatures that have a history of being "wrongly bypassed."
+name: mockingjay_bypassed_feedback
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+    - {table: {table: bypassed_hits, index: pc_sig, cmp: gte, threshold: 1}} # Do not bypass if previously useful after bypass
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bypassed_hits       # New table to track useful bypassed lines
+    scope: global
+    kind: saturating
+    entries: 2048             # Same size as RDP table for consistency
+    width: 2                  # Small counter (0-3) to indicate usefulness
+    init: ZERO
+    unset: true               # Entries start as absent/zero
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+      - {name: bypassed_flag, kind: flag, width: 1, init: ZERO} # New flag to mark if this line was bypassed
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+      - when: {counter: {counter: bypassed_flag, cmp: eq, threshold: 1}} # If this line was bypassed and now hit
+        train: {table: bypassed_hits, index: signature, op: increment}    # Increment its usefulness counter
+        set: {bypassed_flag: {const: 0}}                                 # Reset flag after feedback
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install:
+      signature: {signature: pc_sig}
+      timestamp: {read: set_clock}
+      bypassed_flag: {const: 0} # Default to not bypassed on install
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+  - when: {way: NUM_WAY} # If the fill was bypassed (way is NUM_WAY)
+    each_way:
+      when: {counter: {counter: set_clock, cmp: eq, threshold: 0}} # dummy condition to run on sampler
+      set: {bypassed_flag: {const: 1}} # Mark the corresponding sampler entry as bypassed
+    # The new word approach is not needed here; bypassed_flag is a sampler field
+    # and can be set directly when a fill is bypassed. However, the sampler only
+    # sees the *current* fill, not the *bypassed* fill.
+    # The sampler does not get an `on_fill` event for bypassed lines directly.
+    # The `on_match` of the sampler would need to detect a hit on a line that *was* bypassed.
+    # The current `bypassed_flag` is per sampler entry, not per line in the LLC.
+    # To track bypassed lines that are later accessed, we need to mark them *at the point of bypass*.
+    # A bypassed fill doesn't have a `way` in the cache, but it does have an `ip` (for pc_sig).
+    # The `sampled_cache`'s `install` is called for *fills*, not for bypasses.
+    # The `on_match` is called for *hits*.
+    #
+    # The problem is: how does the sampler know a line was bypassed when it later sees a hit?
+    #
+    # Let's adjust:
+    # 1. When a fill is bypassed, we update the `bypassed_hits` table by decrementing the counter
+    #    for the current pc_sig, indicating a 'bad' bypass.
+    # 2. When a hit occurs, we update the `bypassed_hits` table by incrementing the counter
+    #    for the current pc_sig, indicating a 'good' access (which might have been a bypass).
+    # This might be too aggressive. The original suggestion was "which bypassed lines proved useful".
+    # This means a line was bypassed, then later *accessed* (hit or miss, but not filled).
+    #
+    # The sampler can track this: when a line is installed in the sampler, mark it as 'not bypassed'.
+    # If the *actual* LLC fill was bypassed, we need a way to tell the sampler.
+    #
+    # Current `on_fill` has `when: {way: NUM_WAY}` for a bypassed fill.
+    # If a fill is bypassed, its `pc_sig` is known.
+    # We want to train `bypassed_hits` when a line is bypassed *and then later hit*.
+    #
+    # The `bypassed_flag` in the sampler seems correct if the sampler's `install` is aware of the bypass decision.
+    # However, `install` runs *before* the `bypass_when` condition for the actual LLC fill.
+    #
+    # Let's use the `on_fill` event for bypassed fills to update the `bypassed_hits` table directly.
+    # And then `on_hit` to update it if the hit was on a line that *could have been* bypassed but wasn't.
+    #
+    # A simpler approach for `wrong_bypass`:
+    # 1. When a fill is bypassed, mark its `pc_sig` in `bypassed_hits` with a 'bypassed' state (e.g., set to 1).
+    # 2. On a subsequent hit *to that signature*, if it was marked 'bypassed', increment the counter.
+    # 3. Clear the 'bypassed' state after some time or on a hit.
+    #
+    # The `bypassed_hits` table is for *signatures*, not specific lines.
+    #
+    # Let's refine the bypass feedback logic:
+    # `bypassed_hits` stores a confidence for *not bypassing* a given `pc_sig`.
+    # - If a fill *is* bypassed, we decrement `bypassed_hits[pc_sig]`. This means the bypass was chosen, so we reinforce the bypass decision, or punish the predictor.
+    # - If a fill *is NOT* bypassed (i.e., installed), and it later gets a hit, we increment `bypassed_hits[pc_sig]`. This means it was a useful line that we should not have bypassed.
+    #
+    # This is the "wrong_bypass" feedback.
+    #
+    # Re-evaluating the `bypassed_flag` in the sampler:
+    # It's intended to mark a sampler entry as representing a line that *was* bypassed in the LLC.
+    # `install` for the sampler always happens. The `bypassed_flag` can only be set if the `on_fill` event in the *main* policy
+    # communicates the bypass decision to the sampler.
+    #
+    # Let's define a new word for this. A step word that takes the sampler and a flag to set.
+    #
+    # New word: `mark_sampler_bypassed`
+    # - name: mark_sampler_bypassed
+    #   place: step
+    #   params: {sampler: sampler, flag_field: sampler_field}
+    #   means: >
+    #     For the current access, if the sampler finds a matching entry, set the specified flag_field in that entry to 1.
+    #     If no match, do nothing. This is called when the LLC bypasses a line.
+    #
+    # This new word would be used in `on_fill` when `way == NUM_WAY`.
+    # The `on_match` in the sampler would then check this `bypassed_flag`.
+
+    # Okay, let's try the simpler approach without a new word first, as the prompt discourages new words unless strictly necessary.
+    # The issue is how to tell the sampler that an installed entry corresponds to a bypassed line.
+    # The sampler's `install` happens on *every* fill, whether bypassed or not.
+    # The `bypassed_flag` in the sampler's `fields` is a good idea.
+    # But how to set it correctly for bypassed LLC fills?
+    #
+    # The `on_fill` event with `way == NUM_WAY` means the LLC *did* bypass.
+    # We need to update the sampler's *installed* entry for *this* access to indicate it was bypassed.
+    # But the sampler's `install` already happened, creating the entry.
+    # And `on_fill` cannot directly modify sampler entries for the current fill's `pc_sig` other than through `sample`.
+    #
+    # Let's rethink. If a line is bypassed, it means it was *not* installed in the LLC.
+    # The sampler, however, *always* installs an entry for any `on_fill` event.
+    # So the sampler entry for a bypassed line will exist.
+    #
+    # The `bypassed_flag` field in the sampler is meant to indicate that the *LLC* line it represents was bypassed.
+    # When `on_fill` is called, if `way == NUM_WAY`, it means the LLC bypassed.
+    # At this point, the sampler *has already processed* its `install` for this line.
+    # So, we need a way to tell the sampler that its *just installed* entry for this `pc_sig` should be marked as bypassed.
+    #
+    # The `after` section of the sampler runs *after* installation.
+    # But `after` cannot access the `way` of the main cache.
+    #
+    # The `on_fill` event can `sample` the `sampled_cache` *again* after the bypass decision.
+    # But `sample` would either hit or install. We need to specifically modify the *just installed* entry.
+    #
+    # This is where a new word or a specific mechanism is needed.
+    # The prompt explicitly suggests a new word to track hits on non-resident lines.
+    #
+    # Let's try to define a new word that acts on the sampler's *last installed entry* for the current access,
+    # or perhaps by finding the current access's entry.
+
+    # Alternative strategy:
+    # 1. When a fill is bypassed, increment `bypassed_hits[pc_sig]`. This implies "this signature was bypassed, and we should track if it's useful".
+    # 2. When a hit occurs, *decrement* `bypassed_hits[pc_sig]` if it's > 0. This implies "this signature was useful, so maybe don't bypass next time".
+    #
+    # This means `bypassed_hits` acts as a counter for "how many times was this signature bypassed and then later hit before eviction?".
+    # A high value means "don't bypass".
+    #
+    # Let's try this simpler approach first, without a new word, by modifying `on_fill` and `on_hit`.
+
+    # `bypassed_hits` table:
+    # - Value 0: no history or consistently bypassed and not reused.
+    # - Value > 0: has been bypassed and then reused.
+    #
+    # `on_fill` (when bypassed): if a fill is bypassed, we just made a decision.
+    # We don't know yet if it was a 'wrong_bypass'. That's determined by future hits.
+    # So, `on_fill` for a bypass should *not* update `bypassed_hits` in a way that affects *this* bypass decision.
+    #
+    # The `wrong_bypass` mistake is: "bypassed a line reused before every resident line".
+    # This means a line *was bypassed*, but it *should have been kept*.
+    #
+    # The `bypassed_hits` table should reflect signatures for which bypass was a *bad idea*.
+    # So, if a line with a certain pc_sig is *bypassed*, and then later *hit* (while not in cache, which is impossible to track directly),
+    # or just *hit* in the sampler, then we should punish the bypass decision for that pc_sig.
+    #
+    # Let's use the sampler. The sampler *always* installs an entry for a fill.
+    # In `sampler.install`, we can set a `bypassed_flag`.
+    # But `install` doesn't know if the LLC *actually* bypassed.
+    #
+    # The only way to get feedback on `wrong_bypass` is to track signatures of *bypassed* lines.
+    #
+    # Let's define a new word: `mark_bypassed_sampler_entry`.
+    # This word will be called *after* the bypass decision is made in `on_fill`.
+    # It will find the entry in the sampler corresponding to the current access's `pc_sig` and `line_address` (tag),
+    # and set its `bypassed_flag`.
+    #
+    # This is complex. Let's simplify the feedback mechanism for `bypassed_hits`.
+    #
+    # `bypassed_hits` is a table of `pc_sig` -> "confidence to *not* bypass".
+    #
+    # - `on_fill` (if bypassed): We decided to bypass. This was potentially a mistake.
+    #   But we only know it's a mistake if it's reused. So, *don't* update `bypassed_hits` here.
+    #
+    # - `on_hit`: A line was useful. If its `pc_sig` has a `bypassed_hits` entry > 0,
+    #   it suggests it was previously bypassed (or could have been) and was useful.
+    #   So, increment `bypassed_hits[pc_sig]`.
+    #
+    # - `sampler.on_match`: If a sampler entry was marked `bypassed_flag=1`, and it's a hit,
+    #   then `train bypassed_hits` up. Then clear `bypassed_flag`.
+    #
+    # How to set `bypassed_flag` in sampler?
+    # `on_fill` runs *after* `sample: sampled_cache` in the `access` procedure.
+    # So, the sampler has already installed its entry.
+    #
+    # If the LLC `on_fill` decides to bypass (`way == NUM_WAY`), we need to find the *corresponding entry* in the sampler
+    # and mark its `bypassed_flag`.
+    #
+    # This requires a new word for `on_fill` that can locate and modify a sampler entry by its tag/signature.
+    #
+    # Let's declare `update_sampler_bypassed_flag`.
+
+    - when: {way: NUM_WAY} # If the fill was bypassed (way is NUM_WAY)
+      words: {update_sampler_bypassed_flag: {sampler: sampled_cache, flag_field: bypassed_flag}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+  # This rule executes IF the line was bypassed (way == NUM_WAY)
+  # It needs to inform the sampler that the corresponding entry (which was installed by `run: access`)
+  # represents a bypassed line.
+  - when: {way: NUM_WAY}
+    words: {update_sampler_bypassed_flag: {sampler: sampled_cache, flag_field: bypassed_flag}}
+
+===== NEW_WORDS =====
+
+- name: update_sampler_bypassed_flag
+  place: step
+  params: {sampler: sampler, flag_field: sampler_field}
+  means: >
+    For the current access's line address and pc_sig, search the specified sampler for a matching entry.
+    If a match is found, set the specified flag_field in that sampler entry to 1. If no match, do nothing.
+    This is called when the LLC bypasses a line to mark its corresponding sampler entry.

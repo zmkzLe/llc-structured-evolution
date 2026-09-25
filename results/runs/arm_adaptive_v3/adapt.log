@@ -1,0 +1,19 @@
+guidance writer: /home/khoile0315/oe_out/arm_adaptive_v3/yaml_run -> /home/khoile0315/oe_out/arm_adaptive_v3/guidance.txt, every 10 candidates, model gemini-2.5-pro, search pid 11315, stub None
+[2026-09-22T10:04:17Z] version 1 after 10 candidates: 4079 chars, 6568 tokens in 41.5 s
+[2026-09-22T11:24:52Z] version 2 after 21 candidates: 6110 chars, 6621 tokens in 29.9 s
+[2026-09-22T12:12:24Z] version 3 after 32 candidates: 6264 chars, 6512 tokens in 28.2 s
+[2026-09-22T13:45:58Z] version 4 after 42 candidates: 6272 chars, 7162 tokens in 27.6 s
+[2026-09-22T14:26:30Z] version 5 after 52 candidates: 6827 chars, 7158 tokens in 28.4 s
+[2026-09-22T16:03:08Z] version 6 after 62 candidates: 6052 chars, 8382 tokens in 31.0 s
+[2026-09-22T17:31:42Z] version 7 after 72 candidates: 6046 chars, 8178 tokens in 27.1 s
+[2026-09-22T19:01:18Z] version 8 after 82 candidates: 6042 chars, 8096 tokens in 27.9 s
+[2026-09-22T19:41:48Z] version 9 after 92 candidates: 5884 chars, 8265 tokens in 26.3 s
+[2026-09-22T20:40:17Z] version 10 after 102 candidates: 6634 chars, 7917 tokens in 23.4 s
+[2026-09-22T21:24:52Z] version 11 after 112 candidates: 6145 chars, 8948 tokens in 31.2 s
+[2026-09-22T21:51:21Z] version 12 after 122 candidates: 6449 chars, 8479 tokens in 26.4 s
+[2026-09-22T22:32:54Z] version 13 after 132 candidates: 6441 chars, 8522 tokens in 29.6 s
+[2026-09-22T23:22:29Z] version 14 after 142 candidates: 5993 chars, 8433 tokens in 29.3 s
+[2026-09-22T23:37:49Z] version 15 after 152 candidates: 6526 chars, 8692 tokens in 78.0 s
+[2026-09-23T01:47:27Z] version 16 after 162 candidates: 6094 chars, 8315 tokens in 24.0 s
+[2026-09-23T02:44:58Z] version 17 after 172 candidates: 6168 chars, 8480 tokens in 25.6 s
+[2026-09-23T03:25:02Z] the search is gone: done

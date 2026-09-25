@@ -1,0 +1,163 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_confident_bypass
+doc: >
+  This design introduces a confidence mechanism to the reuse predictor to improve
+  bypass decisions. A new 2-bit confidence table (`rdp_conf`) is trained alongside
+  the RDP table, incrementing on sampled hits and decrementing on sampled misses/evictions.
+  The bypass decision now uses a `confident_pred_gt_victim_etr` condition, bypassing
+  only when the predicted ETR is strictly greater than the victim's ETR AND the
+  confidence for that prediction is at its maximum. This aims to reduce `wrong_bypass`
+  by making bypass decisions more reliable, while still allowing aggressive bypassing
+  for highly confident long-reuse predictions.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - confident_pred_gt_victim_etr: {table: rdp, index: pc_sig, div: 8, conf_table: rdp_conf, conf_threshold: 3}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: rdp_conf              # New confidence table for RDP
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2                  # 2-bit confidence counter (0-3)
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train_rdp_hit: {rdp_table: rdp, conf_table: rdp_conf, index: signature, age: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train_rdp_hit: {rdp_table: rdp, conf_table: rdp_conf, index: signature, age: age, scale: 1, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train_rdp_miss: {rdp_table: rdp, conf_table: rdp_conf, index: signature}
+        free: true
+    on_replace:
+      - train_rdp_miss: {rdp_table: rdp, conf_table: rdp_conf, index: signature}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: pred_exceeds_blended_etr
+  place: condition
+  params:
+    table: table
+    index: signature
+    div: {int: [1, 1024]}
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(table[index] / div).
+    Calculates the integer average of the absolute values of the 'etr' field across
+    all valid resident lines in the set ('avg_etr'). Finds the absolute value of the
+    'etr' field of the victim line ('victim_etr'). The condition is true if the
+    predicted ETR is greater than the integer average of 'avg_etr' and 'victim_etr'.
+    If the table entry is absent, the predicted ETR is 0, and the condition is false.
+    The 'etr' field must be a per_line state field. This can only be used in 'bypass_when'.
+- name: train_rdp_hit
+  place: step
+  params: {rdp_table: table, conf_table: table, index: signature, age: state, scale: {int: [1,10]}, min_diff: {int: [0, 127]}}
+  means: >
+    Trains the rdp_table at the given index with the 'toward' op, using the provided age, scale, and min_diff.
+    The rdp_table must be 'unset'. Then, increments the conf_table entry at the same index.
+- name: train_rdp_miss
+  place: step
+  params: {rdp_table: table, conf_table: table, index: signature}
+  means: >
+    Increments the rdp_table entry at the given index. The rdp_table must be 'unset', so an absent entry
+    becomes rdp_table.max. Then, decrements the conf_table entry at the same index.
+- name: confident_pred_gt_victim_etr
+  place: condition
+  params:
+    table: table
+    index: signature
+    div: {int: [1, 1024]}
+    conf_table: table
+    conf_threshold: {int: [0, 3]}
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(table[index] / div).
+    Finds the absolute value of the 'etr' field of the victim line ('victim_etr').
+    The condition is true if the predicted ETR is strictly greater than 'victim_etr'
+    AND the entry for the 'index' in 'conf_table' is present and its value is
+    greater than or equal to 'conf_threshold'. If the table entry for the index
+    is absent, the predicted ETR is 0, and the condition is false. The 'etr' field
+    must be a per_line state field. This can only be used in 'bypass_when'.

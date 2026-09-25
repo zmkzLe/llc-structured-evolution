@@ -1,0 +1,47 @@
+Run so far: 20 candidates, 10 scored, 10 refused or failed (schema_rejected 5, words_refused 5).
+Refusal kinds seen more than once this run (a pattern, not a one-off): 3 times, schema_rejected: duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 3 x schema_rejected: duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+- 1 x words_refused: confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+- 1 x words_refused: confident_bypass_rdp, confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+- 1 x words_refused: 4 validation errors for NewWord params.sample.str Input should be a valid string [type=string_type, input_value={'symbol': ['age']}, input_type=dict] For furthe
+- 1 x words_refused: 4 validation errors for NewWord params.cmp.str Input should be a valid string [type=string_type, input_value={'symbol': ['Comparison']}, input_type=dict] For fu
+- 1 x words_refused: 1 validation error for NewWord params Value error, parameter 'sample': type 'symbol' is not one of state, table, signature, sampler, access_types, {int: [lo, hi
+- 1 x schema_rejected: 1 validation error for StructureDescription Value error, procedure(s) train_on_miss, train_on_reuse, train_on_reuse_prefetch declared but never run by any event
+- 1 x schema_rejected: 1 validation error for StructureDescription Value error, on_hit[1] -> procedures.access[6]: 'rdp' / 8 reaches 11, which 'etr' (4 bits, -8..7) cannot hold [type=
+The seed scored 1.10761.
+Best so far: 5d8caa67b6c0 at 1.10853, +0.08% over the seed.
+
+Parts of the design changed so far (candidates that changed it, how many beat their closest earlier design, best and mean change of the score):
+- samplers: 5 tried, 3 improved, best +0.00266, mean -0.00010
+- victim.bypass_when: 5 tried, 2 improved, best +0.00098, mean -0.00085
+- tables: 3 tried, 1 improved, best +0.00098, mean -0.00135
+- new_words: 3 tried, 1 improved, best +0.00072, mean -0.00144
+- procedures.access: 2 tried, 1 improved, best +0.00092, mean -0.01000
+- state: 1 tried, 0 improved, best -0.02092, mean -0.02092
+
+The last 10 candidates, oldest first:
+11. scored 958185a995d9 at 1.10542, changed 91 canonical lines in samplers, tables, victim.bypass_when, new_words, new words confident_bypass_rdp, confident_bypass_victim: -0.00128 against its closest earlier design
+12. scored 0830d720a314 at 1.08577, changed 6 canonical lines in procedures.access, state: -0.02092 against its closest earlier design
+13. scored 3c94a28b31a9 at 1.10483, changed 18 canonical lines in samplers, tables, victim.bypass_when, new words confident_rdp_greater_than, confident_table_exceeds_victim: +0.00098 against its closest earlier design
+14. refused (schema_rejected): duplicate key 'train' at line 80, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+15. scored 833cd6ab08ac at 1.10651, changed 8 canonical lines in samplers, new words confident_rdp_greater_than, confident_table_exceeds_victim: +0.00266 against its closest earlier design
+16. scored 3c94a28b31a9 at 1.10483, changed 18 canonical lines in samplers, tables, victim.bypass_when, new words confident_rdp_greater_than, confident_table_exceeds_victim: a repeat of an earlier design
+17. scored dcb616ce3b1b at 1.10614, changed 28 canonical lines in victim.bypass_when, new_words, new words confident_bypass_victim: +0.00072 against its closest earlier design
+18. refused (schema_rejected): duplicate key 'when' at line 85, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+19. refused (schema_rejected): 1 validation error for StructureDescription Value error, on_hit[1] -> procedures.access[6]: 'rdp' / 8 reaches 11, which 'etr' (4 bits, -8..7) cannot hold [type=value_error, input_value={'name': 'mj_wi
+20. scored 5d8caa67b6c0 at 1.10853, changed 6 canonical lines in procedures.access, samplers: +0.00092 against its closest earlier design
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 67.9%, largest mistake kept_dead (50 of 814 sampled fills), IPC over LRU 0.998, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.3%, largest mistake wrong_bypass (212319 of 430728 sampled fills), IPC over LRU 1.288, LLC MPKI 137.5
+- 619.lbm_s-2677B: headroom 43.9%, largest mistake wrong_bypass (109408 of 259068 sampled fills), IPC over LRU 1.005, LLC MPKI 82.7
+- 657.xz_s-2302B: headroom 34.9%, largest mistake kept_dead (1228 of 3881 sampled fills), IPC over LRU 1.003, LLC MPKI 1.4
+- 459.GemsFDTD-1491B: headroom 33.2%, largest mistake wrong_bypass (28203 of 86849 sampled fills), IPC over LRU 1.107, LLC MPKI 27.6
+- 654.roms_s-1390B: headroom 31.1%, largest mistake kept_dead (25627 of 112712 sampled fills), IPC over LRU 1.011, LLC MPKI 36.0
+
+New words accepted this run:
+- confident_rdp_greater_than (condition): True if the entry for the index in conf_table is present and at its maximum value, AND the entry for the same index in rdp_table is present and has a value greater than the threshold. False otherwise. [used 4, better 3, worse 1, same 0, failed 0]
+- confident_table_exceeds_victim (condition): True if the entry for the index in conf_table is present and at its maximum value, AND the value from rdp_table[index]/div (integer division) is greater than the absolute value of the victim key of th [used 4, better 3, worse 1, same 0, failed 0]
+- confident_bypass_rdp (condition): True when the entry in rdp_table at the given index is present and its value is greater than rdp_thresh, AND the entry in conf_table at the given index has a value greater than or equal to conf_thresh [used 1, better 0, worse 1, same 0, failed 0]
+- confident_bypass_victim (condition): Reads the victim key of the chosen victim way. Reads the rdp_table entry at the given index; if absent, the value is 0. True if this rdp value, divided by div (integer division), is greater than the a [used 2, better 1, worse 1, same 0, failed 0]

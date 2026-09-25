@@ -1,0 +1,6 @@
+===== STRUCTURE_DESCRIPTION =====
+# Write the COMPLETE YAML structure description here (do not use placeholders).
+# Must include 'name', 'doc', 'state', 'victim', etc.
+===== NEW_WORDS =====
+
+# Write a YAML list of the new words the description uses, or nothing.

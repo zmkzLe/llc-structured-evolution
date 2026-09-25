@@ -1,0 +1,147 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_bypass_feedback
+doc: >
+  Mockingjay with bypass feedback. A Bypass Feedback Table (BFT) tracks the utility of bypass decisions,
+  indexed by PC signature. Bypassed lines are monitored by a Bypass Watcher sampler. If a bypassed line
+  is later accessed, the BFT entry for its PC signature is decremented (wrong bypass). If it is evicted
+  from the watcher without being accessed, the BFT entry is incremented (correct bypass).
+  The bypass decision then uses this BFT value, only bypassing if the BFT indicates a neutral or positive
+  tendency for bypassing lines with that PC signature. A global clock is added for the Bypass Watcher's age.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+  - name: global_clock
+    scope: global
+    kind: counter
+    width: 64
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}, table: {table: bft, index: pc_sig, cmp: gte, threshold: MID}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}, table: {table: bft, index: pc_sig, cmp: gte, threshold: MID}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bft
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 3                  # 0-7, MID is 4
+    init: MID
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+  - name: bypass_watcher
+    scope: global
+    sets: {mirror: 1}         # One global sampled set for tracking bypassed lines
+    extra_index_bits: 0
+    ways: 16                  # Number of entries to track recent bypassed lines
+    tag_bits: 46              # Full line address tag
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 64, init: ZERO}
+    age: {clock: global_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true} # Evict oldest bypassed line
+    on_match:
+      - train: {table: bft, index: signature, op: decrement} # Wrong bypass: line was reused
+        free: true
+    on_replace:
+      - train: {table: bft, index: signature, op: increment} # Correct bypass: line was not reused
+    install: {signature: {signature: pc_sig}, timestamp: {tick: global_clock}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - sample: bypass_watcher  # Check if this access hits a previously bypassed line
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - set: {global_clock: {add: 1}} # Increment global clock after all sampling and set aging
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+  - when: {way: NUM_WAY} # If the fill was bypassed (victim returned NUM_WAY)
+    sample: bypass_watcher # Install the bypassed line's signature into the watcher
+===== NEW_WORDS =====

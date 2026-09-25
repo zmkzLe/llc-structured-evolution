@@ -1,0 +1,2 @@
+Candidate 71591f0bf274 FAILED at words_refused; it was not scored.
+Reason: confident_long_reuse: already declared in this run with another definition; a word is never changed, so declare a new name

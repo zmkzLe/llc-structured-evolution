@@ -1,0 +1,9 @@
+guidance writer: /home/khoile0315/oe_out/arm_adaptive/yaml_run -> /home/khoile0315/oe_out/arm_adaptive/guidance.txt, every 10 candidates, model gemini-2.5-pro, search pid 2896, stub None
+[2026-09-21T08:02:04Z] version 1 after 10 candidates: 4314 chars, 4627 tokens in 27.1 s
+[2026-09-21T10:03:47Z] version 2 after 20 candidates: 4236 chars, 4910 tokens in 35.6 s
+[2026-09-21T11:24:16Z] version 3 after 30 candidates: 4471 chars, 5397 tokens in 24.2 s
+[2026-09-21T12:48:48Z] version 4 after 40 candidates: 4768 chars, 5875 tokens in 26.2 s
+[2026-09-21T14:45:21Z] version 5 after 50 candidates: 6392 chars, 6060 tokens in 24.6 s
+[2026-09-21T16:14:51Z] version 6 after 60 candidates: 6819 chars, 6210 tokens in 22.5 s
+[2026-09-21T17:37:29Z] version 7 after 70 candidates: 6407 chars, 7627 tokens in 30.9 s
+[2026-09-21T18:24:59Z] version 8 after 80 candidates: 6435 chars, 6631 tokens in 26.3 s

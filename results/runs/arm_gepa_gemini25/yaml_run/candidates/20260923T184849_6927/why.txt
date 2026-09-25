@@ -1,0 +1,5 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 1 validation error for StructureDescription
+signatures.1.source
+  Value error, 'line_address' is not a SignatureSource member: not in the vocabulary and not a declared new word [type=value_error, input_value='line_address', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

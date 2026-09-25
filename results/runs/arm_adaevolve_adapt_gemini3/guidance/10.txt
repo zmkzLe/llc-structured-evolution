@@ -1,0 +1,93 @@
+Guidance version 10, written after 103 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.99899 (-0.10% against the seed)
+- name: bypass_if_dead
+  place: condition
+  params:
+    conf: table
+    index: signature
+    rdp: table
+    threshold:
+      int: [0, 127]
+  means: 'True when the entry of the rdp table at the index is present and its value is strictly greater
+    than the threshold, and the entry of the conf table at the index is equal to 0. False otherwise.
+
+    '
+# used by 1 scored design(s); best 0.99899 (-0.10% against the seed)
+- name: bypass_exceeds_if_dead
+  place: condition
+  params:
+    conf: table
+    div:
+      int: [1, 16]
+    index: signature
+    rdp: table
+  means: True when the entry of the rdp table at the index is present, its value divided by div (integer
+    division) is strictly greater than the absolute value of the chosen victim way's key, and the entry
+    of the conf table at the index is equal to 0. False on an absent entry. Only inside victim.bypass_when.
+# used by 1 scored design(s); best 0.99859 (-0.14% against the seed)
+- name: confident_bypass
+  place: condition
+  params:
+    conf: table
+    index: signature
+    table: table
+    threshold:
+      int: [0, 127]
+  means: 'True when the entry of the table at the index is present and its value is greater than the threshold,
+    and the entry of the conf table at the index is greater than 1. False otherwise.
+
+    '
+# used by 1 scored design(s); best 0.99859 (-0.14% against the seed)
+- name: confident_exceeds_victim
+  place: condition
+  params:
+    conf: table
+    div:
+      int: [1, 16]
+    index: signature
+    table: table
+  means: True when the entry of the table at the index is present, its value divided by div (integer division)
+    is greater than the absolute value of the victim key of the way the victim search chose, and the entry
+    of the conf table at the index is greater than 1. False on an absent entry. Only inside victim.bypass_when.
+# used by 1 scored design(s); best 0.99843 (-0.16% against the seed)
+- name: table_exceeds_positive_victim
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    index: signature
+    table: table
+  means: True when the entry of the table at the index is present, the chosen victim way's key is greater
+    than or equal to 0, and the table entry divided by div (integer division) is greater than the chosen
+    victim way's key. False on an absent entry or if the victim key is negative. Only inside victim.bypass_when.
+# used by 1 scored design(s); best 0.99788 (-0.21% against the seed)
+- name: train_fast_adapt
+  place: step
+  params:
+    age: state
+    index: signature
+    jump:
+      int: [1, 127]
+    margin:
+      int: [1, 127]
+    max_val:
+      int: [1, 127]
+    min_diff:
+      int: [1, 127]
+    table: table
+  means: 'Reads the table entry at the index. If the entry is absent, it is set to the age, clamped at
+    max_val. Else, if the entry is strictly greater than the age plus the margin, the entry is decreased
+    by the jump value, clamped at 0. Else, if the age is strictly greater than the entry plus the margin,
+    the entry is increased by the jump value, clamped at max_val. Else, if the absolute difference between
+    the entry and the age is at least min_diff, the entry is incremented by 1 if age > entry, or decremented
+    by 1 if age < entry, clamped between 0 and max_val. The final value is written to the table entry.
+
+    '
+Names also taken (declared by a design not scored yet, or not shown above): train_add, overdue_or_furthest, overdue_then_max, bypass_overdue_aware
+
+Refused among the last 10 candidates, and why: malformed 1 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 7 (duel.follower_uses_b_when.threshold.str-enum[Threshold] Input should be 'ZERO', 'MAX' or 'MAX_OVER_2' (written: 'MID') duel.follower_uses_b_when.threshold.int Input should be a valid integer, unable to parse string as an integer (written: '; Input should be a valid dictionary or instance of StructureDescription (written: '<the actual structure description, YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')). words_refused 1 (means Field required (written: {'name': 'your_new_word', 'place': 'condition'}))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 10 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 3 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 2 times (schema_rejected): state Field required (written: {'name': 'your_policy_nam...ctual documentation.\n'}) victim Field required (written: {'name': 'your_policy_nam...ctual documentation.\n'})
+
+Modifying victim.bypass_when, new_words, samplers, and tables paid off, yielding a +0.00041 improvement over a prior design, though the seed Mockingjay remains the best overall at 1.00000. Conversely, altering victim.extremum, victim.tie_break, on_fill, on_hit, procedures.access, procedures.age_set, and procedures.etr_from_rdp lost by up to 0.02238 on average. You must stop submitting placeholder text like '<the structure description, YAML>' and omitting the STRUCTURE_DESCRIPTION and NEW_WORDS sections. Stop omitting required fields such as state, victim, state.0.width, state.0.scope, and means, stop submitting invalid YAML syntax, stop redefining existing new words like confident_exceeds_victim, and ensure your metadata stays within the 48 KB budget. The trace with the most headroom is 627.cam4_s-573B at 52.4%, where the largest mistake is should_bypass. However, wrong_bypass dominates the next highest headroom traces, including 605.mcf_s-1644B (44.4%), 619.lbm_s-2677B (43.9%), 459.GemsFDTD-1491B (33.3%), and 433.milc-127B (28.4%), while 657.xz_s-2302B (32.2%) suffers mostly from kept_dead mistakes. To address the massive wrong_bypass mistakes on 605.mcf_s-1644B and 619.lbm_s-2677B, the policy must change how it decides to bypass fills, perhaps by remembering a confidence metric in the tables to track which signatures actually see reuse before resident lines. To fix kept_dead on 657.xz_s-2302B, the victim selection must age lines more aggressively to evict them once their reuse window passes. A new word could express a custom condition that combines the signature's expected time to reuse with a dynamic confidence threshold, allowing the policy to better separate useful fills from dead ones.

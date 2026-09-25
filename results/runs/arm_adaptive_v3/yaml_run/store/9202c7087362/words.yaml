@@ -1,0 +1,58 @@
+- name: etr_with_confidence_cost
+  place: value
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as 0. An absent 'conf_val' is treated as 0.
+    The maximum value for confidence is 3.
+    Calculates a base_etr = rdp_val / div using integer division.
+    Calculates a penalty = (3 - conf_val) * scale.
+    The final returned value is min(max_etr, base_etr + penalty).
+- name: incoming_worse_than_all
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: >
+    Calculates the Estimated Time to Reuse (ETR) for the incoming line (incoming_etr).
+    It reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' or 'conf_val' is treated as 0. The maximum value for confidence is 3.
+    A base ETR is calculated as `base_etr = rdp_val / div`.
+    A penalty for low confidence is calculated as `penalty = (3 - conf_val) * scale`.
+    The incoming line's ETR is `incoming_etr = min(max_etr, base_etr + penalty)`.
+    The condition then iterates through all resident cache ways. It is true only if `incoming_etr`
+    is strictly greater than the absolute value of the 'etr' field for EVERY resident way.
+    If even one resident way has an absolute 'etr' less than or equal to `incoming_etr`, the condition is false.
+- name: train_sampler_match
+  place: step
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 127]
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    sample: state
+    scale:
+      int: [1, 2]
+  means: >
+    Performs training for a sampler match based on the reuse distance 'sample' (age).
+    First, it trains the rdp_table using the 'toward' operation. The target value is min(sample * scale, rdp_table.max). The entry moves one step toward the target if the difference from the target is at least min_diff.
+    Second, if the 'sample' value is less than conf_thresh, it increments the conf_table entry at the same index.

@@ -1,0 +1,204 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mj_accuracy_based_confidence
+doc: >
+  Introduces a new sampler training mechanism to improve confidence prediction.
+  Instead of incrementing confidence on any short reuse, a new step word,
+  `train_on_prediction_accuracy`, is used. On a sampler hit, it compares the
+  predicted reuse distance with the actual measured reuse distance ('age').
+  Confidence is incremented only if the prediction is accurate (within a margin),
+  and decremented otherwise. This provides a more direct feedback loop for the
+  confidence table, aiming to reduce both `kept_dead` and `wrong_bypass` errors
+  by making the policy's value function (`etr_with_confidence_cost`) more reliable.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    # Retain the conservative bypass logic from the parent design
+    - deconfident_rdp_gt: {rdp_table: rdp, conf_table: rdp_conf, index: pc_sig, threshold: 73, scale: 4}
+    - deconfident_exceeds_victim: {rdp_table: rdp, conf_table: rdp_conf, index: pc_sig, div: 8, scale: 4}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: rdp_conf
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - when: {type_in: [PREFETCH]}
+        train_on_prediction_accuracy: {rdp_table: rdp, conf_table: rdp_conf, index: signature, sample: age, accuracy_margin: 16, rdp_scale: 2, rdp_min_diff: 16}
+        free: true
+        stop: true
+      - train_on_prediction_accuracy: {rdp_table: rdp, conf_table: rdp_conf, index: signature, sample: age, accuracy_margin: 16, rdp_scale: 1, rdp_min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp_conf, index: signature, op: decrement}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+      - train: {table: rdp_conf, index: signature, op: decrement}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # The update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    # Aggressively evict lines with zero confidence, a proven heuristic
+    - when: {table: {table: rdp_conf, index: pc_sig, cmp: eq, threshold: 0}}
+      set: {etr: {const: 11}}
+      stop: true
+    # For all other lines, calculate ETR using a new unified cost function
+    - set:
+        etr:
+          etr_with_confidence_cost:
+            rdp_table: rdp
+            conf_table: rdp_conf
+            index: pc_sig
+            div: 8
+            scale: 2
+            max_etr: 11
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: deconfident_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent rdp_val
+    is treated as 0. The conf_table is assumed to be fully initialized, and its maximum value is 3. Calculates
+    an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val) * scale). If the result of the subtraction
+    is negative, it is treated as 0. Calculates a predicted_etr value as adjusted_rdp divided by div,
+    using integer division. Returns true if predicted_etr is greater than the absolute value of the victim
+    way''s key.'
+- name: deconfident_rdp_gt
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+    threshold:
+      int: [0, 127]
+  means: 'Reads the value ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An
+    absent entry in rdp_table is treated as a value of 0. The conf_table is assumed to be fully initialized,
+    and its maximum value is 3. Calculates an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val)
+    * scale). If the result of the subtraction is negative, it is treated as 0. Returns true if this adjusted_rdp
+    is greater than the threshold.
+
+    '
+- name: etr_with_confidence_cost
+  place: value
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as 0. An absent 'conf_val' is treated as 0.
+    The maximum value for confidence is 3.
+    Calculates a base_etr = rdp_val / div using integer division.
+    Calculates a penalty = (3 - conf_val) * scale.
+    The final returned value is min(max_etr, base_etr + penalty).
+- name: train_on_prediction_accuracy
+  place: step
+  params:
+    rdp_table: table
+    conf_table: table
+    index: signature
+    sample: state
+    accuracy_margin: {int: [0, 127]}
+    rdp_scale: {int: [1, 2]}
+    rdp_min_diff: {int: [0, 127]}
+  means: >
+    Performs training for a sampler match based on prediction accuracy.
+    First, it reads the predicted reuse distance 'predicted_rd' from rdp_table[index]
+    (absent is 0) and the measured reuse distance 'measured_rd' from the 'sample' state.
+    If the absolute difference between 'predicted_rd' and 'measured_rd' is less than or
+    equal to accuracy_margin, it increments conf_table[index]. Otherwise, it decrements
+    conf_table[index]. Second, it trains the rdp_table using the 'toward' operation.
+    The target value is min(measured_rd * rdp_scale, rdp_table.max). The entry moves
+    one step toward the target if its current value differs from the target by at least
+    rdp_min_diff.

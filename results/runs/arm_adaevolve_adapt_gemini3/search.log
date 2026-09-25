@@ -1,0 +1,789 @@
+LLM: google/gemini-3.1-pro-preview (weight 0.7), google/gemini-3.8-flash (weight 0.3) via Vertex (a3-chia-hack26ath-7727, global); usage bills that project's credit, token refreshed per request
+seed written to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/seed_candidate.txt (4139 B); evaluator design_evaluator.py
+candidate taken from its markers in: utils.code_utils, search.default_discovery_controller, adaevolve.controller, gepa_native.controller
+guidance: every proposal's prompt carries /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/guidance.txt as it stands at that moment
+effective config: search adaevolve (adaptive multi-island evolution, intensity per island), iterations 100000, evaluator timeout 10800s, parallel 2, diff_based_generation False, cascade False, temperature 0.7, max_tokens 64000, llm timeout 900s, retries 2, proposers [('google/gemini-3.1-pro-preview', 0.7), ('google/gemini-3.8-flash', 0.3)], database AdaEvolveDatabaseConfig{'fitness_key': 'combined_score', 'higher_is_better': {'combined_score': True}, 'population_size': 40, 'num_islands': 2, 'migration_interval': 50}
+running adaevolve for 100000 iterations
+15:51:47 [search.utils] Logging to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/logs/adaevolve_20260923_155147.log
+15:51:47 [search.adaevolve] AdaEvolveDatabase initialized: num_islands=2, decay=0.9, intensity=[0.15, 0.5], migration=True (interval=50), unified_archive=True, adaptive_search=True, ucb_selection=True, dynamic_islands=True, paradigm_breakthrough=True, multiobjective=False
+15:51:47 [runner] Runner ready: search=adaevolve, program=/home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/seed_candidate.txt
+15:51:48 [llm] OpenAI LLM: google/gemini-3.1-pro-preview
+15:51:48 [llm] OpenAI LLM: google/gemini-3.8-flash
+15:51:48 [llm] Pool weights: google/gemini-3.1-pro-preview=0.70, google/gemini-3.8-flash=0.30
+15:51:48 [evaluator] Initialized evaluator with /home/khoile0315/chia_native/design_evaluator.py
+15:51:48 [default_discovery_controller] DiscoveryController initialized: num_context_programs=4
+15:51:48 [search.adaevolve] Paradigm LLM: using guide_models [google/gemini-3.1-pro-preview, google/gemini-3.8-flash]
+15:51:48 [search.adaevolve] AdaEvolveController initialized (language=text, paradigm_breakthrough=True)
+15:51:48 [runner] Adding initial program to database
+16:25:43 [evaluator] Evaluated program b3a43e6b-e00d-4115-9106-c99c49ee1199 in 2035.72s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+16:25:43 [base_database] Database has 1 programs, best program score is combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+16:25:43 [search.adaevolve] AdaEvolve: Running 100000 iterations across 2 islands
+16:25:43 [search.adaevolve] AdaEvolve iteration stats will be logged to: /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/adaevolve_iteration_stats_20260923_162543.jsonl
+16:25:43 [search.adaevolve] Seeded island 1
+16:25:43 [search.adaevolve] AdaEvolve parallel: up to 2 iterations in flight (1..100000)
+16:26:58 [evaluator] Evaluated program 066612e8-e6bd-4ff3-83d0-17ed45aa1d23 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:28:03 [evaluator] Evaluated program 530a34b7-3966-440b-94e3-948fff7206a8 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:28:32 [evaluator] Evaluated program 41559627-8091-49d2-bdd7-552d390224c6 in 0.00s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'my_policy', 'do...t changed and why...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'my_policy', 'do...t changed and why...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+16:28:35 WARNING [llm] Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+16:28:51 WARNING [llm] Error attempt 2/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+16:30:33 [evaluator] Evaluated program 5d9f1d4d-f6d8-4f10-95ef-c912da0f3756 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:30:33 WARNING [search.adaevolve] Iteration 1: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:31:21 [evaluator] Evaluated program f83bef45-e7e3-424b-9a2e-787ca60d8b93 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:31:59 [evaluator] Evaluated program 3acac4df-6daa-4604-a6bb-e69eda7f0ee9 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:33:11 [evaluator] Evaluated program eef9e517-0796-4ed8-a2f4-10e9bdbb241e in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:33:11 WARNING [search.adaevolve] Iteration 2: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:33:57 [evaluator] Evaluated program 5042070e-4240-4f62-bae5-22069fdd12f4 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:35:38 [evaluator] Evaluated program f8b0b088-1ed8-45f6-99ea-5ef42b141017 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:35:38 WARNING [search.adaevolve] Iteration 3: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:36:23 [evaluator] Evaluated program c5ee3a32-1a25-4a06-9925-c61083074dbb in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:38:28 [evaluator] Evaluated program b81e2bb9-ccc4-46a2-bbcc-0deaa612777e in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:39:24 [evaluator] Evaluated program bd4ddc74-7c04-41a5-bf61-9e677016b41e in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:40:27 [evaluator] Evaluated program 97bef901-88f4-4521-bf11-a75e7d7a7ef1 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:44:30 [evaluator] Evaluated program ea8aa57f-9096-4c24-9f4b-4790ca0fca72 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:44:30 WARNING [search.adaevolve] Iteration 5: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:45:41 WARNING [llm] Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+16:47:07 [evaluator] Evaluated program ede5b67c-da77-4d8e-b781-4d89aaf28083 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:50:19 [evaluator] Evaluated program b1b14c4d-6557-4e80-9843-22dbc66c79b8 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:50:19 WARNING [search.adaevolve] Iteration 4: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+16:50:25 [evaluator] Evaluated program 9eaa9eca-1e18-4937-b5a1-6a8e90bbdc67 in 0.00s: combined_score=0.0000, status=schema_rejected, error=expected '<document start>', but found '<scalar>'
+  in "<unicode string>", line 8, column 5:
+    ... (all other sections: signatures, ... 
+        ^
+16:52:19 [evaluator] Evaluated program 40299a90-d782-42d0-9f16-6cad9a195c97 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ... YAML, no placeholders>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:52:19 WARNING [search.adaevolve] Iteration 6: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ... YAML, no placeholders>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:53:06 [evaluator] Evaluated program 4e278146-860f-4888-9e09-12bd0462680b in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:54:40 [evaluator] Evaluated program 67fe1915-5e78-4c98-84fe-5144167a7e8e in 0.00s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:56:34 [evaluator] Evaluated program 22967e28-c5cd-4ba9-8f4b-841274b59050 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:58:40 [evaluator] Evaluated program e8b8c702-8372-4dfb-9d5c-749bc97525f2 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+16:58:40 WARNING [search.adaevolve] Iteration 8: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+17:02:00 [evaluator] Evaluated program a7581607-a14d-4dc3-8ac1-96d871011a01 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:06:10 [evaluator] Evaluated program b3e82b7f-31d0-4a95-bdc3-6dcd45f19a46 in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='... (include all require...t, NO placeholders) ...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam..., NO placeholders) ...'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+17:38:08 [evaluator] Evaluated program c4bdd303-3b19-4a86-baf9-72ac90a99ca8 in 2521.52s: combined_score=0.9829, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6765.9571, cacti_node_nm=22.0000
+17:38:08 [search.adaevolve] Iteration 7: Program c4bdd303 (parent: b3a43e6b) completed in 2702.73s (llm: 181.22s, eval: 2521.52s)
+17:38:08 [search.adaevolve] Metrics: combined_score=0.9829, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6765.9571, cacti_node_nm=22
+gemini-3.1-pro-preview: rate limited (429), trying again in 30 s
+gemini-3.1-pro-preview: rate limited (429), trying again in 60 s
+17:49:05 [evaluator] Evaluated program 86023e0f-c985-4f2b-a7ed-f8a47de12667 in 2443.01s: combined_score=0.9986, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6868.2454, cacti_node_nm=22.0000
+17:49:05 [search.adaevolve] Iteration 9: Program 86023e0f (parent: b3a43e6b) completed in 2574.69s (llm: 131.68s, eval: 2443.01s)
+17:49:05 [search.adaevolve] Metrics: combined_score=0.9986, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6868.2454, cacti_node_nm=22
+17:51:37 [evaluator] Evaluated program 877f68d6-f3ff-4e13-a45d-e13e0d417910 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:53:38 [evaluator] Evaluated program d3b11186-a758-4b30-853d-7589d0bb2e65 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+17:55:45 [evaluator] Evaluated program 2e8d859a-72fb-4de7-bc65-066c0649c414 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+17:55:45 WARNING [search.adaevolve] Iteration 11: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+17:59:31 [evaluator] Evaluated program c1ec11d9-d7d2-4717-8cc2-2c4e8eaf81cd in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:03:02 [evaluator] Evaluated program 1f2b4c65-3d62-457d-9cf6-d6ddeef3701b in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:05:42 [evaluator] Evaluated program 4910e06e-29c1-472e-b69c-ac49b47cc273 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:05:42 WARNING [search.adaevolve] Iteration 12: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:08:59 [evaluator] Evaluated program e8d45f8e-57bd-409a-b65b-adb7e1c58601 in 0.00s: combined_score=0.0000, status=schema_rejected, error=3 validation errors for StructureDescription
+state.0.width
+  Field required [type=missing, input_value={'name': 'example_field'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+state.0.scope
+  Field required [type=missing, input_value={'name': 'example_field'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...ame': 'example_field'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+18:11:21 [evaluator] Evaluated program 57852846-293d-4c24-8a4a-9b402687dbd1 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:13:35 [evaluator] Evaluated program 25829910-f96d-4bc6-8651-0381ee5a3735 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:13:35 WARNING [search.adaevolve] Iteration 13: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:16:59 [evaluator] Evaluated program 8baf8742-1d05-42e6-82ae-75900ff9b2f3 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:19:22 [evaluator] Evaluated program 95133722-1773-42c4-acd5-461b583d73a8 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:24:29 [evaluator] Evaluated program ad9bde2d-a2ac-4a03-9d63-f6b3fcacc227 in 2592.19s: combined_score=0.9686, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=7006.4043, cacti_node_nm=22.0000
+18:24:29 [search.adaevolve] Iteration 10: Program ad9bde2d (parent: 2b385e1d) completed in 2780.48s (llm: 188.29s, eval: 2592.19s)
+18:24:29 [search.adaevolve] Metrics: combined_score=0.9686, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=7006.4043, cacti_node_nm=22
+18:24:29 [search.adaevolve] Checkpoint interval reached at iteration 10
+18:24:29 [base_database] Database has 5 programs, best program score is combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+18:24:29 [search.utils] [CHECKPOINT] Saved database with 5 programs to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_10
+18:24:29 [search.adaevolve] Saved AdaEvolve state to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_10
+18:24:29 [runner] Checkpoint 10: best=combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+18:24:29 [runner] Checkpoint saved to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_10
+18:24:54 [evaluator] Evaluated program e614d983-a4f1-46f5-aebe-5538a3aa9a03 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:28:31 [evaluator] Evaluated program 2553cb50-ede3-40cf-ad4b-26c4324391d9 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:30:44 [evaluator] Evaluated program 582e8c4e-9a34-472d-82cd-7a2e33578183 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:30:44 WARNING [search.adaevolve] Iteration 15: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:31:12 [evaluator] Evaluated program eb0f08b5-41e7-4322-86d3-fb73d8a64d27 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:34:17 [evaluator] Evaluated program c64aaef8-9c66-4ceb-9da8-c96812a770cb in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:36:07 [evaluator] Evaluated program 152a01e9-90d8-4239-a0b7-442b2aeb7764 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+18:36:07 WARNING [search.adaevolve] Iteration 16: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+18:38:44 [evaluator] Evaluated program 4fc72731-ff1a-402b-91ee-c7136891842d in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:41:37 [evaluator] Evaluated program df3fa943-0bbe-427c-82d3-d56c8b308c40 in 0.01s: combined_score=0.0000, status=schema_rejected, error=3 validation errors for StructureDescription
+state.0.width
+  Field required [type=missing, input_value={'name': 'example_field'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+state.0.scope
+  Field required [type=missing, input_value={'name': 'example_field'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...ame': 'example_field'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+18:43:01 [evaluator] Evaluated program 01de1956-f136-40c7-9df8-8f18dff17b07 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<complete valid YAML Str...older text or ellipses>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:43:01 WARNING [search.adaevolve] Iteration 17: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<complete valid YAML Str...older text or ellipses>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+18:45:57 [evaluator] Evaluated program 658be672-f358-4cd5-a453-f92a865dd5a8 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+18:59:08 [evaluator] Evaluated program 98cb6fd9-e283-4c96-a84b-4d44d7cce186 in 2259.81s: combined_score=0.9866, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6695.5971, cacti_node_nm=22.0000
+18:59:08 [search.adaevolve] Iteration 14: Program 98cb6fd9 (parent: 2b385e1d) completed in 2385.65s (llm: 125.84s, eval: 2259.81s)
+18:59:08 [search.adaevolve] Metrics: combined_score=0.9866, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6695.5971, cacti_node_nm=22
+19:01:47 [evaluator] Evaluated program 599ff13c-8bd5-4ff7-a81d-de13bfa94dc4 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+19:05:34 [evaluator] Evaluated program b150792c-6e99-4bfc-8d8c-4698d860f074 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+19:06:10 [evaluator] Evaluated program b11df2b3-4d63-45e1-b9be-205ced54ec7b in 0.20s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+19:06:10 [search.adaevolve] Iteration 19: Program b11df2b3 (parent: ad9bde2d) completed in 36.37s (llm: 36.17s, eval: 0.20s)
+19:06:10 [search.adaevolve] Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+19:09:04 [evaluator] Evaluated program 61eba48a-d5e7-4933-9ca4-6cafa87829ac in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+19:11:26 [evaluator] Evaluated program 206ace47-3769-4b87-b3d8-9c3fcd2dcefa in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+19:13:41 [evaluator] Evaluated program 7e405230-7210-4c65-83b3-66044d6786f9 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+19:13:41 WARNING [search.adaevolve] Iteration 20: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+19:18:09 [evaluator] Evaluated program c253a813-84b5-44e5-963f-b3618ebe7254 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+19:18:52 [evaluator] Evaluated program 3ea819b6-8f22-41a5-8ba5-31632113d147 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+19:23:53 [evaluator] Evaluated program 71c2a117-3dd7-4dc4-b681-c31345092b05 in 2163.18s: combined_score=0.9984, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6617.3274, cacti_node_nm=22.0000
+19:23:53 [search.adaevolve] Iteration 18: Program 71c2a117 (parent: b3a43e6b) completed in 2275.68s (llm: 112.51s, eval: 2163.18s)
+19:23:53 [search.adaevolve] Metrics: combined_score=0.9984, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6617.3274, cacti_node_nm=22
+19:23:56 WARNING [llm] Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+19:24:01 WARNING [llm] Error attempt 2/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+19:57:50 [evaluator] Evaluated program c1f3259a-457b-4a8d-9d66-2e1c79a02d9f in 2251.90s: combined_score=0.9978, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6619.1868, cacti_node_nm=22.0000
+19:57:50 [search.adaevolve] Iteration 21: Program c1f3259a (parent: b3a43e6b) completed in 2338.39s (llm: 86.48s, eval: 2251.90s)
+19:57:50 [search.adaevolve] Metrics: combined_score=0.9978, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6619.1868, cacti_node_nm=22
+19:59:13 [evaluator] Evaluated program 3b09a267-d84d-4552-b678-457fbce0e4df in 0.24s: combined_score=0.9978, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6619.1868, cacti_node_nm=22.0000
+19:59:13 [search.adaevolve] Iteration 23: Program 3b09a267 (parent: 2b385e1d) completed in 82.68s (llm: 82.44s, eval: 0.24s)
+19:59:13 [search.adaevolve] Metrics: combined_score=0.9978, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6619.1868, cacti_node_nm=22
+20:01:37 [evaluator] Evaluated program be1f9579-3b7d-40f5-a4c2-ce578bd5d96b in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:04:34 [evaluator] Evaluated program 155a815c-6e54-483d-9673-cc8a3c90576b in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:05:10 [evaluator] Evaluated program 688a3e7f-c9e9-4a9a-9a63-5ba2e794f7ce in 2314.99s: combined_score=0.9979, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6617.6813, cacti_node_nm=22.0000
+20:05:10 [search.adaevolve] Iteration 22: Program 688a3e7f (parent: b3a43e6b) completed in 2464.81s (llm: 149.82s, eval: 2314.99s)
+20:05:10 [search.adaevolve] Metrics: combined_score=0.9979, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6617.6813, cacti_node_nm=22
+20:05:11 [search.adaevolve] Global paradigm stagnation detected, generating breakthrough ideas...
+20:05:48 [search.adaevolve] Generated 3 paradigms:
+20:05:48 [search.adaevolve]   [1] Feedback-Driven Chain-of-Thought Analysis (approach: chain-of-thought)
+20:05:48 [search.adaevolve]   [2] Simulated Multi-Persona Expert Panel (approach: role-playing)
+20:05:48 [search.adaevolve]   [3] Few-Shot Heuristic Mapping for Cache Mistakes (approach: few-shot)
+20:05:48 [search.adaevolve] Set 3 new paradigms (best score: 1.000000)
+20:05:48 [search.adaevolve] Generated 3 breakthrough paradigms
+20:05:48 [search.adaevolve] Using paradigm 1/3 (1/2): Feedback-Driven Chain-of-Thought Analysis
+20:06:27 [evaluator] Evaluated program 126be83b-7eb8-4fb0-bab6-9c12b2ad0efb in 0.05s: combined_score=0.0000, status=schema_rejected, error=duplicate key 'train' at line 75, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+20:06:27 WARNING [search.adaevolve] Iteration 24: All 3 attempts failed: Eval failure: duplicate key 'train' at line 75, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+20:06:27 [search.adaevolve] Using paradigm 2/3 (1/2): Simulated Multi-Persona Expert Panel
+20:06:59 [evaluator] Evaluated program 12089985-b659-4096-8472-6fb92c476068 in 0.26s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+20:06:59 [search.adaevolve] Iteration 26: Program 12089985 (parent: b3a43e6b) completed in 31.86s (llm: 31.60s, eval: 0.26s)
+20:06:59 [search.adaevolve] Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+20:06:59 [search.adaevolve] Using paradigm 3/3 (1/2): Few-Shot Heuristic Mapping for Cache Mistakes
+20:08:05 [evaluator] Evaluated program 4e03054e-2ee2-4499-9385-3e2f8fd4c081 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:08:05 [search.adaevolve] Using paradigm 1/3 (2/2): Feedback-Driven Chain-of-Thought Analysis
+20:09:06 [evaluator] Evaluated program 59f9974d-0524-49be-9661-4d43dc29a0e2 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:09:06 [search.adaevolve] Using paradigm 2/3 (2/2): Simulated Multi-Persona Expert Panel
+20:09:11 WARNING [llm] Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+20:09:18 WARNING [llm] Error attempt 2/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+20:10:03 [evaluator] Evaluated program f140a1a3-426a-4186-aa21-0e13a279d64d in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:10:03 [search.adaevolve] Using paradigm 3/3 (2/2): Few-Shot Heuristic Mapping for Cache Mistakes
+20:10:03 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:11:32 [evaluator] Evaluated program 51969f23-2a70-4612-94ba-1344ae5337ef in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:11:32 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:12:18 [evaluator] Evaluated program b17e25a3-9983-437d-a7e5-22c7e18318b8 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure descripti... valid YAML dictionary>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:12:18 WARNING [search.adaevolve] Iteration 25: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure descripti... valid YAML dictionary>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:12:18 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:12:18 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:12:18 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:12:18 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:12:18 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:12:18 [search.adaevolve] Global paradigm stagnation detected, generating breakthrough ideas...
+20:12:57 [search.adaevolve] Generated 3 paradigms:
+20:12:57 [search.adaevolve]   [1] Pre-generation Feedback Analysis (Chain-of-Thought) (approach: chain-of-thought)
+20:12:57 [search.adaevolve]   [2] Error-to-Component Mapping Constraints (approach: format-constraint)
+20:12:57 [search.adaevolve]   [3] Few-Shot Demonstration of NEW_WORDS Creation (approach: few-shot)
+20:12:57 [search.adaevolve] Archived 3 paradigms (improvement: +0.000000):
+20:12:57 [search.adaevolve]   [FAILED] Feedback-Driven Chain-of-Thought Analysis (uses: 2)
+20:12:57 [search.adaevolve]   [FAILED] Simulated Multi-Persona Expert Panel (uses: 2)
+20:12:57 [search.adaevolve]   [FAILED] Few-Shot Heuristic Mapping for Cache Mistakes (uses: 2)
+20:12:57 [search.adaevolve] Set 3 new paradigms (best score: 1.000000)
+20:12:57 [search.adaevolve] Generated 3 breakthrough paradigms
+20:12:57 [search.adaevolve] Using paradigm 1/3 (1/2): Pre-generation Feedback Analysis (Chain-of-Thought)
+20:14:03 [evaluator] Evaluated program 1f82cb50-ff44-4ec0-b3d5-150e25ef9748 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:14:03 WARNING [search.adaevolve] Iteration 27: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:14:03 [search.adaevolve] Using paradigm 2/3 (1/2): Error-to-Component Mapping Constraints
+20:14:48 [evaluator] Evaluated program 6679c084-357d-4452-bc2c-dbd42081a8df in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:14:48 [search.adaevolve] Using paradigm 3/3 (1/2): Few-Shot Demonstration of NEW_WORDS Creation
+20:16:01 [evaluator] Evaluated program dd95c176-c636-49c3-bf5d-578a0b5adcd1 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:16:01 [search.adaevolve] Using paradigm 1/3 (2/2): Pre-generation Feedback Analysis (Chain-of-Thought)
+20:16:26 [evaluator] Evaluated program 1eecc9b1-5ea4-43f4-9bb6-a4990ec8a0d8 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<concrete YAML structure description>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:16:26 [search.adaevolve] Using paradigm 2/3 (2/2): Error-to-Component Mapping Constraints
+20:16:57 [evaluator] Evaluated program 4be024fc-fbec-47bd-9d82-38990e232b3b in 0.26s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+20:16:57 [search.adaevolve] Iteration 29: Program 4be024fc (parent: b3a43e6b) completed in 30.87s (llm: 30.61s, eval: 0.26s)
+20:16:57 [search.adaevolve] Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+20:16:57 [search.adaevolve] Using paradigm 3/3 (2/2): Few-Shot Demonstration of NEW_WORDS Creation
+20:16:57 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:17:00 WARNING [llm] Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+20:17:05 WARNING [llm] Error attempt 2/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+20:17:06 [evaluator] Evaluated program 76c3aa2a-4af0-4465-89bf-099243f8b034 in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_policy_nam...ctual documentation.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...ctual documentation.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+20:17:06 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:17:09 WARNING [llm] Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+20:19:20 [evaluator] Evaluated program 307d4548-d5c9-4dc9-b1e7-3ffc01b03a45 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): NEW_WORDS
+20:19:20 [search.adaevolve] All paradigms exhausted, will archive on next check
+gemini-3.1-pro-preview: rate limited (429), trying again in 30 s
+20:20:53 [evaluator] Evaluated program 5b1b57e8-d599-4756-b95a-60ff9c1e71c5 in 0.35s: combined_score=0.0000, status=too_much_storage, error=this design declares 48.1 KB of replacement metadata at this LLC; the budget is 48 KB (the seed declares 47.4 KB): pay for new state by narrowing or removing state elsewhere
+20:20:53 [search.adaevolve] All paradigms exhausted, will archive on next check
+gemini-3.1-pro-preview: rate limited (429), trying again in 60 s
+gemini-3.1-pro-preview: rate limited (429), trying again in 120 s
+20:22:37 [evaluator] Evaluated program 862ea074-a2a5-4f49-b87a-0e9ed3dba670 in 0.35s: combined_score=0.0000, status=words_refused, error=confident_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+20:22:37 WARNING [search.adaevolve] Iteration 30: All 3 attempts failed: Eval failure: confident_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+20:22:37 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:22:37 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:22:37 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:22:37 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:22:37 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:22:37 [search.adaevolve] Global paradigm stagnation detected, generating breakthrough ideas...
+20:23:06 [search.adaevolve] Generated 3 paradigms:
+20:23:06 [search.adaevolve]   [1] Diagnostic-Driven Architectural Inversion Prompting (approach: diagnostic-driven-refactoring)
+20:23:06 [search.adaevolve]   [2] Formal Bit-Budget Ledger and Grammatical Constraint Scaffolding (approach: constraint-guided-scaffolding)
+20:23:06 [search.adaevolve]   [3] Atomic Delta-Mutation with Strict Canonical Line Bounding (approach: atomic-delta-mutation)
+20:23:06 [search.adaevolve] Archived 3 paradigms (improvement: +0.000000):
+20:23:06 [search.adaevolve]   [FAILED] Pre-generation Feedback Analysis (Chain-of-Thought) (uses: 2)
+20:23:06 [search.adaevolve]   [FAILED] Error-to-Component Mapping Constraints (uses: 2)
+20:23:06 [search.adaevolve]   [FAILED] Few-Shot Demonstration of NEW_WORDS Creation (uses: 2)
+20:23:06 [search.adaevolve] Set 3 new paradigms (best score: 1.000000)
+20:23:06 [search.adaevolve] Generated 3 breakthrough paradigms
+20:23:06 [search.adaevolve] Using paradigm 1/3 (1/2): Diagnostic-Driven Architectural Inversion Prompting
+20:25:12 [evaluator] Evaluated program bdcb4e95-9396-4a06-8d62-85a8c4411804 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:25:12 [search.adaevolve] Using paradigm 2/3 (1/2): Formal Bit-Budget Ledger and Grammatical Constraint Scaffolding
+20:26:01 [evaluator] Evaluated program 45b9b03c-1bc0-41a1-86da-2d63a2a2c79d in 0.33s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+20:26:01 [search.adaevolve] Iteration 31: Program 45b9b03c (parent: b3a43e6b) completed in 48.92s (llm: 48.58s, eval: 0.33s)
+20:26:01 [search.adaevolve] Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+20:26:01 [search.adaevolve] Using paradigm 3/3 (1/2): Atomic Delta-Mutation with Strict Canonical Line Bounding
+20:26:32 [evaluator] Evaluated program b3316a25-52bb-4c0b-9041-f7d37e7537d6 in 0.29s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+20:26:32 [search.adaevolve] Iteration 32: Program b3316a25 (parent: b3a43e6b) completed in 30.64s (llm: 30.34s, eval: 0.29s)
+20:26:32 [search.adaevolve] Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+20:26:32 [search.adaevolve] Using paradigm 1/3 (2/2): Diagnostic-Driven Architectural Inversion Prompting
+20:26:55 [evaluator] Evaluated program d9d3a2fd-0bf0-4c6d-866e-bd006f60fe0a in 0.26s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+20:26:55 [search.adaevolve] Iteration 33: Program d9d3a2fd (parent: b3a43e6b) completed in 23.02s (llm: 22.76s, eval: 0.26s)
+20:26:55 [search.adaevolve] Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+20:26:55 [search.adaevolve] Using paradigm 2/3 (2/2): Formal Bit-Budget Ledger and Grammatical Constraint Scaffolding
+20:27:51 [evaluator] Evaluated program bb04c13a-bf4c-45af-8389-fba29dc85396 in 0.26s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+20:27:51 [search.adaevolve] Iteration 34: Program bb04c13a (parent: b3a43e6b) completed in 55.77s (llm: 55.50s, eval: 0.26s)
+20:27:51 [search.adaevolve] Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+20:27:51 [search.adaevolve] Using paradigm 3/3 (2/2): Atomic Delta-Mutation with Strict Canonical Line Bounding
+20:27:51 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:29:56 [evaluator] Evaluated program a89574b7-f93a-4c3e-b877-19fa9b9ee66b in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete, concrete...cture description here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:29:56 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:32:45 [evaluator] Evaluated program eb0c1042-76df-4811-8633-76c645c4910d in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...ted.\n', 'state': '...'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+20:32:45 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:36:27 [evaluator] Evaluated program f9acdf41-d1d2-477d-a528-c520c17e80f1 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:36:27 WARNING [search.adaevolve] Iteration 35: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:36:27 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:36:27 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:36:27 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:36:27 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:36:27 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:36:27 [search.adaevolve] Global paradigm stagnation detected, generating breakthrough ideas...
+20:37:06 [search.adaevolve] Generated 3 paradigms:
+20:37:06 [search.adaevolve]   [1] Dominant-Mistake Contrastive Analysis via Diagnostic Anchors (approach: contrastive-reasoning)
+20:37:06 [search.adaevolve]   [2] Hardware-Budgeted Micro-Architecture Decomposition via Doc Specification (approach: task-decomposition)
+20:37:06 [search.adaevolve]   [3] Grammar-Native Composition without Syntactic Novelty (approach: schema-anchored-generation)
+20:37:06 [search.adaevolve] Archived 3 paradigms (improvement: +0.000000):
+20:37:06 [search.adaevolve]   [FAILED] Diagnostic-Driven Architectural Inversion Prompting (uses: 2)
+20:37:06 [search.adaevolve]   [FAILED] Formal Bit-Budget Ledger and Grammatical Constraint Scaffolding (uses: 2)
+20:37:06 [search.adaevolve]   [FAILED] Atomic Delta-Mutation with Strict Canonical Line Bounding (uses: 2)
+20:37:06 [search.adaevolve] Set 3 new paradigms (best score: 1.000000)
+20:37:06 [search.adaevolve] Generated 3 breakthrough paradigms
+20:37:06 [search.adaevolve] Using paradigm 1/3 (1/2): Dominant-Mistake Contrastive Analysis via Diagnostic Anchors
+20:38:13 WARNING [llm] Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+20:40:37 [evaluator] Evaluated program 1e00bb2f-754e-4ddb-bce0-30a6f9610f69 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:40:37 [search.adaevolve] Using paradigm 2/3 (1/2): Hardware-Budgeted Micro-Architecture Decomposition via Doc Specification
+20:42:47 [evaluator] Evaluated program 34aa1104-053f-4214-9f69-ee12b0d6b0c3 in 0.01s: combined_score=0.0000, status=schema_rejected, error=while scanning a simple key
+  in "<unicode string>", line 6, column 1:
+    <the rest of the actual YAML str ... 
+    ^
+could not find expected ':'
+  in "<unicode string>", line 7, column 1:
+    
+    ^
+20:42:47 [search.adaevolve] Using paradigm 3/3 (1/2): Grammar-Native Composition without Syntactic Novelty
+20:44:41 [evaluator] Evaluated program 41279140-7146-4fe8-b9ad-864231522911 in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_design_nam...tional details here.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...tional details here.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+20:44:41 WARNING [search.adaevolve] Iteration 36: All 3 attempts failed: Eval failure: 2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_design_nam...tional details here.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...tional details here.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+20:44:41 [search.adaevolve] Using paradigm 1/3 (2/2): Dominant-Mistake Contrastive Analysis via Diagnostic Anchors
+20:45:30 [evaluator] Evaluated program 31bde54a-ef2e-424c-a028-d2e1763b59e5 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:45:30 [search.adaevolve] Using paradigm 2/3 (2/2): Hardware-Budgeted Micro-Architecture Decomposition via Doc Specification
+20:46:26 [evaluator] Evaluated program a7722b6c-6bcc-4daf-973c-8a05e32f34bf in 0.26s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+20:46:26 [search.adaevolve] Iteration 37: Program a7722b6c (parent: b3a43e6b) completed in 55.91s (llm: 55.64s, eval: 0.26s)
+20:46:26 [search.adaevolve] Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+20:46:26 [search.adaevolve] Using paradigm 3/3 (2/2): Grammar-Native Composition without Syntactic Novelty
+20:46:26 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:49:11 [evaluator] Evaluated program f990b977-66e3-4fd3-bcf5-70e13793a868 in 0.05s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+duel.follower_uses_b_when.threshold.str-enum[Threshold]
+  Input should be 'ZERO', 'MAX' or 'MAX_OVER_2' [type=enum, input_value='MID', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/enum
+duel.follower_uses_b_when.threshold.int
+  Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='MID', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/int_parsing
+20:49:11 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:50:53 [evaluator] Evaluated program 22993d04-38e6-4ad1-b09a-03b6ddfcc9b3 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the actual structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:50:53 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:52:48 [evaluator] Evaluated program 942add07-2950-4d6f-82e0-029e864de560 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:52:48 WARNING [search.adaevolve] Iteration 38: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+20:52:48 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:52:48 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:52:48 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:52:48 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:52:48 [search.adaevolve] All paradigms exhausted, will archive on next check
+20:52:48 [search.adaevolve] Global paradigm stagnation detected, generating breakthrough ideas...
+20:52:51 WARNING [llm] Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+20:53:24 [search.adaevolve] Generated 3 paradigms:
+20:53:24 [search.adaevolve]   [1] Micro-Architectural Hypothesis Testing via structured `doc` field (approach: scientific-method-structuring)
+20:53:24 [search.adaevolve]   [2] Cross-Pollination and Hybridization of Reference Designs (approach: design-synthesis)
+20:53:24 [search.adaevolve]   [3] Zero-Sum Budget Reallocation Game (approach: resource-constrained-optimization)
+20:53:24 [search.adaevolve] Archived 3 paradigms (improvement: +0.000000):
+20:53:24 [search.adaevolve]   [FAILED] Dominant-Mistake Contrastive Analysis via Diagnostic Anchors (uses: 2)
+20:53:24 [search.adaevolve]   [FAILED] Hardware-Budgeted Micro-Architecture Decomposition via Doc Specification (uses: 2)
+20:53:24 [search.adaevolve]   [FAILED] Grammar-Native Composition without Syntactic Novelty (uses: 2)
+20:53:24 [search.adaevolve] Set 3 new paradigms (best score: 1.000000)
+20:53:24 [search.adaevolve] Generated 3 breakthrough paradigms
+20:53:24 [search.adaevolve] Using paradigm 1/3 (1/2): Micro-Architectural Hypothesis Testing via structured `doc` field
+20:55:19 [evaluator] Evaluated program 2713e65b-b230-482e-baee-922fb0458768 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:55:19 [search.adaevolve] Using paradigm 2/3 (1/2): Cross-Pollination and Hybridization of Reference Designs
+20:57:17 [evaluator] Evaluated program 947912b2-1b6d-4272-aa0f-9475db92c2d2 in 0.01s: combined_score=0.0000, status=words_refused, error=1 validation error for NewWord
+means
+  Field required [type=missing, input_value={'name': 'your_new_word', 'place': 'condition'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+20:57:17 [search.adaevolve] Using paradigm 3/3 (1/2): Zero-Sum Budget Reallocation Game
+20:59:19 [evaluator] Evaluated program 0ac09849-5bd8-4730-928c-cfba41f3e158 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:59:19 WARNING [search.adaevolve] Iteration 39: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+20:59:19 [search.adaevolve] Using paradigm 1/3 (2/2): Micro-Architectural Hypothesis Testing via structured `doc` field
+20:59:28 WARNING [llm] Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+21:00:40 [evaluator] Evaluated program 14c77fdb-986e-4d38-ad4c-0bcdf6a9f031 in 2477.47s: combined_score=0.9990, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6867.7689, cacti_node_nm=22.0000
+21:00:40 [search.adaevolve] Iteration 28: Program 14c77fdb (parent: 12089985) completed in 2613.93s (llm: 136.45s, eval: 2477.47s)
+21:00:40 [search.adaevolve] Metrics: combined_score=0.9990, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6867.7689, cacti_node_nm=22
+21:00:40 [search.adaevolve] Using paradigm 2/3 (2/2): Cross-Pollination and Hybridization of Reference Designs
+21:01:21 WARNING [llm] Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+21:01:43 [evaluator] Evaluated program 0c34872f-da7d-45f9-b2ec-64974007c836 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:01:43 [search.adaevolve] Using paradigm 3/3 (2/2): Zero-Sum Budget Reallocation Game
+21:01:43 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:02:29 [evaluator] Evaluated program 7a3de55c-f977-49ee-9976-6f9551340572 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<complete, valid YAML st...d fields fully written>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:02:29 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:02:40 [evaluator] Evaluated program 7cbe8101-e05a-48ce-8db5-5d72d9db5221 in 0.01s: combined_score=0.0000, status=schema_rejected, error=expected '<document start>', but found '<scalar>'
+  in "<unicode string>", line 5, column 5:
+    ... (your complete, concrete YAML st ... 
+        ^
+21:02:40 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:05:35 [evaluator] Evaluated program fe977009-e505-4aa3-a39e-3609baf49a05 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+21:05:35 WARNING [search.adaevolve] Iteration 40: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+21:05:35 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:05:35 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:05:35 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:05:35 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:05:35 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:05:35 [search.adaevolve] Global paradigm stagnation detected, generating breakthrough ideas...
+21:06:17 [search.adaevolve] Generated 3 paradigms:
+21:06:17 [search.adaevolve]   [1] Micro-Level Intent Anchoring via YAML Comments (approach: localized-reasoning)
+21:06:17 [search.adaevolve]   [2] Cross-Domain Architecture Analogy Prompting (approach: analogy-prompting)
+21:06:17 [search.adaevolve]   [3] Bottleneck-First Trace Overfitting Strategy (approach: target-recalibration)
+21:06:17 [search.adaevolve] Archived 3 paradigms (improvement: +0.000000):
+21:06:17 [search.adaevolve]   [FAILED] Micro-Architectural Hypothesis Testing via structured `doc` field (uses: 2)
+21:06:17 [search.adaevolve]   [FAILED] Cross-Pollination and Hybridization of Reference Designs (uses: 2)
+21:06:17 [search.adaevolve]   [FAILED] Zero-Sum Budget Reallocation Game (uses: 2)
+21:06:17 [search.adaevolve] Set 3 new paradigms (best score: 1.000000)
+21:06:17 [search.adaevolve] Generated 3 breakthrough paradigms
+21:06:17 [search.adaevolve] Using paradigm 1/3 (1/2): Micro-Level Intent Anchoring via YAML Comments
+21:08:24 [evaluator] Evaluated program 96e1bca7-5336-4b06-ba2d-4ab388de39ac in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:08:24 [search.adaevolve] Using paradigm 2/3 (1/2): Cross-Domain Architecture Analogy Prompting
+21:11:47 [evaluator] Evaluated program 23a8672f-fd67-4b95-b90d-e65a9ff18abf in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_policy_nam...itectural rationale.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...itectural rationale.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+21:11:47 [search.adaevolve] Using paradigm 3/3 (1/2): Bottleneck-First Trace Overfitting Strategy
+21:12:17 [evaluator] Evaluated program b02bb859-a2f8-42b1-819d-45f3f3b1b8d4 in 0.29s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+21:12:17 [search.adaevolve] Iteration 42: Program b02bb859 (parent: b3a43e6b) completed in 29.69s (llm: 29.40s, eval: 0.29s)
+21:12:17 [search.adaevolve] Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+21:12:17 [search.adaevolve] Using paradigm 1/3 (2/2): Micro-Level Intent Anchoring via YAML Comments
+21:14:19 [evaluator] Evaluated program e8985838-3e40-44c6-ab03-c5eb950cb717 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:14:19 [search.adaevolve] Using paradigm 2/3 (2/2): Cross-Domain Architecture Analogy Prompting
+21:16:21 [evaluator] Evaluated program d063c6d5-de47-47da-ade4-25e9f1441036 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the actual structure de...t, write the full YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:16:21 [search.adaevolve] Using paradigm 3/3 (2/2): Bottleneck-First Trace Overfitting Strategy
+21:16:21 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:18:24 [evaluator] Evaluated program 01616351-3111-4cad-9edf-ae1341ecf37a in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:18:24 WARNING [search.adaevolve] Iteration 43: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:18:24 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:18:24 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:18:24 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:18:24 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:18:24 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:18:24 [search.adaevolve] Global paradigm stagnation detected, generating breakthrough ideas...
+21:18:57 [search.adaevolve] Generated 3 paradigms:
+21:18:57 [search.adaevolve]   [1] Pre-Generation Analytical Scratchpad (Chain-of-Thought) (approach: chain-of-thought)
+21:18:57 [search.adaevolve]   [2] Feedback-to-Component Decision Tree Mapping (approach: rule-based-guidance)
+21:18:57 [search.adaevolve]   [3] Anti-Pattern Pre-Flight Checklist Verification (approach: error-prevention)
+21:18:57 [search.adaevolve] Archived 3 paradigms (improvement: +0.000000):
+21:18:57 [search.adaevolve]   [FAILED] Micro-Level Intent Anchoring via YAML Comments (uses: 2)
+21:18:57 [search.adaevolve]   [FAILED] Cross-Domain Architecture Analogy Prompting (uses: 2)
+21:18:57 [search.adaevolve]   [FAILED] Bottleneck-First Trace Overfitting Strategy (uses: 2)
+21:18:57 [search.adaevolve] Set 3 new paradigms (best score: 1.000000)
+21:18:57 [search.adaevolve] Generated 3 breakthrough paradigms
+21:18:57 [search.adaevolve] Using paradigm 1/3 (1/2): Pre-Generation Analytical Scratchpad (Chain-of-Thought)
+21:20:57 [evaluator] Evaluated program 3bcaf7fc-a9ed-4648-baee-ec166f3ec75f in 0.02s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:20:57 [search.adaevolve] Using paradigm 2/3 (1/2): Feedback-to-Component Decision Tree Mapping
+21:22:50 [evaluator] Evaluated program 1afb7c67-14fa-45a1-a021-24749811f8e2 in 0.02s: combined_score=0.0000, status=schema_rejected, error=expected '<document start>', but found '['
+  in "<unicode string>", line 6, column 5:
+    ... [rest of the actual YAML configu ... 
+        ^
+21:22:50 [search.adaevolve] Using paradigm 3/3 (1/2): Anti-Pattern Pre-Flight Checklist Verification
+21:24:22 [evaluator] Evaluated program 2278aee2-24aa-4ee6-adf6-7ae84770c4f6 in 0.02s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Field required [type=missing, input_value={'name': 'mockingjay', 'd...why.\n', 'state': '...'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+21:24:22 WARNING [search.adaevolve] Iteration 44: All 3 attempts failed: Eval failure: 2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Field required [type=missing, input_value={'name': 'mockingjay', 'd...why.\n', 'state': '...'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+21:24:22 [search.adaevolve] Using paradigm 1/3 (2/2): Pre-Generation Analytical Scratchpad (Chain-of-Thought)
+21:25:32 [evaluator] Evaluated program 628e54ff-c1ba-4ca8-be3e-5a16d93ee69d in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:25:32 [search.adaevolve] Using paradigm 2/3 (2/2): Feedback-to-Component Decision Tree Mapping
+21:27:39 [evaluator] Evaluated program 83ba258b-f959-437f-92cf-12587317daaa in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...h': 1, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+21:27:39 [search.adaevolve] Using paradigm 3/3 (2/2): Anti-Pattern Pre-Flight Checklist Verification
+21:27:39 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:29:46 [evaluator] Evaluated program 18f8dfda-9318-4836-a2fd-d09a209798e0 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ...YAML. NO PLACEHOLDERS.>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:29:46 WARNING [search.adaevolve] Iteration 45: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ...YAML. NO PLACEHOLDERS.>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:29:46 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:29:46 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:29:46 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:29:46 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:29:46 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:29:46 [search.adaevolve] Global paradigm stagnation detected, generating breakthrough ideas...
+21:30:35 [search.adaevolve] Generated 3 paradigms:
+21:30:35 [search.adaevolve]   [1] Multi-Feature Signature Contextualization via New Words (approach: feature-engineering)
+21:30:35 [search.adaevolve]   [2] Adaptive Bypassing via Set Dueling (approach: dynamic-arbitration)
+21:30:35 [search.adaevolve]   [3] Confidence-Gated Victim Selection with Custom Condition (approach: confidence-gating)
+21:30:35 [search.adaevolve] Archived 3 paradigms (improvement: +0.000000):
+21:30:35 [search.adaevolve]   [FAILED] Pre-Generation Analytical Scratchpad (Chain-of-Thought) (uses: 2)
+21:30:35 [search.adaevolve]   [FAILED] Feedback-to-Component Decision Tree Mapping (uses: 2)
+21:30:35 [search.adaevolve]   [FAILED] Anti-Pattern Pre-Flight Checklist Verification (uses: 2)
+21:30:35 [search.adaevolve] Set 3 new paradigms (best score: 1.000000)
+21:30:35 [search.adaevolve] Generated 3 breakthrough paradigms
+21:30:35 [search.adaevolve] Using paradigm 1/3 (1/2): Multi-Feature Signature Contextualization via New Words
+21:31:02 [evaluator] Evaluated program c899832d-dcb1-4d48-a015-df84d122c7e5 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<complete YAML structure description>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:31:02 [search.adaevolve] Using paradigm 2/3 (1/2): Adaptive Bypassing via Set Dueling
+21:34:17 [evaluator] Evaluated program d88bfc05-698e-4007-b775-9881c64f5f5b in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete, valid YA...cture description here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:34:17 [search.adaevolve] Using paradigm 3/3 (1/2): Confidence-Gated Victim Selection with Custom Condition
+21:36:28 [evaluator] Evaluated program 8834a523-da23-47db-bcde-f3a7c1184cd5 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+21:36:28 WARNING [search.adaevolve] Iteration 46: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+21:36:28 [search.adaevolve] Using paradigm 1/3 (2/2): Multi-Feature Signature Contextualization via New Words
+21:38:55 [evaluator] Evaluated program 7e69b2f7-b8f7-49fa-88a9-82871ac32142 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:38:55 [search.adaevolve] Using paradigm 2/3 (2/2): Adaptive Bypassing via Set Dueling
+21:41:25 [evaluator] Evaluated program b99f8c26-04d9-479e-a7b4-b30bbc56ce30 in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_policy_nam...itectural rationale.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...itectural rationale.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+21:41:25 [search.adaevolve] Using paradigm 3/3 (2/2): Confidence-Gated Victim Selection with Custom Condition
+21:41:25 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:41:29 [evaluator] Evaluated program 44a76ed6-4f5a-4df9-9b94-7e353482b6f2 in 2234.88s: combined_score=0.9996, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6862.5860, cacti_node_nm=22.0000
+21:41:29 [search.adaevolve] Iteration 41: Program 44a76ed6 (parent: 2b385e1d) completed in 2339.57s (llm: 104.69s, eval: 2234.88s)
+21:41:29 [search.adaevolve] Metrics: combined_score=0.9996, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6862.5860, cacti_node_nm=22
+21:41:29 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:41:29 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:41:29 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:41:29 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:41:29 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:41:29 [search.adaevolve] Global paradigm stagnation detected, generating breakthrough ideas...
+21:42:23 [search.adaevolve] Generated 3 paradigms:
+21:42:23 [search.adaevolve]   [1] Feature Engineering: Custom Access-Type FoldBit for Signatures (approach: architectural-feature-engineering)
+21:42:23 [search.adaevolve]   [2] Ensemble Policy: Set Dueling for Dynamic Insertion Arbitration (approach: set-dueling-ensemble)
+21:42:23 [search.adaevolve]   [3] Cache Pressure Heuristic: Fill-Driven Accelerated Aging (approach: dynamic-aging-heuristic)
+21:42:23 [search.adaevolve] Archived 3 paradigms (improvement: +0.000000):
+21:42:23 [search.adaevolve]   [FAILED] Multi-Feature Signature Contextualization via New Words (uses: 2)
+21:42:23 [search.adaevolve]   [FAILED] Adaptive Bypassing via Set Dueling (uses: 2)
+21:42:23 [search.adaevolve]   [FAILED] Confidence-Gated Victim Selection with Custom Condition (uses: 2)
+21:42:23 [search.adaevolve] Set 3 new paradigms (best score: 1.000000)
+21:42:23 [search.adaevolve] Generated 3 breakthrough paradigms
+21:42:23 [search.adaevolve] Using paradigm 1/3 (1/2): Feature Engineering: Custom Access-Type FoldBit for Signatures
+21:43:56 [evaluator] Evaluated program 4aa1cb04-0c75-4485-a83d-593a590f88c6 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete, concrete...cture description here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:43:56 WARNING [search.adaevolve] Iteration 47: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete, concrete...cture description here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:43:56 [search.adaevolve] Using paradigm 2/3 (1/2): Ensemble Policy: Set Dueling for Dynamic Insertion Arbitration
+21:46:02 [evaluator] Evaluated program 6e433c3c-820f-4c3f-b4b5-26563a4a555e in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:46:02 [search.adaevolve] Using paradigm 3/3 (1/2): Cache Pressure Heuristic: Fill-Driven Accelerated Aging
+21:46:26 [evaluator] Evaluated program 821e7e13-6c1f-44fc-8f5a-74074d2e8992 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<valid YAML structure de...ERS, NO ANGLE BRACKETS>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:46:26 [search.adaevolve] Using paradigm 1/3 (2/2): Feature Engineering: Custom Access-Type FoldBit for Signatures
+21:47:49 [evaluator] Evaluated program 73bd6f3a-fe80-41a1-a06f-4d170be87a94 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:47:49 [search.adaevolve] Using paradigm 2/3 (2/2): Ensemble Policy: Set Dueling for Dynamic Insertion Arbitration
+21:48:16 [evaluator] Evaluated program 2c0c4a7f-726d-40d1-a2c6-0ae533a8d703 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:48:16 WARNING [search.adaevolve] Iteration 48: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:48:16 [search.adaevolve] Using paradigm 3/3 (2/2): Cache Pressure Heuristic: Fill-Driven Accelerated Aging
+21:48:16 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:50:12 [evaluator] Evaluated program 77e09391-f69b-4bb9-97a4-c03462474b38 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+21:50:12 [search.adaevolve] All paradigms exhausted, will archive on next check
+21:50:36 [evaluator] Evaluated program b16ae3f9-dbe0-41ef-b6ad-b0b306206eed in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+21:50:36 [search.adaevolve] All paradigms exhausted, will archive on next check
+22:32:48 [evaluator] Evaluated program 5a558b09-0f06-4ccf-92ea-7ed55abd3d54 in 2426.47s: combined_score=0.9987, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6870.0392, cacti_node_nm=22.0000
+22:32:48 [search.adaevolve] Iteration 50: Program 5a558b09 (parent: ad9bde2d) completed in 2532.27s (llm: 105.79s, eval: 2426.47s)
+22:32:48 [search.adaevolve] Metrics: combined_score=0.9987, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6870.0392, cacti_node_nm=22
+22:32:48 [search.adaevolve] Checkpoint interval reached at iteration 50
+22:32:48 [base_database] Database has 22 programs, best program score is combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+22:32:48 [search.utils] [CHECKPOINT] Saved database with 22 programs to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_50
+22:32:48 [search.adaevolve] Saved AdaEvolve state to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_50
+22:32:48 [runner] Checkpoint 50: best=combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+22:32:48 [runner] Checkpoint saved to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_50
+22:32:48 [search.adaevolve] All paradigms exhausted, will archive on next check
+22:32:48 [search.adaevolve] All paradigms exhausted, will archive on next check
+22:32:48 [search.adaevolve] All paradigms exhausted, will archive on next check
+22:32:48 [search.adaevolve] Migration completed at iteration 50
+22:32:48 [search.adaevolve] All paradigms exhausted, will archive on next check
+22:32:48 [search.adaevolve] All paradigms exhausted, will archive on next check
+22:32:48 [search.adaevolve] Global paradigm stagnation detected, generating breakthrough ideas...
+22:33:31 [search.adaevolve] Generated 3 paradigms:
+22:33:31 [search.adaevolve]   [1] Multi-Factor Bypass Gating via Custom Condition Word (approach: conditional-gating)
+22:33:31 [search.adaevolve]   [2] Access-Aware ETR Scaling via Custom Value Word (approach: dynamic-insertion)
+22:33:31 [search.adaevolve]   [3] Spatial Context Enrichment via Custom FoldBit Word (approach: signature-enrichment)
+22:33:31 [search.adaevolve] Archived 3 paradigms (improvement: +0.000000):
+22:33:31 [search.adaevolve]   [FAILED] Feature Engineering: Custom Access-Type FoldBit for Signatures (uses: 2)
+22:33:31 [search.adaevolve]   [FAILED] Ensemble Policy: Set Dueling for Dynamic Insertion Arbitration (uses: 2)
+22:33:31 [search.adaevolve]   [FAILED] Cache Pressure Heuristic: Fill-Driven Accelerated Aging (uses: 2)
+22:33:31 [search.adaevolve] Set 3 new paradigms (best score: 1.000000)
+22:33:31 [search.adaevolve] Generated 3 breakthrough paradigms
+22:33:31 [search.adaevolve] Using paradigm 1/3 (1/2): Multi-Factor Bypass Gating via Custom Condition Word
+22:33:44 [evaluator] Evaluated program 1ba25b06-097f-4aa2-b003-54750a98e3ff in 2656.58s: combined_score=0.9994, status=ok, metadata_kb=46.0625, metadata_flipflop_bits=10.0000, metadata_bits_per_line=7.6771, metadata_area_mm2=0.0372, metadata_energy_uj=6484.9772, cacti_node_nm=22.0000
+22:33:44 [search.adaevolve] Iteration 49: Program 1ba25b06 (parent: b3a43e6b) completed in 2755.27s (llm: 98.69s, eval: 2656.58s)
+22:33:44 [search.adaevolve] Metrics: combined_score=0.9994, status=ok, metadata_kb=46.0625, metadata_flipflop_bits=10, metadata_bits_per_line=7.6771, metadata_area_mm2=0.0372, metadata_energy_uj=6484.9772, cacti_node_nm=22
+22:33:45 [search.adaevolve] Using paradigm 2/3 (1/2): Access-Aware ETR Scaling via Custom Value Word
+22:35:56 [evaluator] Evaluated program 6e79e84c-df72-4668-a512-f5be48acd468 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+22:35:56 [search.adaevolve] Using paradigm 3/3 (1/2): Spatial Context Enrichment via Custom FoldBit Word
+22:37:59 [evaluator] Evaluated program 3cd54458-87e5-4d15-ab6f-72b23729ab98 in 0.02s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the actual structure de...ERS. MUST BE COMPLETE.>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+22:37:59 [search.adaevolve] Using paradigm 1/3 (2/2): Multi-Factor Bypass Gating via Custom Condition Word
+22:38:26 [evaluator] Evaluated program a657835a-2aee-48fe-a0d8-69cb5c60b609 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:38:26 WARNING [search.adaevolve] Iteration 52: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+22:38:26 [search.adaevolve] Using paradigm 2/3 (2/2): Access-Aware ETR Scaling via Custom Value Word
+22:40:28 [evaluator] Evaluated program f76db150-e06a-402d-88e2-6feb0fa49850 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+22:40:28 [search.adaevolve] Using paradigm 3/3 (2/2): Spatial Context Enrichment via Custom FoldBit Word
+22:40:28 [search.adaevolve] All paradigms exhausted, will archive on next check
+22:43:15 [evaluator] Evaluated program 2cb961c9-21e8-4cd2-be89-eb47c1c837ea in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_policy_nam...your changes here...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...your changes here...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+22:43:15 [search.adaevolve] All paradigms exhausted, will archive on next check
+23:00:03 [runner] Signal 15 received, shutting down...
+23:00:03 [default_discovery_controller] Graceful shutdown requested...
+23:11:51 [evaluator] Evaluated program 8cdfd003-1e3b-49f7-8e11-f5acbdfb08e2 in 2224.88s: combined_score=0.9986, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6868.3962, cacti_node_nm=22.0000
+23:11:51 [search.adaevolve] Iteration 51: Program 8cdfd003 (parent: b3a43e6b) completed in 2300.15s (llm: 75.27s, eval: 2224.88s)
+23:11:51 [search.adaevolve] Metrics: combined_score=0.9986, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6868.3962, cacti_node_nm=22
+23:11:52 [search.adaevolve] All paradigms exhausted, will archive on next check
+23:11:52 [search.adaevolve] All paradigms exhausted, will archive on next check
+23:11:52 [search.adaevolve] All paradigms exhausted, will archive on next check
+23:25:17 [evaluator] Evaluated program 67aa7a9b-3443-43b3-8b70-f35e822bbce4 in 2155.89s: combined_score=1.0000, status=ok, metadata_kb=30.0000, metadata_flipflop_bits=0.0000, metadata_bits_per_line=5.0000, metadata_area_mm2=0.0226, metadata_energy_uj=3848.2239, cacti_node_nm=22.0000
+23:25:17 [search.adaevolve] Iteration 53: Program 67aa7a9b (parent: 2b385e1d) completed in 2521.92s (llm: 365.90s, eval: 2155.89s)
+23:25:17 [search.adaevolve] Metrics: combined_score=1.0000, status=ok, metadata_kb=30.0000, metadata_flipflop_bits=0, metadata_bits_per_line=5.0000, metadata_area_mm2=0.0226, metadata_energy_uj=3848.2239, cacti_node_nm=22
+23:25:18 [search.adaevolve] All paradigms exhausted, will archive on next check
+23:25:18 [search.adaevolve] All paradigms exhausted, will archive on next check
+23:25:18 [search.adaevolve] All paradigms exhausted, will archive on next check
+23:25:18 [search.adaevolve] AdaEvolve completed
+23:25:18 [base_database] Database has 31 programs, best program score is combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+23:25:18 [search.adaevolve] AdaEvolve iteration stats saved to: /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/adaevolve_iteration_stats_20260923_162543.jsonl
+23:25:18 [search.utils] [CHECKPOINT] Saved database with 31 programs to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_100000
+23:25:18 [search.adaevolve] Saved AdaEvolve state to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_100000
+23:25:18 [runner] Checkpoint 100000: best=combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+23:25:18 [runner] Checkpoint saved to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_100000
+23:25:18 [evaluator] Evaluated program b3a43e6b-e00d-4115-9106-c99c49ee1199 in 0.39s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+23:25:18 [runner] Test evaluation for best program: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+23:25:18 [runner] Best program saved to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/best
+23:25:18 [runner] Discovery completed. Best: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000, test_combined_score=1.0000, test_status=ok, test_metadata_kb=47.3750, test_metadata_flipflop_bits=0.0000, test_metadata_bits_per_line=7.8958, test_metadata_area_mm2=0.0379, test_metadata_energy_uj=6604.4185, test_cacti_node_nm=22.0000
+23:25:18 [runner] Best program saved to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/best
+
+=== result ===
+DiscoveryResult(best_score=1.0000, initial_score=1.0000)

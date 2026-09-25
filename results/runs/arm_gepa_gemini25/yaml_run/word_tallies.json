@@ -1,0 +1,90 @@
+{
+ "data_address": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "is_bypass_fill": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "log_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "penalize_and_clear_tracker": {
+  "better": 0,
+  "failed": 2,
+  "same": 1,
+  "unknown": 0,
+  "used": 3,
+  "worse": 0
+ },
+ "predict_bypass_and_log": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "predict_bypass_and_record": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 2,
+  "worse": 1
+ },
+ "punish_for_wrong_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "punish_if_logged": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "punish_wrong_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "rdp_and_conf_check": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "record_bypass_on_predict": {
+  "better": 0,
+  "failed": 1,
+  "same": 1,
+  "unknown": 0,
+  "used": 2,
+  "worse": 0
+ }
+}

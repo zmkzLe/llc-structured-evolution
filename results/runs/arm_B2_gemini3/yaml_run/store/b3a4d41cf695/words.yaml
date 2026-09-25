@@ -1,0 +1,17 @@
+- name: thrash_aware_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    limit:
+      int: [0, 127]
+    table: table
+  means: >
+    True when the entry of the table at the index is present and either:
+    (1) the sum of the field across all ways of the access's set is greater than or equal to zero
+    and the table entry is strictly greater than the limit; or
+    (2) the field of the victim way chosen by find_victim is greater than or equal to zero and
+    the table entry divided by div (integer division) is strictly greater than that field of the
+    victim way. False otherwise. Nothing is written.

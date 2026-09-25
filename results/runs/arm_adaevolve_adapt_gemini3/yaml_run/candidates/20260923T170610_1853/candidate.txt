@@ -1,0 +1,7 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Your complete explanation of the policy...
+state:
+  ... (include all required YAML sections, FULLY written out, NO placeholders) ...
+===== NEW_WORDS =====

@@ -1,0 +1,33 @@
+- name: confidence_adjusted_etr_v2
+  place: value
+  params:
+    rdp_table: table
+    conf_table: table
+    index: signature
+    scale: {int: [0, 16]}
+    div: {int: [1, 128]}
+    max_etr: {int: [0, 15]}
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as 0. 'conf_val' is read from its table, with an
+    absent entry read as its init value (0). The maximum value for confidence is 3.
+    Calculates an adjusted_rdp = rdp_val - (scale * (3 - conf_val)). If adjusted_rdp
+    is negative, it is treated as 0. Calculates a predicted_etr = adjusted_rdp / div.
+    Returns min(predicted_etr, max_etr).
+- name: predicted_etr_exceeds_victim
+  place: condition
+  params:
+    rdp_table: table
+    conf_table: table
+    index: signature
+    scale: {int: [0, 16]}
+    div: {int: [1, 128]}
+  means: >
+    A condition for use inside bypass_when. It reads 'rdp_val' from rdp_table[index]
+    and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0.
+    'conf_val' is read, with an absent entry read as its init value (0).
+    The maximum value for confidence is 3. It calculates an adjusted_rdp = rdp_val -
+    (scale * (3 - conf_val)). If adjusted_rdp is negative, it is treated as 0.
+    It then calculates a predicted_etr = adjusted_rdp / div. The condition returns
+    true if this predicted_etr is greater than the absolute value of the key of
+    the victim way.

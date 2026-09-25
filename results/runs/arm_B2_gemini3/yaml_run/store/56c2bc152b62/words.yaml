@@ -1,0 +1,9 @@
+- name: predicted_exceeds_live_victim
+  place: condition
+  params: {table: table, index: signature, field: state, div: {int: [1, 16]}}
+  means: >
+    True when the entry of the table at the index is present, the victim way
+    chosen by find_victim has its field greater than or equal to zero, and the
+    table entry divided by div is strictly greater than that victim way's field.
+    False if the table entry is absent or if the victim way's field is strictly
+    less than zero. Nothing is written.

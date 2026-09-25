@@ -1,0 +1,4 @@
+===== STRUCTURE_DESCRIPTION =====
+<the complete and valid structure description, in YAML>
+
+===== NEW_WORDS =====

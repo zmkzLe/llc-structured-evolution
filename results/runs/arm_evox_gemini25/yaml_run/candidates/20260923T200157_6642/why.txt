@@ -1,0 +1,5 @@
+Candidate ? FAILED at words_refused; it was not scored.
+Reason: 1 validation error for NewWord
+params
+  Value error, parameter 'fill_was_bypassed': type 'condition' is not one of state, table, signature, sampler, access_types, {int: [lo, hi]} or {symbol: <list>} [type=value_error, input_value={'tracker': 'sampler', 'p..._bypassed': 'condition'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

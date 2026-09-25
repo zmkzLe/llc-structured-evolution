@@ -1,0 +1,2 @@
+Candidate be35c4a3fa9d FAILED at words_refused; it was not scored.
+Reason: confidence_penalized_etr, train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name

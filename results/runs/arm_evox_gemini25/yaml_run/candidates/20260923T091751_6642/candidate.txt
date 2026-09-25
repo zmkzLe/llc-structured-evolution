@@ -1,0 +1,19 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_bypass_fix_v1
+doc: >
+  Adds a bypass feedback mechanism to reduce wrong_bypass errors by learning from past mistakes.
+
+# ... The REST of your COMPLETE YAML description, starting from the 'state:' section.
+# Copy the Mockingjay design and add your new state (tables) and rules.
+# Modify the victim.bypass_when section.
+
+===== NEW_WORDS =====
+
+# A YAML list of new word declarations.
+# Your new word to track and learn from wrong bypasses goes here.
+# If you add no new words (not recommended for this task), this section MUST still be present but can be empty.
+# - name: your_new_word_name
+#   place: ...
+#   params: ...
+#   means: >
+#     A detailed, 8+ word description of what this word does.

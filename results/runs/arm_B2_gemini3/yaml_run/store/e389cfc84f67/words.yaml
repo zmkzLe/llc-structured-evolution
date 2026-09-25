@@ -1,0 +1,15 @@
+- name: strict_bypass
+  place: condition
+  params: {table: table, index: signature, field: state, div: {int: [1, 16]}, stream_thresh: {int: [0, 127]}}
+  means: >
+    True when the entry of the table at the index is present, and either the
+    table entry is greater than or equal to stream_thresh, or both the field
+    of the victim way chosen by find_victim is greater than or equal to zero
+    and the table entry divided by div (integer division) is strictly greater
+    than that field of the victim way. False otherwise. Nothing is written.
+- name: signed_gt
+  place: condition
+  params: {field: state, min_val: {int: [-16, 0]}}
+  means: >
+    True when the signed per_line field of the way being visited is strictly
+    greater than min_val. False otherwise. Nothing is written.

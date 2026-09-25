@@ -1,0 +1,2 @@
+Candidate 6e0688998178 FAILED at words_refused; it was not scored.
+Reason: pred_gt_avg_and_victim_etr: already declared in this run with another definition; a word is never changed, so declare a new name

@@ -1,0 +1,9 @@
+- name: confident_exceeds_victim
+  place: condition
+  params:
+    conf: table
+    div:
+      int: [1, 16]
+    index: signature
+    table: table
+  means: True when the entry of the table at the index is present, its value divided by div (integer division) is greater than the absolute value of the victim key of the way the victim search chose, and the entry of the conf table at the index is greater than 1. False on an absent entry. Only inside victim.bypass_when.

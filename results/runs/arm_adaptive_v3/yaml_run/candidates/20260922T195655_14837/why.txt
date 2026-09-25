@@ -1,0 +1,2 @@
+Candidate 29fd03174090 FAILED at words_refused; it was not scored.
+Reason: deconfident_etr_from_rdp: already declared in this run with another definition; a word is never changed, so declare a new name

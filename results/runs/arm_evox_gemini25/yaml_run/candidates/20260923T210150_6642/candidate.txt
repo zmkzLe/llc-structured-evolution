@@ -1,0 +1,148 @@
+===== STRUCTURE_DESCRIPTION =====
+# Reference: DPC4-ChampSim/replacement/mockingjay, single-core build. Sizes are for
+# the DPC4 LLC, 4096 x 12: INF_RD 95, INF_ETR 11, MAX_RD 73, 11-bit signatures,
+# 32 sampled sets. The multi-core build folds the core id instead of the hit bit,
+# inserts an unknown signature at INF_ETR, and scales prefetch samples by less.
+name: mockingjay_bypass_feedback
+doc: >
+  Mockingjay with bypass feedback: introduced a `bypassed_sigs` table to track PC signatures of
+  recently bypassed lines. If a line with a previously bypassed signature is accessed,
+  RDP is trained to predict shorter reuse distance, and the bypass decision is overridden
+  for that signature, forcing insertion.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    # Bypass only if the signature has NOT been marked as previously wrongly bypassed
+    - {rdp_high_and_not_bypassed_before: {rdp_table: rdp, rdp_index: pc_sig, rdp_threshold: 73, bypass_tracker_table: bypassed_sigs, bypass_tracker_index: pc_sig}}
+    - {rdp_exceeds_victim_and_not_bypassed_before: {rdp_table: rdp, rdp_index: pc_sig, rdp_div: 8, bypass_tracker_table: bypassed_sigs, bypass_tracker_index: pc_sig}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bypassed_sigs
+    scope: global
+    kind: saturating
+    entries: 2048 # Same size as RDP table, assuming 1:1 mapping of signatures.
+    width: 1 # Just a flag: 0 for not bypassed, 1 for bypassed.
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+  # If a line that was previously bypassed (marked in bypassed_sigs) is now hit,
+  # it means the bypass was wrong. Train RDP to predict shorter reuse distance.
+  - when: {table: {table: bypassed_sigs, index: pc_sig, cmp: eq, threshold: 1}}
+    train: {table: rdp, index: pc_sig, op: decrement}
+  # Clear the bypassed flag for this signature as it is now resident.
+  - when: {table: {table: bypassed_sigs, index: pc_sig, cmp: eq, threshold: 1}}
+    train: {table: bypassed_sigs, index: pc_sig, op: decrement}
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+  # If this fill was a bypass (way == NUM_WAY), mark its signature in bypassed_sigs.
+  - when: {is_bypassed_fill: {}}
+    train: {table: bypassed_sigs, index: pc_sig, op: increment}
+
+===== NEW_WORDS =====
+
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the fill was bypassed.
+- name: rdp_high_and_not_bypassed_before
+  place: condition
+  params: {rdp_table: table, rdp_index: signature, rdp_threshold: {int: [0, 127]}, bypass_tracker_table: table, bypass_tracker_index: signature}
+  means: >
+    True if the entry in the rdp_table at rdp_index is present and its value is greater than rdp_threshold, AND the entry in the bypass_tracker_table at bypass_tracker_index is zero. An absent rdp_table entry makes this false. For the bypass_tracker_table, if an entry is absent, it is considered to have a value of zero.
+- name: rdp_exceeds_victim_and_not_bypassed_before
+  place: condition
+  params: {rdp_table: table, rdp_index: signature, rdp_div: {int: [1, 128]}, bypass_tracker_table: table, bypass_tracker_index: signature}
+  means: >
+    True if the rdp_table entry at rdp_index divided by rdp_div (integer division, rounding down) is greater than the absolute value of the victim key of the way the victim search chose, AND the entry in the bypass_tracker_table at bypass_tracker_index is zero. An absent rdp_table entry makes this false. For the bypass_tracker_table, if an entry is absent, it is considered to have a value of zero. Only usable inside victim.bypass_when.

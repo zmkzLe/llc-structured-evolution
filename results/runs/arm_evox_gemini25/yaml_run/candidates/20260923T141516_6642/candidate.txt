@@ -1,0 +1,41 @@
+===== STRUCTURE_DESCRIPTION =====` marker. Your submission will be automatically rejected if it contains placeholder text.
+
+---
+### HOW TO CONSTRUCT YOUR DESIGN
+
+Start with the `mockingjay` seed policy (provided in the "Other Designs" section below) and modify it.
+
+1.  **Analyze the Problem:** The `wrong_bypass` error means the policy decides to not cache a line, but that line was needed again soon. The bypass decision logic in `mockingjay` is in the `victim.bypass_when` section. It's based on a prediction from the `rdp` table. This prediction is clearly sometimes wrong.
+2.  **Propose a Solution:** A good solution needs more information than just the `rdp` prediction. As instructed, you need to track bypassed lines.
+    *   **Declare a new table or sampler** to store information about bypassed lines (e.g., their PC signature).
+    *   **Declare a `new word`** to interact with this structure. For example, a new `step` word could be used in `on_fill` (when a bypass happens) to record the bypassed line's signature. A new `condition` word could check this table on a subsequent miss to the same line to detect a `wrong_bypass`.
+    *   **Add a training rule:** When a `wrong_bypass` is detected (a miss to a line that was recently bypassed), train your main predictor (`rdp`) to be less aggressive about bypassing that signature in the future (e.g., `op: decrement`).
+3.  **Manage Metadata:** You have a 48 KB budget. Mockingjay uses 47.4 KB. To add a new table, you must shrink something else. A good place to start is the `rdp` table. You can reduce its `entries` or `width`. For example, reducing `rdp` `entries` from 2048 to 1024 would free up significant space for your new structure.
+4.  **Write the Code:** Modify the `mockingjay` YAML to implement your changes. Add your new table to `tables`, your new word to `NEW_WORDS`, and the new rules to the event handlers (`on_fill`, `on_access`).
+
+---
+### REFERENCE: THE SIMULATOR ENVIRONMENT & VOCABULARY
+
+This section contains all the detailed rules, definitions, and examples you need.
+
+The codebase is ChampSim, a simulator of an out-of-order superscalar processor running a program trace, in the DPC4 single-core configuration: one core, a 3 MB last-level cache of 4096 sets and 12 ways with 64-byte lines and a 35-cycle latency, and no prefetcher anywhere. The goal is the score: on each training trace, your design's IPC divided by Mockingjay's IPC on the same trace, and the geometric mean of those ratios over the training traces. Mockingjay, the seed and the design to beat, scores exactly 1.0; larger is better, and above 1.0 beats it. Two constraints hold for every design: it must be realizable in hardware, and its replacement state may not exceed 48 KB, separate from the cache itself; a design declaring more is refused.
+
+Every candidate also reports its metadata, priced by CACTI at 22 nm from the state the description declares (metadata_kb, metadata_area_mm2, metadata_energy_uj); reported, not scored. The seed declares 47.4 KB of the 48 KB budget, so new state has to be paid for by narrowing or removing state elsewhere; the metadata_kb figure in the feedback tells you where a design stands.
+
+THE VOCABULARY
+The description is checked against a fixed vocabulary before anything is built. Every key, symbol and value is defined in "The meaning of every word" at the end of this message, which also says when ChampSim calls each event. An unknown key or symbol, a value outside its declared width, or a reference to a name that is not declared is refused, and the reason comes back to you.
+
+NEW WORDS
+Where the fixed vocabulary cannot express what you want, declare a new word in the NEW_WORDS section and use it in the description. Each word is a mapping:
+- name: lower-case letters, digits and underscores, starting with a letter
+- place: where it may be written: condition (a clause of `when` or `bypass_when`), value (the value of a `set` or `install` field), step (a rule's action), or the name of a symbol list it joins: Extremum, TieBreak, SearchSideEffect, SignatureSource, FoldBit or SignatureHash
+- params: the parameters it takes, each with a type: state, table, signature or sampler (the name of one declared in the description), access_types (a list of access types), {int: [lo, hi]} (an integer in that range), or {symbol: <ListName>}, where <ListName> is the name of ONE of the vocabulary's symbol lists, never a list of values: `cmp: {symbol: Comparison}` takes gt or any other member of Comparison. Inside a sampler, one of the sampled entry's fields, or its age, is passed as a `state` parameter. A symbol-list member takes no parameters.
+- means: what the code does, in at least 8 words, exact enough that a programmer implements it without guessing: every input it reads, the arithmetic, the width, the order of operations, the tie-break.
+`params` is a mapping from parameter name to type, never a list. A complete declaration, one item of the NEW_WORDS list:
+```
+- name: reuse_below
+  place: condition
+  params: {table: table, index: signature, limit: {int: [0, 127]}}
+  means: >
+    True when the entry of the table at the index is present and its value is
+    below the limit; an absent entry counts as below. Nothing is written.

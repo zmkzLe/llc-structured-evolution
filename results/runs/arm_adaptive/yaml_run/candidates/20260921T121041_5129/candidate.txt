@@ -1,0 +1,173 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_recency_bypass
+doc: >
+  Reduces wrong_bypass mistakes by adding a recency check to the bypass logic.
+  A new table tracks the timestamp of the last reuse for each signature. A line
+  is now bypassed only if it's predicted to be dead with high confidence AND its
+  signature has not been associated with a reuse recently. This prevents
+  bypassing lines that are part of a recently active access pattern. The sampler
+  size is slightly reduced to stay within the metadata budget.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+  - name: global_clock # New global clock for recency tracking.
+    scope: global
+    kind: counter
+    width: 8
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when: # Bypass only when RDP predicts long reuse, confidence is MAX, AND signature has not been reused recently.
+    - confident_rdp_greater_than: {conf_table: rdp_conf, rdp_table: rdp, index: pc_sig, threshold: 73}
+      signature_age_gt: {table: last_seen_ts, index: pc_sig, clock: global_clock, limit: 128}
+    - confident_table_exceeds_victim: {conf_table: rdp_conf, rdp_table: rdp, index: pc_sig, div: 8}
+      signature_age_gt: {table: last_seen_ts, index: pc_sig, clock: global_clock, limit: 128}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+  - name: rdp_conf # Tracks confidence in an RDP "dead" (long-reuse) prediction.
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+  - name: last_seen_ts # New table to track recency of a signature's reuse.
+    scope: global
+    kind: counter
+    entries: 2048
+    width: 8
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 3 # Reduced from 4 to make space for last_seen_ts table.
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match: # A reuse was detected -> the line was not dead.
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - set_table_to_value: {table: last_seen_ts, index: signature, value_src: global_clock} # Record reuse timestamp
+      - train: {table: rdp_conf, index: signature, op: decrement} # Decrement confidence in "dead" prediction.
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep: # A line aged out without reuse -> likely dead.
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp_conf, index: signature, op: increment} # Increment confidence in "dead" prediction.
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace: # A line was evicted without reuse -> likely dead.
+      - train: {table: rdp_conf, index: signature, op: increment} # Increment confidence in "dead" prediction.
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+      - set: {global_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    # If confidence in "dead" prediction is high, evict quickly.
+    - when: {table: {table: rdp_conf, index: pc_sig, cmp: is_max, threshold: MAX}}
+      set: {etr: {const: 11}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: confident_rdp_greater_than
+  place: condition
+  params: {conf_table: table, rdp_table: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    True if the entry for the index in conf_table is present and at its maximum value, AND
+    the entry for the same index in rdp_table is present and has a value greater than the threshold.
+    False otherwise.
+- name: confident_table_exceeds_victim
+  place: condition
+  params: {conf_table: table, rdp_table: table, index: signature, div: {int: [1, 1024]}}
+  means: >
+    True if the entry for the index in conf_table is present and at its maximum value, AND
+    the value from rdp_table[index]/div (integer division) is greater than the absolute
+    value of the victim key of the way the victim search chose. An absent entry in rdp_table
+    is treated as a value of 0. False otherwise.
+- name: set_table_to_value
+  place: step
+  params: {table: table, index: signature, value_src: state}
+  means: >
+    Writes the current value of the state field value_src into the table entry
+    at the given index. The entry is marked as present. The value is clamped to
+    the table's maximum value.
+- name: signature_age_gt
+  place: condition
+  params: {table: table, index: signature, clock: state, limit: {int: [0, 255]}}
+  means: >
+    Reads the entry in the table at the given index. If the entry is absent, returns false.
+    Otherwise, computes the age as (clock_value - entry_value) modulo 2^width, where width is
+    the table's width. Returns true if this age is greater than the limit. The clock_value is
+    read from the given state field.

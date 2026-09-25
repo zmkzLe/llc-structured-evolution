@@ -1,0 +1,32 @@
+Candidate 73d42767b8cc: score 1.00471, the geometric mean over 17 traces of its IPC over Mockingjay's on the same trace (20M warm-up + 50M measured); Mockingjay, the seed and the design to beat, scores 1.0: ahead.
+Closest earlier design: 94958da04c31 (similarity 0.957, score 0.99674, change +0.00797). Parts changed: name, victim.bypass_when, new_words.
+New words: pred_gt_relaxed_victim_etr (condition).
+
+Per trace. vs MJ: IPC over Mockingjay's on that trace. change: minus the closest design's.
+MPKI: LLC misses per 1000 instructions. memory: share of all cycles stalled on the memory
+hierarchy at any level; LLC: the part of it stalled on LLC hits; DRAM: the part stalled on
+DRAM. retire: share of all cycles spent retiring instructions, which no replacement policy
+changes. headroom: share of the sampled misses Belady's MIN avoids on this candidate's own
+stream. Then the sampled fills judged against MIN: kept a dead line, evicted a line reused
+sooner, should have bypassed, bypassed wrongly (change from the closest design in brackets).
+trace                      vs MJ   change   MPKI  memory   LLC   DRAM  retire headroom       kept_dead  evicted_sooner  should_bypass   wrong_bypass
+410.bwaves-1963B          1.0000  -0.0018  17.92   76.8%  1.2%  60.0%   20.7%     2.8%        0 (-104)          0 (+0)      0 (-1361)   1555 (+1540)
+429.mcf-192B              1.0004  +0.0100  51.97   90.3%  6.7%  73.4%    6.4%     0.5%      320 (+241)        38 (-36)    111 (-1875)     259 (+198)
+433.milc-127B             0.9990  -0.0043  20.29   82.9%  0.0%  77.2%   12.6%    28.6%   2562 (-12459)        246 (+8)    1686 (-481) 14820 (+13601)
+434.zeusmp-10B            0.9998  -0.0002   2.27   63.3%  0.0%  44.4%   33.3%    10.1%        25 (-26)          0 (+0)       62 (-45)      613 (+77)
+437.leslie3d-149B         0.9988  -0.0002   7.06   84.2%  0.0%  76.6%   14.0%    12.9%      731 (-112)          0 (+0)      931 (-75)    1073 (+401)
+450.soplex-247B           1.0034  +0.0074  20.68   84.1%  4.4%  76.5%   12.1%    18.9%    3933 (-1176)   11322 (-1521)   7682 (-7854)   9301 (+4392)
+459.GemsFDTD-1491B        0.9993  +0.0006  27.63   89.8%  0.8%  86.3%    9.0%    33.3%     39 (-22250)          0 (+0)      0 (-3530) 28238 (+27918)
+470.lbm-1274B             1.0027  +0.0051  25.87   86.8%  0.0%  86.8%   12.7%    20.0%     8520 (-343)     18571 (-77)    353 (-6802)   6059 (+5611)
+483.xalancbmk-127B        1.0232  +0.0362  18.50   84.8%  4.6%  77.5%   11.1%     9.9%     332 (-8219)    746 (-13848)   963 (-18034) 24558 (+21585)
+603.bwaves_s-1740B        1.0006  +0.0008  19.44   78.5%  0.0%  55.2%   19.7%     7.0%        5 (-262)          0 (+0)      0 (-2964)   3438 (+3372)
+605.mcf_s-1644B           1.0022  +0.0041 137.40   87.8%  1.3%  67.9%    8.1%    44.3%  16422 (-185104)   3237 (-23999)      32 (-292)212051 (+211185)
+619.lbm_s-2677B           0.9995  -0.0073  82.61   91.5%  0.0%  87.3%    8.0%    43.9%  62586 (-82297)          0 (+0)    37 (-24159)109383 (+109383)
+623.xalancbmk_s-10B       1.0416  +0.0695   4.11   70.5% 20.5%  43.0%   24.2%    11.8%     165 (-1145)     446 (-2266)    647 (-9778)   2697 (+2532)
+625.x264_s-20B            1.0000  +0.0000   1.41   42.1%  0.0%  25.3%   54.0%     4.7%         36 (+0)          0 (+0)       162 (+0)         0 (+0)
+627.cam4_s-573B           1.0000  +0.0000   0.16   23.6%  0.0%   0.8%   60.4%    52.4%         32 (+0)          0 (+0)        53 (+0)         0 (+0)
+654.roms_s-1390B          1.0005  +0.0055  33.30   90.8%  0.0%  88.2%    8.4%    25.6%   18023 (-7506)       279 (-10)   6283 (-6163) 21470 (+14300)
+657.xz_s-2302B            1.0099  +0.0105   1.36   47.9%  1.9%  26.7%   33.9%    33.0%      732 (-328)        12 (-13)     253 (-143)     516 (+516)
+
+All traces, sampled fills: kept_dead 114463 (-321090), evicted_sooner 34897 (-41762), should_bypass 19255 (-83556), wrong_bypass 436031 (+416611). The largest kind of mistake is wrong_bypass. Mistakes of every kind are addressed by changing what the policy remembers or how it decides, not by moving one threshold.
+Metadata: 47.38 KB SRAM, 0.0379 mm2 at 22 nm (reported, not scored).

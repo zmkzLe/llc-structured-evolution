@@ -1,0 +1,2 @@
+Candidate 3d61259c945a FAILED at words_refused; it was not scored.
+Reason: confidence_adjusted_etr: already declared in this run with another definition; a word is never changed, so declare a new name

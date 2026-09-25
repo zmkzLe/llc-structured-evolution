@@ -1,0 +1,349 @@
+```cpp
+===== HEADER =====
+#ifndef REPLACEMENT_@MODULE@_H
+#define REPLACEMENT_@MODULE@_H
+
+#include <vector>
+#include <cstdint>
+#include "cache.h"
+#include "modules.h"
+
+class @MODULE@ : public champsim::modules::replacement {
+    long NUM_SET;
+    long NUM_WAY;
+
+    struct line_state {
+        int8_t etr = 0;
+    };
+    std::vector<std::vector<line_state>> state_per_line;
+
+    struct set_state {
+        uint8_t etr_clock = 8;
+        uint8_t set_clock = 0;
+    };
+    std::vector<set_state> state_per_set;
+
+    struct rdp_entry {
+        bool valid = false;
+        uint8_t value = 0;
+    };
+    std::vector<rdp_entry> rdp;
+
+    struct sampler_entry {
+        bool valid = false;
+        uint16_t tag = 0;
+        uint16_t signature = 0;
+        uint8_t timestamp = 0;
+    };
+    std::vector<std::vector<sampler_entry>> sampled_cache;
+    std::vector<long> sampled_set_to_group;
+
+    uint64_t pc_sig(champsim::address ip, bool hit, bool prefetch);
+    int8_t add_etr(int8_t val, int addend);
+    uint8_t add_etr_clock(uint8_t val, int addend);
+    uint8_t add_set_clock(uint8_t val, int addend);
+    uint8_t calc_age(uint8_t clock, uint8_t stamp);
+    void train_rdp_toward(uint16_t index, uint8_t sample, int scale, int min_diff);
+    void train_rdp_increment(uint16_t index);
+    void do_sample_sampled_cache(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, access_type type, bool hit);
+    void run_access(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, access_type type, bool hit);
+
+public:
+    explicit @MODULE@(CACHE* cache);
+    long find_victim(uint32_t triggering_cpu, uint64_t instr_id, long set, const champsim::cache_block* current_set, champsim::address ip, champsim::address full_addr, access_type type);
+    void replacement_cache_fill(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, champsim::address victim_addr, access_type type);
+    void update_replacement_state(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, champsim::address victim_addr, access_type type, uint8_t hit);
+};
+
+#endif
+===== SOURCE =====
+#include "@MODULE@.h"
+#include "champsim.h"
+#include "msl/bits.h"
+#include <cmath>
+#include <cstdlib>
+
+@MODULE@::@MODULE@(CACHE* cache) : replacement(cache), NUM_SET(cache->NUM_SET), NUM_WAY(cache->NUM_WAY) {
+    state_per_line.resize(NUM_SET, std::vector<line_state>(NUM_WAY));
+    state_per_set.resize(NUM_SET);
+    rdp.resize(2048);
+    sampled_cache.resize(32 * 16, std::vector<sampler_entry>(5));
+    
+    sampled_set_to_group.resize(NUM_SET, -1);
+    long num_groups = 0;
+    for (long s = 0; s < NUM_SET; ++s) {
+        unsigned m = champsim::lg2(NUM_SET) - champsim::lg2(32);
+        unsigned long long mod_mask = (1ULL << m) - 1;
+        if ((s & mod_mask) == ((s >> champsim::lg2(32)) & mod_mask)) {
+            sampled_set_to_group[s] = num_groups++;
+        }
+    }
+}
+
+uint64_t @MODULE@::pc_sig(champsim::address ip, bool hit, bool prefetch) {
+    uint64_t x = ip.to<uint64_t>();
+    x = (x << 1) | (hit ? 1 : 0);
+    x = (x << 1) | (prefetch ? 1 : 0);
+    for (int i = 0; i < 3; ++i) {
+        if (x & 1) {
+            x = (x >> 1) ^ 0xEDB88320;
+        } else {
+            x = x >> 1;
+        }
+    }
+    return x & 0x7FF;
+}
+
+int8_t @MODULE@::add_etr(int8_t val, int addend) {
+    int res = val + addend;
+    res = res & 0x1F;
+    if (res & 0x10) res |= ~0x1F;
+    return res;
+}
+
+uint8_t @MODULE@::add_etr_clock(uint8_t val, int addend) {
+    return (val + addend) & 0x0F;
+}
+
+uint8_t @MODULE@::add_set_clock(uint8_t val, int addend) {
+    return (val + addend) & 0xFF;
+}
+
+uint8_t @MODULE@::calc_age(uint8_t clock, uint8_t stamp) {
+    return (clock - stamp) & 0xFF;
+}
+
+void @MODULE@::train_rdp_toward(uint16_t index, uint8_t sample, int scale, int min_diff) {
+    int s = sample * scale;
+    if (s > 95) s = 95;
+    
+    if (!rdp[index].valid) {
+        rdp[index].valid = true;
+        rdp[index].value = s;
+    } else {
+        int diff = std::abs((int)rdp[index].value - s);
+        if (diff >= min_diff) {
+            if (rdp[index].value < s) {
+                rdp[index].value++;
+            } else if (rdp[index].value > s) {
+                rdp[index].value--;
+            }
+        }
+    }
+}
+
+void @MODULE@::train_rdp_increment(uint16_t index) {
+    if (!rdp[index].valid) {
+        rdp[index].valid = true;
+        rdp[index].value = 95;
+    } else {
+        if (rdp[index].value < 95) {
+            rdp[index].value++;
+        }
+    }
+}
+
+void @MODULE@::do_sample_sampled_cache(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, access_type type, bool hit) {
+    long group_idx = sampled_set_to_group[set];
+    if (group_idx == -1) return;
+    
+    uint64_t line_address = full_addr.to<uint64_t>() >> LOG2_BLOCK_SIZE;
+    long sampler_set_idx = (line_address >> champsim::lg2(NUM_SET)) & 15;
+    long flat_sampler_set = group_idx * 16 + sampler_set_idx;
+    
+    uint16_t tag = (line_address >> (champsim::lg2(NUM_SET) + 4)) & 1023;
+    
+    bool prefetch = (type == access_type::PREFETCH);
+    uint64_t sig = pc_sig(ip, hit, prefetch);
+    
+    auto& sset = sampled_cache[flat_sampler_set];
+    uint8_t current_set_clock = state_per_set[set].set_clock;
+    
+    int match_way = -1;
+    for (int w = 0; w < 5; ++w) {
+        if (sset[w].valid && sset[w].tag == tag) {
+            match_way = w;
+            break;
+        }
+    }
+    
+    if (match_way != -1) {
+        auto& entry = sset[match_way];
+        uint8_t age = calc_age(current_set_clock, entry.timestamp);
+        
+        bool stopped = false;
+        if (age > 95) {
+            stopped = true;
+        }
+        
+        if (!stopped && type == access_type::PREFETCH) {
+            train_rdp_toward(entry.signature, age, 2, 16);
+            entry.valid = false;
+            stopped = true;
+        }
+        
+        if (!stopped) {
+            train_rdp_toward(entry.signature, age, 1, 16);
+            entry.valid = false;
+        }
+    }
+    
+    for (int w = 0; w < 5; ++w) {
+        if (sset[w].valid) {
+            uint8_t age = calc_age(current_set_clock, sset[w].timestamp);
+            if (age > 95) {
+                train_rdp_increment(sset[w].signature);
+                sset[w].valid = false;
+            }
+        }
+    }
+    
+    bool has_tag = false;
+    for (int w = 0; w < 5; ++w) {
+        if (sset[w].valid && sset[w].tag == tag) {
+            has_tag = true;
+            break;
+        }
+    }
+    
+    if (!has_tag) {
+        int victim_way = -1;
+        for (int w = 0; w < 5; ++w) {
+            if (!sset[w].valid) {
+                victim_way = w;
+                break;
+            }
+        }
+        
+        bool was_valid = false;
+        if (victim_way == -1) {
+            int max_age = -1;
+            for (int w = 0; w < 5; ++w) {
+                uint8_t age = calc_age(current_set_clock, sset[w].timestamp);
+                if ((int)age > max_age) {
+                    max_age = age;
+                    victim_way = w;
+                }
+            }
+            was_valid = true;
+        }
+        
+        if (was_valid) {
+            train_rdp_increment(sset[victim_way].signature);
+        }
+        
+        sset[victim_way].valid = true;
+        sset[victim_way].tag = tag;
+        sset[victim_way].signature = sig;
+        sset[victim_way].timestamp = current_set_clock;
+    }
+    
+    state_per_set[set].set_clock = add_set_clock(state_per_set[set].set_clock, 1);
+}
+
+void @MODULE@::run_access(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, access_type type, bool hit) {
+    do_sample_sampled_cache(triggering_cpu, set, way, full_addr, ip, type, hit);
+    
+    if (state_per_set[set].etr_clock == 8) {
+        for (long w = 0; w < NUM_WAY; ++w) {
+            if (w == way) continue;
+            int8_t val = state_per_line[set][w].etr;
+            if (std::abs((int)val) < 11) {
+                state_per_line[set][w].etr = add_etr(val, -1);
+            }
+        }
+    }
+    
+    if (state_per_set[set].etr_clock == 8) {
+        state_per_set[set].etr_clock = 0;
+    }
+    
+    state_per_set[set].etr_clock = add_etr_clock(state_per_set[set].etr_clock, 1);
+    
+    bool prefetch = (type == access_type::PREFETCH);
+    uint64_t sig = pc_sig(ip, hit, prefetch);
+    
+    if (!rdp[sig].valid) {
+        if (way != NUM_WAY) {
+            state_per_line[set][way].etr = 0;
+        }
+        return;
+    }
+    
+    if (rdp[sig].valid && rdp[sig].value > 73) {
+        if (way != NUM_WAY) {
+            state_per_line[set][way].etr = 11;
+        }
+        return;
+    }
+    
+    if (way != NUM_WAY) {
+        int table_val = rdp[sig].value / 8;
+        state_per_line[set][way].etr = add_etr(0, table_val);
+    }
+}
+
+long @MODULE@::find_victim(uint32_t triggering_cpu, uint64_t instr_id, long set, const champsim::cache_block* current_set, champsim::address ip, champsim::address full_addr, access_type type) {
+    long best_way = 0;
+    int best_mag = 0;
+    
+    for (long w = 0; w < NUM_WAY; ++w) {
+        int8_t val = state_per_line[set][w].etr;
+        int mag = std::abs((int)val);
+        
+        if (w == 0) {
+            best_mag = mag;
+            best_way = w;
+        } else {
+            if (mag > best_mag) {
+                best_mag = mag;
+                best_way = w;
+            } else if (mag == best_mag && val < 0) {
+                best_mag = mag;
+                best_way = w;
+            }
+        }
+    }
+    
+    if (type != access_type::WRITE) {
+        bool hit = false;
+        bool prefetch = (type == access_type::PREFETCH);
+        uint64_t sig = pc_sig(ip, hit, prefetch);
+        
+        bool bypass = false;
+        if (rdp[sig].valid && rdp[sig].value > 73) {
+            bypass = true;
+        }
+        if (!bypass && rdp[sig].valid) {
+            int table_val = rdp[sig].value / 8;
+            if (table_val > best_mag) {
+                bypass = true;
+            }
+        }
+        if (bypass) {
+            return NUM_WAY;
+        }
+    }
+    
+    return best_way;
+}
+
+void @MODULE@::replacement_cache_fill(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, champsim::address victim_addr, access_type type) {
+    if (type == access_type::WRITE) {
+        if (way != NUM_WAY) {
+            state_per_line[set][way].etr = -11;
+        }
+        return;
+    }
+    run_access(triggering_cpu, set, way, full_addr, ip, type, false);
+}
+
+void @MODULE@::update_replacement_state(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, champsim::address victim_addr, access_type type, uint8_t hit) {
+    if (hit) {
+        if (type == access_type::WRITE) {
+            return;
+        }
+        run_access(triggering_cpu, set, way, full_addr, ip, type, true);
+    }
+}
+```

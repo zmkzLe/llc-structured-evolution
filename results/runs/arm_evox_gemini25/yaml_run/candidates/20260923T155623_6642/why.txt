@@ -1,0 +1,11 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 3 validation errors for StructureDescription
+samplers.1.install
+  Input should be a valid dictionary [type=dict_type, input_value=[{'original_pc_sig': {'si... {'read': 'set_clock'}}], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+on_access.0.when
+  Value error, 'way': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'way': 'NUM_WAY'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+on_fill.1.when
+  Value error, 'way': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'way': 'NUM_WAY'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

@@ -1,0 +1,14 @@
+Guidance version 40, written after 402 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.98046 (-1.95% against the seed)
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the
+    fill was bypassed.
+
+Refused among the last 10 candidates, and why: malformed 4 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 4 (Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); Value error, victim.bypass_when[0]: index 'pc_sig' takes 2048 values but table 'rdp' has 1024 entries. The excess indices read and train memory past the table. (written: {'name': 'mockingjay_bf_f...}}}, {'run': 'access'}]}); victim.bypass_when.0 Value error, 'when': not a word of the grammar here, nor a declared condition word (written: {'when': {'table': {'tabl... 'gt', 'threshold': 73}}) victim.bypass_when.1 Value error, 'when': not a word of the grammar here). words_refused 1 (name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'check_and_clear_bypassed_pc_reuse'))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 10 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<your complete and valid... description goes here>'); 9 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 2 times (schema_rejected): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mockingjay_optimized_bypass_tracker')
+
+You must first fix the basic formatting errors that cause nearly all your proposals to be refused, such as missing sections, invalid YAML, and illegal word names. This has prevented any progress, leaving your best score identical to Mockingjay's. The few scored changes you made to `on_access`, `on_fill`, and `samplers`, and with the new word `is_bypassed_fill`, all degraded performance, showing that minor tweaks are not the solution. The greatest opportunity lies in the bypass decision, where you make conflicting mistakes: `wrong_bypass` is the largest error on traces like `605.mcf_s` and `619.lbm_s`, while `should_bypass` dominates on `627.cam4_s`. To resolve this conflict and reduce the many `wrong_bypass` errors, the policy needs to remember which bypassed lines are requested again. The current vocabulary cannot express state for non-resident addresses, so you must propose a new word that defines a structure to track recently bypassed lines and learn from their reuse.

@@ -1,0 +1,3 @@
+===== STRUCTURE_DESCRIPTION =====
+<The complete, valid YAML for your design, starting with 'name: ...'>
+===== NEW_WORDS =====

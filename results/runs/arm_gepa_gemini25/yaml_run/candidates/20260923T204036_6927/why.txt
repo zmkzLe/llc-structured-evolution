@@ -1,0 +1,4 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 1 validation error for StructureDescription
+  Value error, on_access[2] -> procedures.access[4]: writes per_line field 'etr' on ON_ACCESS. That event fires on misses, where way == NUM_WAY and the write lands on the next set instead of throwing. Put way-indexed writes in on_hit or on_fill. [type=value_error, input_value={'name': 'mockingjay_bypa...ue}, {'run': 'access'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

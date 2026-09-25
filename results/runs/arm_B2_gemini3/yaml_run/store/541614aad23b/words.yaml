@@ -1,0 +1,18 @@
+- name: dynamic_resident_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    stream_thresh:
+      int: [0, 127]
+    table: table
+  means: >
+    True when the entry of the table at the index is present and either
+    its value is greater than or equal to stream_thresh, or every way in
+    the access's set has its field greater than or equal to zero and the
+    maximum of that field across all ways of the set is strictly greater
+    than zero and the table entry divided by div (integer division) is
+    greater than or equal to that maximum. False otherwise. Nothing is
+    written.

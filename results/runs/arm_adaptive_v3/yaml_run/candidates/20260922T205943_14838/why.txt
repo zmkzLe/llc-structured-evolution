@@ -1,0 +1,2 @@
+Candidate 34b2b2d396d0 FAILED at words_refused; it was not scored.
+Reason: train_sampler_match, unified_etr_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name

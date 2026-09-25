@@ -1,0 +1,18 @@
+- name: predict_bypass_and_record
+  place: condition
+  params: {predictor: table, filter: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    Checks the value in the predictor table at the given index. If the value is
+    greater than the threshold, this condition has a side effect: it trains the
+    filter table at the same index by calling increment. After the potential side
+    effect, it returns true if the predictor's value was greater than the
+    threshold, and false otherwise. An absent predictor entry is treated as 0 and
+    returns false.
+- name: punish_wrong_bypass
+  place: step
+  params: {bypassed_table: table, predictor_table: table, index: signature}
+  means: >
+    Provides negative feedback for an incorrect bypass decision. It decrements
+    the entry in the predictor_table at the given index. It also consumes the
+    trigger by decrementing the entry in the bypassed_table at the same index,
+    effectively resetting its flag.

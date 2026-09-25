@@ -1,0 +1,47 @@
+===== STRUCTURE_DESCRIPTION =====` block must be complete, valid YAML. Submitting `<the structure description, YAML>` will be rejected.
+*   **YAML SYNTAX IS STRICT.** Ensure your file is valid YAML. Keys in a mapping must be unique. For example, a `when` clause cannot have two `counter` tests. If you need a more complex condition, declare a new `condition` word.
+*   **ADHERE TO THE VOCABULARY.** Every key and value must come from the vocabulary defined in "The meaning of every word" or be a properly declared `NEW_WORD`. Do not invent keys. For example, a condition is written `{counter: {counter: my_ctr, cmp: gt, threshold: 5}}`, not `{cmp: gt, counter: my_ctr, ...}`.
+
+---
+Every candidate also reports its metadata, priced by CACTI at 22 nm from the
+state the description declares (metadata_kb, metadata_area_mm2,
+metadata_energy_uj); reported, not scored. The seed declares 47.4 KB of the
+48 KB budget, so new state has to be paid for
+by narrowing or removing state elsewhere; the metadata_kb figure in the feedback
+tells you where a design stands.
+
+THE VOCABULARY
+The description is checked against a fixed vocabulary before anything is built.
+Every key, symbol and value is defined in "The meaning of every word" at the end
+of this message, which also says when ChampSim calls each event. An unknown key
+or symbol, a value outside its declared width, or a reference to a name that is
+not declared is refused, and the reason comes back to you.
+
+NEW WORDS
+Where the fixed vocabulary cannot express what you want, declare a new word in
+the NEW_WORDS section and use it in the description. Each word is a mapping:
+- name: lower-case letters, digits and underscores, starting with a letter
+- place: where it may be written: condition (a clause of `when` or
+  `bypass_when`), value (the value of a `set` or `install` field), step (a
+  rule's action), or the name of a symbol list it joins: Extremum, TieBreak,
+  SearchSideEffect, SignatureSource, FoldBit or SignatureHash
+- params: the parameters it takes, each with a type: state, table, signature or
+  sampler (the name of one declared in the description), access_types (a list
+  of access types), {int: [lo, hi]} (an integer in that range), or
+  {symbol: <ListName>}, where <ListName> is the name of ONE of the vocabulary's
+  symbol lists, never a list of values: `cmp: {symbol: Comparison}` takes gt or
+  any other member of Comparison. Inside a sampler, one of the sampled entry's
+  fields, or its age, is passed as a `state` parameter. A symbol-list member
+  takes no parameters.
+- means: what the code does, in at least 8 words, exact enough that a programmer
+  implements it without guessing: every input it reads, the arithmetic, the
+  width, the order of operations, the tie-break.
+`params` is a mapping from parameter name to type, never a list. A complete
+declaration, one item of the NEW_WORDS list:
+```
+- name: reuse_below
+  place: condition
+  params: {table: table, index: signature, limit: {int: [0, 127]}}
+  means: >
+    True when the entry of the table at the index is present and its value is
+    below the limit; an absent entry counts as below. Nothing is written.

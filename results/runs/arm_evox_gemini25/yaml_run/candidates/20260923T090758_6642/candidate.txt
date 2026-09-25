@@ -1,0 +1,9 @@
+===== STRUCTURE_DESCRIPTION =====
+    name: mockingjay_v2
+    doc: >
+      A small modification to Mockingjay to improve bypass decisions.
+    ... (rest of the valid YAML for the design) ...
+    ===== NEW_WORDS =====
+
+    - name: my_new_word
+      place: condition

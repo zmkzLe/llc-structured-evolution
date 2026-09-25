@@ -1,0 +1,14 @@
+===== STRUCTURE_DESCRIPTION =====
+name: my_policy_v2
+doc: >
+  I added a bypass tracking table to penalize wrong bypasses, based on the
+  guidance about high wrong_bypass counts.
+# ... the rest of your YAML description ...
+===== NEW_WORDS =====
+
+- name: my_new_word
+  place: condition
+  params: {table: table, index: signature}
+  means: >
+    This is a very precise and unambiguous description of what my new
+    word does, sufficient for a programmer to implement it.

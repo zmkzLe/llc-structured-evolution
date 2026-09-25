@@ -1,0 +1,8 @@
+===== STRUCTURE_DESCRIPTION =====
+name: my_new_policy
+doc: >
+  A description of my new policy and why it should be better.
+# ... the rest of your complete and valid policy description ...
+===== NEW_WORDS =====
+
+# ... a YAML list of new word declarations, or [] if you have none ...

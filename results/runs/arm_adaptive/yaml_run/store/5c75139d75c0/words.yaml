@@ -1,0 +1,33 @@
+- name: my_confident_rdp_gt_threshold
+  place: condition
+  params: {rdp_table: table, conf_table: table, index: signature, rdp_thresh: {int: [0, 127]}}
+  means: >
+    True when the rdp_table entry at the index is present and its value is greater than
+    rdp_thresh, AND the conf_table entry at the same index is present and its value
+    is its maximum value (2^width - 1). False otherwise.
+
+- name: my_confident_rdp_exceeds_victim
+  place: condition
+  params: {rdp_table: table, conf_table: table, index: signature, div: {int: [1, 128]}}
+  means: >
+    True when the rdp_table entry at the index is present, its value divided by div
+    (integer division) is greater than the absolute value of the chosen victim's key,
+    AND the conf_table entry at the index is present and its value is its maximum value
+    (2^width - 1). False otherwise. Only for use in bypass_when.
+
+- name: train_rdp_toward_conf_dec
+  place: step
+  params: {rdp_table: table, conf_table: table, index: signature, scale: {int: [1, 10]}, min_diff: {int: [0, 127]}}
+  means: >
+    Trains the rdp_table toward the value 'age', scaled by scale, with a minimum
+    difference of min_diff. Simultaneously, decrements the conf_table entry at the same index.
+    The rdp_table training is identical to the 'toward' TrainOp. The conf_table training is
+    identical to the 'decrement' TrainOp.
+
+- name: train_rdp_inc_conf_inc
+  place: step
+  params: {rdp_table: table, conf_table: table, index: signature}
+  means: >
+    Increments the rdp_table entry at the given index. Simultaneously, increments
+    the conf_table entry at the same index. The training for each table is identical
+    to the 'increment' TrainOp.

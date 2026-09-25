@@ -1,0 +1,137 @@
+===== STRUCTURE_DESCRIPTION =====
+# Reference: DPC4-ChampSim/replacement/mockingjay, single-core build.
+# Optimization: overdue-prioritized victim selection and overdue-aware fill bypass.
+name: mj_overdue_opt
+doc: >
+  Prioritizes overdue lines for replacement and prevents wrongful bypasses.
+  In standard Mockingjay, victim selection uses max_magnitude with prefer_negative,
+  which causes newly overdue lines (e.g. etr = -1) to have small magnitudes (1),
+  protecting dead lines while evicting live lines with etr >= 2 (causing kept_dead).
+  Furthermore, table_exceeds_victim compared RDP against abs(victim.etr), which caused
+  incoming fills to bypass whenever the victim was an overdue line with small magnitude,
+  creating rampant wrong_bypass errors on mcf, lbm, GemsFDTD, and milc.
+  This design replaces victim selection with overdue_then_max (any overdue line is
+  evicted before any live line, with most overdue winning; among live lines, largest ETR
+  wins) and bypass_when with bypass_overdue_aware (bypasses only if rdp > min_rd, the
+  victim is not overdue, and rdp / div >= victim.etr).
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: overdue_then_max
+  tie_break: first
+  on_search: none
+  bypass_when:
+    - bypass_overdue_aware: {table: rdp, index: pc_sig, div: 8, min_rd: 73}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+
+- name: overdue_then_max
+  place: Extremum
+  params: {}
+  means: >
+    Finds the victim way by scanning ways 0 to NUM_WAY-1. Any way with a negative key
+    is prioritized over any way with a non-negative key; among ways with negative keys,
+    the most negative (smallest signed value) wins; among ways with non-negative keys,
+    the largest signed value wins. Ties are broken by the declared tie_break.
+- name: bypass_overdue_aware
+  place: condition
+  params: {table: table, index: signature, div: {int: [1, 64]}, min_rd: {int: [1, 127]}}
+  means: >
+    Evaluates whether an incoming fill should bypass. Returns true only if the table
+    entry at index is present and strictly greater than min_rd, the chosen victim way
+    has a non-negative key (meaning no resident line is overdue), and the table entry
+    divided by div is greater than or equal to the chosen victim way's key. Otherwise
+    returns false.

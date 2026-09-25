@@ -1,0 +1,26 @@
+===== STRUCTURE_DESCRIPTION =====
+# Start with a one-line doc string describing your specific change and its rationale.
+doc: >
+  My first change: added a new signature to improve bypass decisions.
+
+name: my_policy_name
+# ... your complete and valid YAML policy description goes here ...
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  # ... rest of your state, signatures, tables, samplers, victim, on_hit, on_fill, etc. ...
+
+===== NEW_WORDS =====
+
+# Your YAML list of new words, or an empty list if none.
+# Example of a new word definition:
+# - name: reuse_threshold_check
+#   place: condition
+#   params: {table: table, index: signature, threshold: {int: [0, 127]}}
+#   means: >
+#     True when the entry of the table at the index is present and its value is
+#     below the threshold. An absent entry counts as below.

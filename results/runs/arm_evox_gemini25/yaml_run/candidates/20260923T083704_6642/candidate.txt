@@ -1,0 +1,11 @@
+===== STRUCTURE_DESCRIPTION =====
+# In this section, write the complete YAML for your policy.
+# Start by copying the seed design (Mockingjay) and then modify it.
+name: your_design_name
+doc: >
+  A one-line explanation of what you changed from the parent and why.
+... # The rest of the complete YAML description goes here.
+===== NEW_WORDS =====
+
+# If your design introduces new words, declare them here as a YAML list.
+# If not, leave this section empty, but keep the marker line.

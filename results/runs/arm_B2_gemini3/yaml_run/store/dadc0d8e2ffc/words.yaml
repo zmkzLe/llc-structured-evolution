@@ -1,0 +1,18 @@
+- name: live_relative_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    limit:
+      int: [0, 127]
+    table: table
+  means: >
+    True when the entry of the table at the index is present and either:
+    (1) the field of the victim way chosen by find_victim is greater than or equal to zero and
+    either the table entry is strictly greater than limit or the table entry divided by div
+    (integer division) is strictly greater than that field of the victim way; or
+    (2) the field of the victim way is strictly less than zero, the table entry is strictly greater
+    than limit, and at least one way in the access set has its field greater than or equal to zero.
+    False otherwise. Nothing is written.

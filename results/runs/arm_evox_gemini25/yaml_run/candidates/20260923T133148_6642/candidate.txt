@@ -1,0 +1,156 @@
+===== STRUCTURE_DESCRIPTION =====
+# Reference: DPC4-ChampSim/replacement/mockingjay, single-core build. Sizes are for
+# the DPC4 LLC, 4096 x 12: INF_RD 95, INF_ETR 11, MAX_RD 73, 11-bit signatures,
+# 32 sampled sets. The multi-core build folds the core id instead of the hit bit,
+# inserts an unknown signature at INF_ETR, and scales prefetch samples by less.
+name: my_bypass_fix_v1
+doc: >
+  Mockingjay with a new mechanism to track and learn from wrong_bypass errors.
+  Introduces a small Bypass History Sampler (BHS) to record signatures of bypassed
+  lines. On a subsequent access (hit or miss) that matches a BHS entry, it means
+  a wrong_bypass occurred, and the RDP table is decremented for that signature.
+  A new `process_bypass_history` word encapsulates the lookup and training logic.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+  - name: global_clock
+    scope: global
+    kind: counter
+    width: 64
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+  - name: bypass_history_sampler
+    scope: global
+    sets: {mirror: 4} # Very small, 4 sampled sets for bypass tracking
+    extra_index_bits: 0
+    ways: 8 # 8 ways per set
+    tag_bits: 10 # Tag bits for the line address
+    fields:
+      - {name: bypassed_pc_sig, kind: counter, width: 11, init: ZERO}
+      - {name: bypass_timestamp, kind: counter, width: 64, init: ZERO} # Use global_clock for aging
+    age: {clock: global_clock, stamp: bypass_timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    install:
+      # Record the signature and current timestamp when a line is bypassed
+      bypassed_pc_sig: {signature: pc_sig}
+      bypass_timestamp: {tick: global_clock}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - process_bypass_history: {bhs: bypass_history_sampler, current_pc_sig: pc_sig, rdp_table: rdp}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_access:
+  - set: {global_clock: {add: 1}} # Increment global clock on every access
+  - when: {type_not_in: [WRITE]} # Only run access procedure for non-write accesses
+    run: access
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - when: {way: NUM_WAY} # This means the fill was bypassed
+    sample: bypass_history_sampler # Record the bypassed line's signature into BHS
+    stop: true # Stop processing on_fill for bypassed lines after recording
+  - run: access
+
+===== NEW_WORDS =====
+
+- name: process_bypass_history
+  place: step
+  params: {bhs: sampler, current_pc_sig: signature, rdp_table: table}
+  means: >
+    Performs a lookup in the 'bhs' sampler using the 'current_pc_sig' of the current access.
+    If a matching entry is found (indicating a previously bypassed line is now being accessed),
+    it signifies a 'wrong_bypass'. In this case, the 'rdp_table' entry at 'current_pc_sig' is
+    decremented, and the matched entry in 'bhs' is freed to prevent further training on it.

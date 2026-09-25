@@ -1,0 +1,11 @@
+guidance writer: /home/khoile0315/oe_out/arm_A2_gemini25/yaml_run -> /home/khoile0315/oe_out/arm_A2_gemini25/guidance.txt, every 10 candidates, model gemini-2.5-pro, search pid 126008, stub None
+[2026-09-23T09:44:59Z] version 1 after 10 candidates: 3741 chars, 4524 tokens in 18.6 s
+[2026-09-23T10:27:34Z] version 2 after 20 candidates: 4567 chars, 6152 tokens in 32.6 s
+[2026-09-23T12:05:16Z] version 3 after 31 candidates: 5147 chars, 6503 tokens in 35.5 s
+[2026-09-23T12:51:52Z] version 4 after 41 candidates: 5875 chars, 6448 tokens in 32.2 s
+[2026-09-23T14:58:45Z] version 5 after 51 candidates: 5999 chars, 7941 tokens in 43.3 s
+[2026-09-23T16:30:22Z] version 6 after 63 candidates: 6013 chars, 6758 tokens in 29.9 s
+[2026-09-23T18:03:59Z] version 7 after 73 candidates: 6150 chars, 7210 tokens in 28.9 s
+[2026-09-23T19:30:43Z] version 8 after 83 candidates: 6472 chars, 8128 tokens in 36.8 s
+[2026-09-23T20:50:29Z] version 9 after 93 candidates: 6411 chars, 8372 tokens in 38.9 s
+[2026-09-23T21:04:03Z] version 10 after 104 candidates: 6881 chars, 8303 tokens in 32.4 s

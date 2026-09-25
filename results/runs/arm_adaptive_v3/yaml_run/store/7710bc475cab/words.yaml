@@ -1,0 +1,69 @@
+- name: deconfident_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent rdp_val
+    is treated as 0. The conf_table is assumed to be fully initialized, and its maximum value is 3. Calculates
+    an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val) * scale). If the result of the subtraction
+    is negative, it is treated as 0. Calculates a predicted_etr value as adjusted_rdp divided by div,
+    using integer division. Returns true if predicted_etr is greater than the absolute value of the victim
+    way''s key.'
+- name: deconfident_rdp_gt
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+    threshold:
+      int: [0, 127]
+  means: 'Reads the value ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An
+    absent entry in rdp_table is treated as a value of 0. The conf_table is assumed to be fully initialized,
+    and its maximum value is 3. Calculates an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val)
+    * scale). If the result of the subtraction is negative, it is treated as 0. Returns true if this adjusted_rdp
+    is greater than the threshold.
+
+    '
+- name: etr_with_confidence_cost
+  place: value
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as 0. An absent 'conf_val' is treated as 0.
+    The maximum value for confidence is 3.
+    Calculates a base_etr = rdp_val / div using integer division.
+    Calculates a penalty = (3 - conf_val) * scale.
+    The final returned value is min(max_etr, base_etr + penalty).
+- name: train_rdp_and_confidence
+  place: step
+  params:
+    rdp_table: table
+    conf_table: table
+    index: signature
+    sample: state
+    error_margin: {int: [0, 127]}
+    scale: {int: [1, 2]}
+    min_diff: {int: [0, 127]}
+  means: >
+    Performs training for both reuse distance (RDP) and confidence based on a sampler match.
+    First, it reads the current prediction 'predicted_rd' from rdp_table[index] (0 if absent) and the measured reuse distance 'actual_rd' from 'sample' (age).
+    It then trains the rdp_table entry toward a target of min(actual_rd * scale, rdp_table.max), moving one step if the difference is at least 'min_diff'.
+    Second, it calculates the absolute prediction error as abs(predicted_rd - actual_rd).
+    If the error is less than or equal to 'error_margin', it increments the conf_table[index] entry.
+    Otherwise, it decrements the conf_table[index] entry.

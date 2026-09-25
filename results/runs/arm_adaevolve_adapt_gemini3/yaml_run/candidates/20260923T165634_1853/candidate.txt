@@ -1,0 +1,6 @@
+===== STRUCTURE_DESCRIPTION =====
+# Write your complete YAML structure description here.
+# It must be fully expanded with NO placeholders.
+===== NEW_WORDS =====
+
+# Write your YAML list of new words here, or leave empty if none.

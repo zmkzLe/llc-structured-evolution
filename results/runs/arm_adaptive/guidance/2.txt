@@ -1,0 +1,62 @@
+Guidance version 2, written after 20 candidates.
+
+New words accepted this run, with the declaration to repeat verbatim to reuse one (the same name with another definition is refused; for another meaning choose a name none of these use):
+- name: confident_bypass_victim
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    div:
+      int: [1, 1024]
+    index: signature
+    rdp_table: table
+  means: Reads the victim key of the chosen victim way. Reads the rdp_table entry at the given index;
+    if absent, the value is 0. True if this rdp value, divided by div (integer division), is greater than
+    the absolute value of the victim key, AND the entry in conf_table at the given index has a value greater
+    than or equal to conf_thresh. This word can only be used in bypass_when.
+- name: confident_bypass_rdp
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: 'True when the entry in rdp_table at the given index is present and its value is greater than
+    rdp_thresh, AND the entry in conf_table at the given index has a value greater than or equal to conf_thresh.
+    False if the rdp_table entry is absent. An entry in conf_table always exists and is initialized to
+    zero.
+
+    '
+- name: confident_table_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 1024]
+    index: signature
+    rdp_table: table
+  means: True if the entry for the index in conf_table is present and at its maximum value, AND the value
+    from rdp_table[index]/div (integer division) is greater than the absolute value of the victim key
+    of the way the victim search chose. An absent entry in rdp_table is treated as a value of 0. False
+    otherwise.
+- name: confident_rdp_greater_than
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    threshold:
+      int: [0, 127]
+  means: 'True if the entry for the index in conf_table is present and at its maximum value, AND the entry
+    for the same index in rdp_table is present and has a value greater than the threshold. False otherwise.
+
+    '
+
+Refused among the last 10 candidates, and why: schema_rejected 3 (duplicate key 'train' at line 80, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.; duplicate key 'when' at line 85, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.; 1 validation error for StructureDescription Value error, on_hit[1] -> procedures.access[6]: 'rdp' / 8 reaches 11, which 'etr' (4 bits, -8..7) cannot hold [type=)
+Refusal kinds seen more than once this run, a pattern to stop: 3 times (schema_rejected): duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+
+Your latest proposal, 5d8caa67b6c0, achieved a new best score by modifying `procedures.access` and `samplers`, demonstrating that changes to how the policy state is updated and what it samples can be effective. However, you must stop submitting designs with basic syntax errors like the repeated `duplicate key 'train'` mistake and cease attempts to redefine existing words. The largest remaining opportunities are on traces with high headroom. On `605.mcf_s-1644B` and `619.lbm_s-2677B`, the dominant mistake is `wrong_bypass`, meaning your bypass logic is too aggressive. Conversely, on `654.roms_s-1390B` and `627.cam4_s-573B`, the main error is `kept_dead`, showing your eviction policy retains useless lines. To address `kept_dead`, continue refining `procedures.access` to improve victim selection, as this has already paid off. To fix `wrong_bypass`, the bypass decision in `victim.bypass_when` needs to better predict immediate reuse. The vocabulary may lack a way to express a line's tendency for quick reuse after insertion, so a new word that remembers this aspect of a signature's history could create a more accurate bypass condition. Avoid changing `state` directly, as your only attempt resulted in a large performance loss.

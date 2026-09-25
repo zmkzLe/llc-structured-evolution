@@ -1,0 +1,5 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 1 validation error for StructureDescription
+on_access.1.when.table.cmp
+  Input should be 'gt', 'gte', 'lt', 'lte', 'eq', 'is_max' or 'absent' [type=enum, input_value='not_absent', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/enum

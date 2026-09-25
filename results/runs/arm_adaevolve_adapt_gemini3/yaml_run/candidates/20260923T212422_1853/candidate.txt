@@ -1,0 +1,7 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay
+doc: >
+  Your exact documentation of what changed and why.
+state:
+  ...
+===== NEW_WORDS =====

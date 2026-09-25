@@ -1,0 +1,7 @@
+- name: tick_mockingjay
+  place: value
+  params: {state: state}
+  means: >
+    Reads the state field. If the value is between 1 and 15 inclusive, returns the value minus 1.
+    If the value is 0, returns 16.
+    If the value is 16 or greater, returns the value plus 1, clamped to 31.

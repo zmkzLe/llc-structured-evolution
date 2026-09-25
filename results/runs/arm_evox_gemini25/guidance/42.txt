@@ -1,0 +1,14 @@
+Guidance version 42, written after 422 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.98046 (-1.95% against the seed)
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the
+    fill was bypassed.
+
+Refused among the last 10 candidates, and why: malformed 4 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 5 (samplers.1.sets.str-enum[SampledSets] Input should be 'category_zero' (written: {'const': 64}) samplers.1.sets.function-after[_power_of_two(), MirrorSets].mirror Field required (written: {'const': 64}) samplers.1.sets.function-after[_power_; Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the complete structure description, in YAML>')). words_refused 1 (is_bypassed_fill: already declared in this run with another definition; a word is never changed, so declare a new name)
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 12 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 11 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+You must first resolve the persistent formatting errors that cause nearly all your proposals to be refused for being malformed or missing the `STRUCTURE_DESCRIPTION` and `NEW_WORDS` sections. This has prevented any progress, leaving your score unchanged from Mockingjay's, as the few scored changes to `on_access`, `on_fill`, and `samplers` were detrimental. The key weakness remains your bypass decisions, which lead to many `wrong_bypass` mistakes on traces with high headroom like `605.mcf_s` and `619.lbm_s`, and `should_bypass` mistakes on `627.cam4_s`. To correct the prevalent `wrong_bypass` errors, the policy needs to remember which bypassed lines are requested again shortly after eviction. The current vocabulary cannot track non-resident lines, so you should propose a new word that defines a structure to record signatures of bypassed lines. On a fill, the policy could then query this structure to identify lines that were mistakenly bypassed and decide to insert them instead, directly addressing the errors on traces like `605.mcf_s`. Stop submitting invalid structures and stop attempting to redefine words like `is_bypassed_fill`, as these actions guarantee refusal.

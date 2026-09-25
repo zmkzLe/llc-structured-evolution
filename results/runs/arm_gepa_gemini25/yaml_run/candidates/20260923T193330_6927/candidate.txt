@@ -1,0 +1,2 @@
+===== STRUCTURE_DESCRIPTION =====` marker line.
+    -   The output **MUST** contain the `===== NEW_WORDS =====

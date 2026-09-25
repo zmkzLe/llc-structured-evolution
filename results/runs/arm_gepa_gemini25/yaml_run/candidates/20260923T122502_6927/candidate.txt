@@ -1,0 +1,99 @@
+===== STRUCTURE_DESCRIPTION =====
+# Reference: DPC4-ChampSim/replacement/mockingjay, single-core build. Sizes are for
+# the DPC4 LLC, 4096 x 12: INF_RD 95, INF_ETR 11, MAX_RD 73, 11-bit signatures,
+# 32 sampled sets. The multi-core build folds the core id instead of the hit bit,
+# inserts an unknown signature at INF_ETR, and scales prefetch samples by less.
+name: mockingjay_dynamic_bypass
+doc: >
+  Mockingjay with dynamic bypass threshold based on a per-set bypass confidence counter,
+  aiming to reduce wrong_bypass errors by making bypass decisions more adaptive.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+  - name: bypass_confidence
+    scope: per_set
+    kind: saturating
+    width: 3                  # 0-7, to dynamically adjust bypass threshold
+    init: 4                   # Start in the middle
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    # Original static bypass threshold (73) now modulated by bypass_confidence
+    - {counter: {counter: bypass_confidence, cmp: lt, threshold: 4}, table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {counter: {counter: bypass_confidence, cmp: gte, threshold: 4}, table: {table: rdp, index: pc_sig, cmp: gt, threshold: 60}} # More aggressive bypass when confidence is high (lower threshold)
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+      - {name: is_bypassed_candidate, kind: flag, width: 1, init: ZERO} # Track if this line was a bypass candidate
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+      # If a line that was a bypass candidate hits, it means we were wrong to consider bypassing it.
+      - when: {counter: {counter: is_bypassed_candidate, cmp: eq, threshold: 1}}
+        set: {bypass_confidence: {add: -1}} # Decrement confidence for being too aggressive
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+      # If a line that was NOT a bypass candidate is replaced without being matched, we should have bypassed it.
+      - when: {counter: {counter: is_bypassed_candidate, cmp: eq, threshold: 0}}
+        set: {bypass_confidence: {add: 1}} # Increment confidence for being too conservative
+    install:
+      signature: {signature: pc_sig}
+      timestamp: {read: set_clock}
+      is_bypassed_candidate:
+        # Mark as bypass candidate if its RDP prediction would have caused a bypass
+        default: {const: 0

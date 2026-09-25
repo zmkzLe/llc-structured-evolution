@@ -1,0 +1,16 @@
+validator: /home/khoile0315/oe_out/arm_adaptive_v3/yaml_run
+  tree /home/khoile0315/champsim_validate module validate_policy
+  33 traces at 50000000 + 100000000, 8 workers, sim timeout 18000 s
+  search stop 2026-09-23T22:00:00Z, deadline 2026-09-24T04:00:00Z, drain False, fake None
+waiting for /home/khoile0315/oe_out/arm_adaptive_v3/yaml_run/store
+[2026-09-22T07:10:26Z] started {"id": "c41837327dd0", "score": 1.0}
+[2026-09-22T08:39:31Z] below_min_gain {"id": "bf70261db6bb", "score": 1.0000028139903192}
+[2026-09-22T10:26:53Z] validated {"id": "c41837327dd0", "score": {"all": 1.0, "training": 1.0, "held_out": 1.0}, "gap": {"difference": 0.0, "ratio": 1.0}, "seconds": 11786.9}
+[2026-09-22T10:42:39Z] below_min_gain {"id": "7a1aaa41dd0f", "score": 1.0005457443247656}
+[2026-09-22T12:11:45Z] started {"id": "e10d4a832a77", "score": 1.0024050586563922}
+[2026-09-22T12:57:48Z] below_min_gain {"id": "f43bb2451544", "score": 1.0024319268381152}
+[2026-09-22T13:41:52Z] below_min_gain {"id": "629f9c3972a2", "score": 1.0025158879271827}
+[2026-09-22T15:24:27Z] validated {"id": "e10d4a832a77", "score": {"all": 1.0010323295500674, "training": 0.9974547371351103, "held_out": 1.0048475824145666}, "gap": {"difference": -0.007392845279456273, "ratio": 0.9926428192605172}, "seconds": 11561.4}
+[2026-09-22T19:53:22Z] below_min_gain {"id": "82befa3bfb0e", "score": 1.00266193232234}
+[2026-09-22T21:24:29Z] started {"id": "311521127a79", "score": 1.0040036539527828}
+[2026-09-23T00:36:08Z] validated {"id": "311521127a79", "score": {"all": 1.0058950804431857, "training": 1.0026755658098752, "held_out": 1.009327142455829}, "gap": {"difference": -0.006651576645953838, "ratio": 0.9934098902465165}, "seconds": 11499.2}

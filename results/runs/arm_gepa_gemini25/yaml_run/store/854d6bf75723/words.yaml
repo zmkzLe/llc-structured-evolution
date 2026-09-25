@@ -1,0 +1,17 @@
+- name: rdp_and_conf_check
+  place: condition
+  params: {
+    rdp_table: table,
+    conf_table: table,
+    index: signature,
+    rdp_cmp: {symbol: Comparison},
+    rdp_thresh: {int: [0, 127]},
+    conf_cmp: {symbol: Comparison},
+    conf_thresh: {int: [0, 3]}
+  }
+  means: >
+    True only if both table conditions are met for the given index. It checks if the
+    entry in rdp_table at the index is present and satisfies rdp_cmp against rdp_thresh.
+    It also checks if the entry in conf_table at the same index satisfies conf_cmp
+    against conf_thresh. Both checks must pass. An absent entry in rdp_table makes
+    the whole condition false.

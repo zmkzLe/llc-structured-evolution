@@ -1,0 +1,39 @@
+- name: rdp_and_conf_gt
+  place: condition
+  params:
+    conf_tbl: table
+    conf_thresh:
+      int: [0, 3]
+    rdp_tbl: table
+    rdp_thresh:
+      int: [0, 127]
+    sig: signature
+  means: True if the entry for the signature 'sig' in table 'rdp_tbl' is present and its value is greater
+    than 'rdp_thresh', AND the entry for 'sig' in table 'conf_tbl' is present and its value is greater
+    than or equal to 'conf_thresh'. False otherwise.
+- name: pred_gt_victim_with_conf
+  place: condition
+  params:
+    rdp_tbl: table
+    conf_tbl: table
+    index: signature
+    div: {int: [1, 1024]}
+    conf_thresh: {int: [0, 3]}
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(rdp_tbl[index] / div).
+    The condition is true if the predicted ETR is greater than the absolute value of the 'etr' field of the victim way,
+    AND the entry for the index in conf_tbl is present and its value is greater than or equal to conf_thresh.
+    If either table entry is absent, the condition is false. The 'etr' field must be a per_line state field.
+    This can only be used in 'bypass_when'.
+- name: train_rdp_on_hit
+  place: step
+  params: {rdp_tbl: table, conf_tbl: table, index: signature, age: state, scale: {int: [1, 10]}, min_diff: {int: [0, 127]}}
+  means: >
+    Trains the rdp_tbl at the given index toward the 'age' value, with the given 'scale' and 'min_diff'.
+    The rdp_tbl must be 'unset'. Then, increments the conf_tbl entry at the same index.
+- name: train_rdp_on_miss
+  place: step
+  params: {rdp_tbl: table, conf_tbl: table, index: signature}
+  means: >
+    Increments the rdp_tbl entry at the given index. If the rdp_tbl is 'unset' and the entry is absent,
+    it becomes rdp_tbl.max. Then, decrements the conf_tbl entry at the same index.

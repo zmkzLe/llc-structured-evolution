@@ -1,0 +1,17 @@
+- name: overdue_then_max
+  place: Extremum
+  params: {}
+  means: >
+    Finds the victim way by scanning ways 0 to NUM_WAY-1. Any way with a negative key
+    is prioritized over any way with a non-negative key; among ways with negative keys,
+    the most negative (smallest signed value) wins; among ways with non-negative keys,
+    the largest signed value wins. Ties are broken by the declared tie_break.
+- name: bypass_overdue_aware
+  place: condition
+  params: {table: table, index: signature, div: {int: [1, 64]}, min_rd: {int: [1, 127]}}
+  means: >
+    Evaluates whether an incoming fill should bypass. Returns true only if the table
+    entry at index is present and strictly greater than min_rd, the chosen victim way
+    has a non-negative key (meaning no resident line is overdue), and the table entry
+    divided by div is greater than or equal to the chosen victim way's key. Otherwise
+    returns false.

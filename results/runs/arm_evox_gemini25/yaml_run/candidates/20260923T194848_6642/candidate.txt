@@ -1,0 +1,168 @@
+===== STRUCTURE_DESCRIPTION =====
+# Doc: This design extends Mockingjay to learn from 'wrong_bypass' mistakes.
+# It introduces a Bypass PC Tracker (BPT) to remember recently bypassed PC signatures.
+# When a line associated with a recently bypassed PC signature is accessed again (either a hit
+# or a fill that was previously bypassed), it signals a 'wrong_bypass' and the RDP table
+# for that PC signature is decremented, reducing the likelihood of future incorrect bypasses.
+# The 'is_bypassed_fill' condition word is added for clarity in handling bypass events.
+name: mockingjay_bpt
+doc: >
+  Mockingjay with Bypass PC Tracking: integrates a mechanism to learn from 'wrong_bypass'
+  decisions. A Bypass PC Tracker (BPT) table records PC signatures of lines that were
+  bypassed. If a line with a PC signature present in the BPT is later accessed (either
+  a cache hit or a fill event for a previously bypassed address), it signifies a wrong
+  bypass. In such cases, the Reuse Distance Predictor (RDP) entry for that PC signature
+  is decremented, teaching the policy to be less aggressive in bypassing that specific
+  access pattern in the future. The BPT entries are timestamped and cleared upon reuse
+  detection to ensure recency and prevent over-training.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+  - name: bpt_clock           # Global clock for the Bypass PC Tracker
+    scope: global
+    kind: counter
+    width: 64
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bypassed_pc_tracker # Stores timestamps of recently bypassed PC signatures
+    scope: global
+    kind: counter
+    entries: 2048             # Same size as RDP for direct indexing
+    width: 8                  # Timestamp width
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_access:
+  - set: {bpt_clock: {add: 1}} # Increment global BPT clock on every access
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+  - when: {check_and_clear_bypassed_pc_reuse: {table: bypassed_pc_tracker, index: pc_sig, age_limit: 16, clock: bpt_clock}}
+    train: {table: rdp, index: pc_sig, op: decrement} # Previous bypass was wrong, decrement RDP
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - when: {is_bypassed_fill: true} # Check if the fill was bypassed
+    record_bypassed_pc: {table: bypassed_pc_tracker, index: pc_sig, clock: bpt_clock} # Record this PC as bypassed
+    stop: true # Do not update ETR for bypassed lines, as they are not in cache
+  - run: access
+  - when: {check_and_clear_bypassed_pc_reuse: {table: bypassed_pc_tracker, index: pc_sig, age_limit: 16, clock: bpt_clock}}
+    train: {table: rdp, index: pc_sig, op: decrement} # Previous bypass was wrong, decrement RDP
+
+===== NEW_WORDS =====
+
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the fill was bypassed.
+
+- name: record_bypassed_pc
+  place: step
+  params: {table: table, index: signature, clock: state}
+  means: >
+    Records the given 'signature' in the 'table'. The table entry indexed by 'signature'
+    is set to the current value of the 'clock' state field. This effectively marks this PC
+    signature as having been recently bypassed. The table is assumed to be a counter
+    table used to store timestamps.
+
+- name: check_and_clear_bypassed_pc_reuse
+  place: condition
+  params: {table: table, index: signature, age_limit: {int: [1, 255]}, clock: state}
+  means: >
+    True if the 'signature' is present in 'table' (i.e., its value is greater than 0)
+    and its stored timestamp (table[index]) is within 'age_limit' of the current 'clock'
+    value (clock - table[index] <= age_limit). If true, the table entry for 'signature'
+    is then cleared (set to 0) to prevent repeated training for the same reuse event.
+    This indicates that a line associated with this PC signature was recently bypassed
+    and is now being accessed again, suggesting a 'wrong_bypass'.

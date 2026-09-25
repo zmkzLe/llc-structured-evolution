@@ -1,0 +1,33 @@
+- name: scaled_confidence_penalty_etr
+  place: value
+  params:
+    rdp_table: table
+    conf_table: table
+    index: signature
+    div: {int: [1, 128]}
+    scale: {int: [0, 16]}
+    max_etr: {int: [0, 15]}
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as 0. 'conf_val' is read from its table, with
+    an absent entry read as its init value (0). The maximum value for confidence
+    is 3. Calculates an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val)
+    * scale). If the result of the subtraction is negative, it is treated as 0.
+    Calculates base_etr = adjusted_rdp / div using integer division.
+    The final returned value is min(max_etr, base_etr).
+- name: deconfident_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent rdp_val
+    is treated as 0. The conf_table is assumed to be fully initialized, and its maximum value is 3. Calculates
+    an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val) * scale). If the result of the subtraction
+    is negative, it is treated as 0. Calculates a predicted_etr value as adjusted_rdp divided by div,
+    using integer division. Returns true if predicted_etr is greater than the absolute value of the victim
+    way''s key.'

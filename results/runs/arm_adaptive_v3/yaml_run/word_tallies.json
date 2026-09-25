@@ -1,0 +1,810 @@
+{
+ "access_etr_logic": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "bypass_confidence_etr": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "bypass_if_worse_than_all": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "conf_adj_etr": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "conf_adj_etr_exceeds_victim": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "conf_penalized_etr": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 2,
+  "worse": 1
+ },
+ "confidence_adjusted_etr": {
+  "better": 2,
+  "failed": 4,
+  "same": 0,
+  "unknown": 0,
+  "used": 6,
+  "worse": 0
+ },
+ "confidence_adjusted_etr_v2": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "confidence_adjusted_rank": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "confidence_amplified_etr": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "confidence_downgraded_etr": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "confidence_penalized_etr": {
+  "better": 1,
+  "failed": 4,
+  "same": 0,
+  "unknown": 0,
+  "used": 5,
+  "worse": 0
+ },
+ "confidence_penalized_rank": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "confidence_ranked_etr": {
+  "better": 1,
+  "failed": 3,
+  "same": 0,
+  "unknown": 0,
+  "used": 4,
+  "worse": 0
+ },
+ "confidence_scaled_etr": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "confident_exceeds_victim": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "confident_high_rdp_gt": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "confident_victim_exceed": {
+  "better": 1,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 4,
+  "worse": 2
+ },
+ "confident_victim_exceed_lenient": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "confident_victim_exceed_thresh": {
+  "better": 0,
+  "failed": 5,
+  "same": 0,
+  "unknown": 0,
+  "used": 5,
+  "worse": 0
+ },
+ "deconfident_etr_from_rdp": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 2,
+  "worse": 1
+ },
+ "deconfident_etr_from_rdp_v2": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "deconfident_etr_v2": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "deconfident_etr_val": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "deconfident_exceeds_victim": {
+  "better": 18,
+  "failed": 20,
+  "same": 1,
+  "unknown": 0,
+  "used": 52,
+  "worse": 13
+ },
+ "deconfident_exceeds_victim_v2": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "deconfident_rdp_gt": {
+  "better": 17,
+  "failed": 18,
+  "same": 0,
+  "unknown": 0,
+  "used": 46,
+  "worse": 11
+ },
+ "deconfident_rdp_gt_v2": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "etr_by_confidence_rank": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "etr_from_rdp_and_confidence": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "etr_with_confidence_cost": {
+  "better": 5,
+  "failed": 11,
+  "same": 0,
+  "unknown": 0,
+  "used": 21,
+  "worse": 5
+ },
+ "etr_with_confidence_cost_v2": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "etr_with_confidence_penalty": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "evaluate_and_train_confidence": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "gated_confidence_etr": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "gated_etr_exceeds_victim": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "gated_etr_gt_threshold": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "high_rdp_and_confident": {
+  "better": 1,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 3,
+  "worse": 1
+ },
+ "high_rdp_and_confident_bypass": {
+  "better": 4,
+  "failed": 14,
+  "same": 0,
+  "unknown": 0,
+  "used": 19,
+  "worse": 1
+ },
+ "high_rdp_and_low_conf": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "high_rdp_and_stable": {
+  "better": 0,
+  "failed": 2,
+  "same": 0,
+  "unknown": 0,
+  "used": 2,
+  "worse": 0
+ },
+ "high_rdp_conf_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "incoming_etr_exceeds_victim": {
+  "better": 1,
+  "failed": 3,
+  "same": 0,
+  "unknown": 0,
+  "used": 4,
+  "worse": 0
+ },
+ "incoming_etr_gt_threshold": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "incoming_etr_worse_than_victim": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "incoming_rank_exceeds_all": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "incoming_rank_exceeds_victim": {
+  "better": 3,
+  "failed": 8,
+  "same": 0,
+  "unknown": 0,
+  "used": 14,
+  "worse": 3
+ },
+ "incoming_rank_gt_threshold": {
+  "better": 3,
+  "failed": 8,
+  "same": 0,
+  "unknown": 0,
+  "used": 14,
+  "worse": 3
+ },
+ "incoming_rank_is_worst": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "incoming_rank_worse_than_set": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "incoming_unified_rank_gt_victim": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "incoming_worse_than_all": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "is_confident": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "lenient_confident_victim_exceed": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "lrh_adjusted_etr": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "modulated_etr": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "modulated_etr_exceeds_victim": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "modulated_etr_gt_threshold": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "moving_average_train": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "penalize_confidence_on_evict": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "penalize_evicted_misprediction": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "penalize_on_eviction": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "penalized_confidence_etr_v2": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "penalized_etr_bypass_gt": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "penalized_etr_exceeds_victim": {
+  "better": 0,
+  "failed": 2,
+  "same": 0,
+  "unknown": 0,
+  "used": 3,
+  "worse": 1
+ },
+ "penalized_rank_exceeds_victim": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "penalized_rank_gt": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "penalized_rdp_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "predicted_etr_exceeds_victim": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "predicted_rank_exceeds_victim": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "ranked_etr_exceeds_victim": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "ranked_etr_from_rdp_conf": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "rdp_and_conf_gt": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "rdp_confidence_etr_rank": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "scaled_confidence_penalty_etr": {
+  "better": 0,
+  "failed": 0,
+  "same": 1,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "scaled_etr_exceeds_victim": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "scaled_etr_gt_threshold": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "strong_confidence_etr": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 2,
+  "worse": 1
+ },
+ "train_accuracy": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "train_confidence": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "train_confidence_from_accuracy": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "train_confidence_on_match": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 2,
+  "worse": 1
+ },
+ "train_on_match_with_feedback": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "train_on_prediction_accuracy": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 2,
+  "worse": 1
+ },
+ "train_rdp_and_confidence": {
+  "better": 0,
+  "failed": 2,
+  "same": 0,
+  "unknown": 0,
+  "used": 3,
+  "worse": 1
+ },
+ "train_rdp_and_rpc_on_match": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "train_rdp_conf_on_match": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "train_sampler_match": {
+  "better": 11,
+  "failed": 31,
+  "same": 0,
+  "unknown": 0,
+  "used": 51,
+  "worse": 9
+ },
+ "train_sampler_match_v2": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "train_sampler_on_reuse": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "unified_confidence_rank": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "unified_confidence_rank_v2": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "unified_etr_exceeds_victim": {
+  "better": 0,
+  "failed": 4,
+  "same": 0,
+  "unknown": 0,
+  "used": 5,
+  "worse": 1
+ },
+ "unified_etr_from_rdp_conf": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "unified_etr_gt": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "unified_etr_gt_threshold": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "unified_etr_penalty": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "unified_etr_rank": {
+  "better": 3,
+  "failed": 11,
+  "same": 0,
+  "unknown": 0,
+  "used": 18,
+  "worse": 4
+ },
+ "unified_etr_v1": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "unified_rank_bypass_gt": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "unified_rank_exceeds_victim": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ }
+}

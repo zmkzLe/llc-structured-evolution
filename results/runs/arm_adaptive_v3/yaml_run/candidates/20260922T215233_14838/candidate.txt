@@ -1,0 +1,188 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_unified_confidence_rank_v2
+doc: >
+  Unifies the ranking for both resident and incoming cache lines using a single,
+  confidence-adjusted metric. The Estimated Time to Reuse (ETR) for all lines,
+  and the bypass decision for incoming lines, are now based on a Reuse Distance
+  Prediction (RDP) value that is penalized by its confidence. Low-confidence
+  predictions are made more conservative (predicting longer reuse, thus higher ETR)
+  by applying a penalty proportional to (3 - confidence_value). This aims to
+  reduce both wrong bypasses and premature evictions (kept_dead) by creating a
+  more consistent and robust ranking across the entire policy. Sampler training
+  for confidence has been aligned to increment confidence for short reuse and
+  decrement for long reuse/eviction.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    # Use the unified confidence-penalized ETR for bypass decision
+    - incoming_rank_exceeds_victim: {rdp_table: rdp, conf_table: conf_table, index: pc_sig, div: 8, scale: 4, max_etr: 11}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: conf_table # Renamed from bypass_confidence
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train_sampler_match: {rdp_table: rdp, conf_table: conf_table, index: signature, sample: age, scale: 2, min_diff: 8, conf_thresh: 48}
+        free: true
+        stop: true
+      - train_sampler_match: {rdp_table: rdp, conf_table: conf_table, index: signature, sample: age, scale: 1, min_diff: 8, conf_thresh: 48}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}} # Detrain confidence for very old lines
+        train: {table: conf_table, index: signature, op: decrement}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+      - train: {table: conf_table, index: signature, op: decrement} # Detrain confidence for replaced lines
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    # Aggressively evict lines with zero confidence, overriding the general ETR calculation
+    - when: {table: {table: conf_table, index: pc_sig, cmp: eq, threshold: 0}}
+      set: {etr: {const: 11}}
+      stop: true
+    # For all other lines, calculate ETR using the confidence-penalized function
+    - set:
+        etr:
+          etr_with_confidence_cost:
+            rdp_table: rdp
+            conf_table: conf_table
+            index: pc_sig
+            div: 8
+            scale: 2 # Using scale 2 for ETR calculation
+            max_etr: 11
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: train_sampler_match
+  place: step
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 127]
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    sample: state
+    scale:
+      int: [1, 2]
+  means: >
+    Performs training for a sampler match based on the reuse distance 'sample' (age).
+    First, it trains the rdp_table using the 'toward' operation. The target value is min(sample * scale, rdp_table.max). The entry moves one step toward the target if the difference from the target is at least min_diff.
+    Second, if the 'sample' value is less than conf_thresh, it increments the conf_table entry at the same index.
+- name: etr_with_confidence_cost
+  place: value
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as 0. An absent 'conf_val' is treated as 0.
+    The maximum value for confidence is 3.
+    Calculates a base_etr = rdp_val / div using integer division.
+    Calculates a penalty = (3 - conf_val) * scale.
+    The final returned value is min(max_etr, base_etr + penalty).
+- name: incoming_rank_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Calculates the estimated time to reuse (ETR) for the incoming line (incoming_etr) using the
+    ''unified_etr_rank'' logic: Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index].
+    An absent ''rdp_val'' or ''conf_val'' is treated as 0. The maximum value for confidence is 3. If ''conf_val''
+    is 0, incoming_etr = max_etr. Otherwise, base_etr = rdp_val / div. penalty = (3 - conf_val) * scale.
+    Incoming_etr = min(max_etr, base_etr + penalty). Returns true if incoming_etr is greater than the
+    absolute value of the victim way''s key.'

@@ -1,0 +1,16 @@
+- name: record_bypass_on_predict
+  place: condition
+  params: {predictor: table, tracker: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    Checks if the value in the predictor table at the given index is greater than the threshold.
+    If it is, this condition has a side effect: it trains the tracker table at the same
+    index by calling increment. After the side effect, it returns true if the predictor's
+    value was greater than the threshold, and false otherwise. An absent predictor entry
+    is treated as 0 and returns false.
+- name: penalize_and_clear_tracker
+  place: step
+  params: {predictor: table, tracker: table, index: signature}
+  means: >
+    This action provides negative feedback for a wrong bypass. It decrements the entry
+    in the predictor table at the given index. It then also decrements the entry in the
+    tracker table at the same index, to consume the feedback signal.

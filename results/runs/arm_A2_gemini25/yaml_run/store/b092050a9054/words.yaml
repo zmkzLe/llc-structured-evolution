@@ -1,0 +1,15 @@
+- name: pred_gt_relaxed_victim_etr
+  place: condition
+  params:
+    div:
+      int: [1, 1024]
+    index: signature
+    margin:
+      int: [0, 127]
+    table: table
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(table[index] / div). Finds the absolute
+    value of the 'etr' field of the victim line ('victim_etr'). A threshold is calculated as victim_etr
+    minus the margin, clamped at a minimum of 0. The condition is true if the predicted ETR is strictly
+    greater than this threshold. If the table entry for the index is absent, the predicted ETR is 0, and
+    the condition is false. The 'etr' field must be a per_line state field. This can only be used in 'bypass_when'.

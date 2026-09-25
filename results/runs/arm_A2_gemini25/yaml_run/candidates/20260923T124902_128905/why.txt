@@ -1,0 +1,2 @@
+Candidate fb7d6714607a FAILED at words_refused; it was not scored.
+Reason: pred_exceeds_avg_resident_etr: already declared in this run with another definition; a word is never changed, so declare a new name

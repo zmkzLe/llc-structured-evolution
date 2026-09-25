@@ -1,0 +1,1031 @@
+2026-09-23 15:51:47,973 - skydiscover.search.utils.logging_utils - INFO - Logging to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/logs/adaevolve_20260923_155147.log
+2026-09-23 15:51:47,974 - skydiscover.search.adaevolve.database - INFO - AdaEvolveDatabase initialized: num_islands=2, decay=0.9, intensity=[0.15, 0.5], migration=True (interval=50), unified_archive=True, adaptive_search=True, ucb_selection=True, dynamic_islands=True, paradigm_breakthrough=True, multiobjective=False
+2026-09-23 15:51:47,974 - skydiscover.runner - INFO - Runner ready: search=adaevolve, program=/home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/seed_candidate.txt
+2026-09-23 15:51:48,022 - skydiscover.llm - INFO - OpenAI LLM: google/gemini-3.1-pro-preview
+2026-09-23 15:51:48,027 - skydiscover.llm - INFO - OpenAI LLM: google/gemini-3.8-flash
+2026-09-23 15:51:48,028 - skydiscover.llm - INFO - Pool weights: google/gemini-3.1-pro-preview=0.70, google/gemini-3.8-flash=0.30
+2026-09-23 15:51:48,079 - skydiscover.evaluation.evaluator - INFO - Initialized evaluator with /home/khoile0315/chia_native/design_evaluator.py
+2026-09-23 15:51:48,079 - skydiscover.search.default_discovery_controller - INFO - DiscoveryController initialized: num_context_programs=4
+2026-09-23 15:51:48,081 - skydiscover.search.adaevolve.controller - INFO - Paradigm LLM: using guide_models [google/gemini-3.1-pro-preview, google/gemini-3.8-flash]
+2026-09-23 15:51:48,081 - skydiscover.search.adaevolve.controller - INFO - AdaEvolveController initialized (language=text, paradigm_breakthrough=True)
+2026-09-23 15:51:48,082 - skydiscover.runner - INFO - Adding initial program to database
+2026-09-23 16:25:43,804 - skydiscover.evaluation.evaluator - INFO - Evaluated program b3a43e6b-e00d-4115-9106-c99c49ee1199 in 2035.72s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 16:25:43,804 - skydiscover.search.base_database - INFO - Database has 1 programs, best program score is combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 16:25:43,804 - skydiscover.search.adaevolve.controller - INFO - AdaEvolve: Running 100000 iterations across 2 islands
+2026-09-23 16:25:43,804 - skydiscover.search.adaevolve.controller - INFO - AdaEvolve iteration stats will be logged to: /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/adaevolve_iteration_stats_20260923_162543.jsonl
+2026-09-23 16:25:43,804 - skydiscover.search.adaevolve.controller - INFO - Seeded island 1
+2026-09-23 16:25:43,805 - skydiscover.search.adaevolve.controller - INFO - AdaEvolve parallel: up to 2 iterations in flight (1..100000)
+2026-09-23 16:26:58,078 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:26:58,628 - skydiscover.evaluation.evaluator - INFO - Evaluated program 066612e8-e6bd-4ff3-83d0-17ed45aa1d23 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:28:03,553 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:28:03,989 - skydiscover.evaluation.evaluator - INFO - Evaluated program 530a34b7-3966-440b-94e3-948fff7206a8 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:28:32,155 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:28:32,266 - skydiscover.evaluation.evaluator - INFO - Evaluated program 41559627-8091-49d2-bdd7-552d390224c6 in 0.00s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'my_policy', 'do...t changed and why...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'my_policy', 'do...t changed and why...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 16:28:32,722 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:28:32,723 - openai._base_client - INFO - Retrying request to /chat/completions in 0.490145 seconds
+2026-09-23 16:28:33,627 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:28:33,628 - openai._base_client - INFO - Retrying request to /chat/completions in 0.872222 seconds
+2026-09-23 16:28:35,148 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:28:35,150 - skydiscover.llm - WARNING - Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 16:28:37,545 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:28:37,546 - openai._base_client - INFO - Retrying request to /chat/completions in 0.494046 seconds
+2026-09-23 16:28:44,624 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:28:44,625 - openai._base_client - INFO - Retrying request to /chat/completions in 0.829592 seconds
+2026-09-23 16:28:51,280 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:28:51,281 - skydiscover.llm - WARNING - Error attempt 2/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 16:28:53,721 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:28:53,722 - openai._base_client - INFO - Retrying request to /chat/completions in 0.487961 seconds
+2026-09-23 16:28:54,669 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:28:54,670 - openai._base_client - INFO - Retrying request to /chat/completions in 0.936015 seconds
+2026-09-23 16:30:32,309 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:30:33,092 - skydiscover.evaluation.evaluator - INFO - Evaluated program 5d9f1d4d-f6d8-4f10-95ef-c912da0f3756 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:30:33,093 - skydiscover.search.adaevolve.controller - WARNING - Iteration 1: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:31:20,929 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:31:21,004 - skydiscover.evaluation.evaluator - INFO - Evaluated program f83bef45-e7e3-424b-9a2e-787ca60d8b93 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:31:58,922 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:31:59,749 - skydiscover.evaluation.evaluator - INFO - Evaluated program 3acac4df-6daa-4604-a6bb-e69eda7f0ee9 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:33:11,505 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:33:11,578 - skydiscover.evaluation.evaluator - INFO - Evaluated program eef9e517-0796-4ed8-a2f4-10e9bdbb241e in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:33:11,578 - skydiscover.search.adaevolve.controller - WARNING - Iteration 2: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:33:49,055 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:33:49,056 - openai._base_client - INFO - Retrying request to /chat/completions in 0.437279 seconds
+2026-09-23 16:33:57,610 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:33:57,684 - skydiscover.evaluation.evaluator - INFO - Evaluated program 5042070e-4240-4f62-bae5-22069fdd12f4 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:35:38,149 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:35:38,203 - skydiscover.evaluation.evaluator - INFO - Evaluated program f8b0b088-1ed8-45f6-99ea-5ef42b141017 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:35:38,203 - skydiscover.search.adaevolve.controller - WARNING - Iteration 3: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:36:17,146 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:36:17,147 - openai._base_client - INFO - Retrying request to /chat/completions in 0.402137 seconds
+2026-09-23 16:36:23,113 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:36:23,175 - skydiscover.evaluation.evaluator - INFO - Evaluated program c5ee3a32-1a25-4a06-9925-c61083074dbb in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:38:27,885 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:38:28,636 - skydiscover.evaluation.evaluator - INFO - Evaluated program b81e2bb9-ccc4-46a2-bbcc-0deaa612777e in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:39:23,718 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:39:24,048 - skydiscover.evaluation.evaluator - INFO - Evaluated program bd4ddc74-7c04-41a5-bf61-9e677016b41e in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:39:50,496 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:39:50,497 - openai._base_client - INFO - Retrying request to /chat/completions in 0.409653 seconds
+2026-09-23 16:40:27,625 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:40:27,705 - skydiscover.evaluation.evaluator - INFO - Evaluated program 97bef901-88f4-4521-bf11-a75e7d7a7ef1 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:40:35,687 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:40:35,687 - openai._base_client - INFO - Retrying request to /chat/completions in 0.973897 seconds
+2026-09-23 16:44:30,031 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:44:30,102 - skydiscover.evaluation.evaluator - INFO - Evaluated program ea8aa57f-9096-4c24-9f4b-4790ca0fca72 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:44:30,102 - skydiscover.search.adaevolve.controller - WARNING - Iteration 5: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:44:45,680 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:44:45,681 - openai._base_client - INFO - Retrying request to /chat/completions in 0.449573 seconds
+2026-09-23 16:45:41,032 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 16:45:41,034 - skydiscover.llm - WARNING - Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 16:47:07,267 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:47:07,350 - skydiscover.evaluation.evaluator - INFO - Evaluated program ede5b67c-da77-4d8e-b781-4d89aaf28083 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:50:19,033 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:50:19,114 - skydiscover.evaluation.evaluator - INFO - Evaluated program b1b14c4d-6557-4e80-9843-22dbc66c79b8 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:50:19,114 - skydiscover.search.adaevolve.controller - WARNING - Iteration 4: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 16:50:24,892 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:50:25,511 - skydiscover.evaluation.evaluator - INFO - Evaluated program 9eaa9eca-1e18-4937-b5a1-6a8e90bbdc67 in 0.00s: combined_score=0.0000, status=schema_rejected, error=expected '<document start>', but found '<scalar>'
+  in "<unicode string>", line 8, column 5:
+    ... (all other sections: signatures, ... 
+        ^
+2026-09-23 16:52:18,865 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:52:19,808 - skydiscover.evaluation.evaluator - INFO - Evaluated program 40299a90-d782-42d0-9f16-6cad9a195c97 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ... YAML, no placeholders>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:52:19,808 - skydiscover.search.adaevolve.controller - WARNING - Iteration 6: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ... YAML, no placeholders>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:53:05,952 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:53:06,073 - skydiscover.evaluation.evaluator - INFO - Evaluated program 4e278146-860f-4888-9e09-12bd0462680b in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:54:40,799 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:54:40,919 - skydiscover.evaluation.evaluator - INFO - Evaluated program 67fe1915-5e78-4c98-84fe-5144167a7e8e in 0.00s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Input should be a valid dictionary or instance of VictimSelector [type=model_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:56:07,284 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:56:34,305 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:56:34,420 - skydiscover.evaluation.evaluator - INFO - Evaluated program 22967e28-c5cd-4ba9-8f4b-841274b59050 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:58:40,800 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 16:58:40,919 - skydiscover.evaluation.evaluator - INFO - Evaluated program e8b8c702-8372-4dfb-9d5c-749bc97525f2 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 16:58:40,919 - skydiscover.search.adaevolve.controller - WARNING - Iteration 8: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 17:02:00,737 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 17:02:00,892 - skydiscover.evaluation.evaluator - INFO - Evaluated program a7581607-a14d-4dc3-8ac1-96d871011a01 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 17:06:10,284 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 17:06:10,431 - skydiscover.evaluation.evaluator - INFO - Evaluated program b3e82b7f-31d0-4a95-bdc3-6dcd45f19a46 in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='... (include all require...t, NO placeholders) ...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam..., NO placeholders) ...'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 17:08:22,102 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 17:38:08,807 - skydiscover.evaluation.evaluator - INFO - Evaluated program c4bdd303-3b19-4a86-baf9-72ac90a99ca8 in 2521.52s: combined_score=0.9829, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6765.9571, cacti_node_nm=22.0000
+2026-09-23 17:38:08,808 - skydiscover.search.adaevolve.controller - INFO - Iteration 7: Program c4bdd303 (parent: b3a43e6b) completed in 2702.73s (llm: 181.22s, eval: 2521.52s)
+2026-09-23 17:38:08,808 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9829, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6765.9571, cacti_node_nm=22
+2026-09-23 17:41:17,091 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 17:49:05,119 - skydiscover.evaluation.evaluator - INFO - Evaluated program 86023e0f-c985-4f2b-a7ed-f8a47de12667 in 2443.01s: combined_score=0.9986, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6868.2454, cacti_node_nm=22.0000
+2026-09-23 17:49:05,120 - skydiscover.search.adaevolve.controller - INFO - Iteration 9: Program 86023e0f (parent: b3a43e6b) completed in 2574.69s (llm: 131.68s, eval: 2443.01s)
+2026-09-23 17:49:05,120 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9986, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6868.2454, cacti_node_nm=22
+2026-09-23 17:51:37,139 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 17:51:37,271 - skydiscover.evaluation.evaluator - INFO - Evaluated program 877f68d6-f3ff-4e13-a45d-e13e0d417910 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 17:53:38,356 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 17:53:38,522 - skydiscover.evaluation.evaluator - INFO - Evaluated program d3b11186-a758-4b30-853d-7589d0bb2e65 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 17:55:45,068 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 17:55:45,338 - skydiscover.evaluation.evaluator - INFO - Evaluated program 2e8d859a-72fb-4de7-bc65-066c0649c414 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 17:55:45,338 - skydiscover.search.adaevolve.controller - WARNING - Iteration 11: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 17:59:31,022 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 17:59:31,095 - skydiscover.evaluation.evaluator - INFO - Evaluated program c1ec11d9-d7d2-4717-8cc2-2c4e8eaf81cd in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 18:03:02,271 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:03:02,343 - skydiscover.evaluation.evaluator - INFO - Evaluated program 1f2b4c65-3d62-457d-9cf6-d6ddeef3701b in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 18:05:41,984 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:05:42,057 - skydiscover.evaluation.evaluator - INFO - Evaluated program 4910e06e-29c1-472e-b69c-ac49b47cc273 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 18:05:42,057 - skydiscover.search.adaevolve.controller - WARNING - Iteration 12: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 18:08:58,882 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:08:59,008 - skydiscover.evaluation.evaluator - INFO - Evaluated program e8d45f8e-57bd-409a-b65b-adb7e1c58601 in 0.00s: combined_score=0.0000, status=schema_rejected, error=3 validation errors for StructureDescription
+state.0.width
+  Field required [type=missing, input_value={'name': 'example_field'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+state.0.scope
+  Field required [type=missing, input_value={'name': 'example_field'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...ame': 'example_field'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 18:11:21,230 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:11:21,352 - skydiscover.evaluation.evaluator - INFO - Evaluated program 57852846-293d-4c24-8a4a-9b402687dbd1 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 18:13:35,721 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:13:35,845 - skydiscover.evaluation.evaluator - INFO - Evaluated program 25829910-f96d-4bc6-8651-0381ee5a3735 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 18:13:35,845 - skydiscover.search.adaevolve.controller - WARNING - Iteration 13: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 18:16:59,774 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:16:59,860 - skydiscover.evaluation.evaluator - INFO - Evaluated program 8baf8742-1d05-42e6-82ae-75900ff9b2f3 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 18:19:22,662 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:19:22,797 - skydiscover.evaluation.evaluator - INFO - Evaluated program 95133722-1773-42c4-acd5-461b583d73a8 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 18:21:28,630 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:24:29,286 - skydiscover.evaluation.evaluator - INFO - Evaluated program ad9bde2d-a2ac-4a03-9d63-f6b3fcacc227 in 2592.19s: combined_score=0.9686, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=7006.4043, cacti_node_nm=22.0000
+2026-09-23 18:24:29,286 - skydiscover.search.adaevolve.controller - INFO - Iteration 10: Program ad9bde2d (parent: 2b385e1d) completed in 2780.48s (llm: 188.29s, eval: 2592.19s)
+2026-09-23 18:24:29,287 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9686, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=7006.4043, cacti_node_nm=22
+2026-09-23 18:24:29,287 - skydiscover.search.adaevolve.controller - INFO - Checkpoint interval reached at iteration 10
+2026-09-23 18:24:29,287 - skydiscover.search.base_database - INFO - Database has 5 programs, best program score is combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 18:24:29,288 - skydiscover.search.utils.checkpoint_manager - INFO - [CHECKPOINT] Saved database with 5 programs to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_10
+2026-09-23 18:24:29,289 - skydiscover.search.adaevolve.database - INFO - Saved AdaEvolve state to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_10
+2026-09-23 18:24:29,289 - skydiscover.runner - INFO - Checkpoint 10: best=combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 18:24:29,289 - skydiscover.runner - INFO - Checkpoint saved to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_10
+2026-09-23 18:24:54,328 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:24:54,334 - skydiscover.evaluation.evaluator - INFO - Evaluated program e614d983-a4f1-46f5-aebe-5538a3aa9a03 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 18:28:31,792 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:28:31,877 - skydiscover.evaluation.evaluator - INFO - Evaluated program 2553cb50-ede3-40cf-ad4b-26c4324391d9 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 18:30:44,352 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:30:44,431 - skydiscover.evaluation.evaluator - INFO - Evaluated program 582e8c4e-9a34-472d-82cd-7a2e33578183 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 18:30:44,431 - skydiscover.search.adaevolve.controller - WARNING - Iteration 15: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 18:31:12,855 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:31:12,861 - skydiscover.evaluation.evaluator - INFO - Evaluated program eb0f08b5-41e7-4322-86d3-fb73d8a64d27 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 18:34:17,109 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:34:17,184 - skydiscover.evaluation.evaluator - INFO - Evaluated program c64aaef8-9c66-4ceb-9da8-c96812a770cb in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 18:36:07,378 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:36:07,519 - skydiscover.evaluation.evaluator - INFO - Evaluated program 152a01e9-90d8-4239-a0b7-442b2aeb7764 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 18:36:07,519 - skydiscover.search.adaevolve.controller - WARNING - Iteration 16: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 18:38:44,437 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:38:44,567 - skydiscover.evaluation.evaluator - INFO - Evaluated program 4fc72731-ff1a-402b-91ee-c7136891842d in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 18:41:37,075 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:41:37,194 - skydiscover.evaluation.evaluator - INFO - Evaluated program df3fa943-0bbe-427c-82d3-d56c8b308c40 in 0.01s: combined_score=0.0000, status=schema_rejected, error=3 validation errors for StructureDescription
+state.0.width
+  Field required [type=missing, input_value={'name': 'example_field'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+state.0.scope
+  Field required [type=missing, input_value={'name': 'example_field'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...ame': 'example_field'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 18:43:01,404 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:43:01,495 - skydiscover.evaluation.evaluator - INFO - Evaluated program 01de1956-f136-40c7-9df8-8f18dff17b07 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<complete valid YAML Str...older text or ellipses>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 18:43:01,496 - skydiscover.search.adaevolve.controller - WARNING - Iteration 17: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<complete valid YAML Str...older text or ellipses>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 18:45:57,507 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:45:57,597 - skydiscover.evaluation.evaluator - INFO - Evaluated program 658be672-f358-4cd5-a453-f92a865dd5a8 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 18:45:58,243 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 18:45:58,245 - openai._base_client - INFO - Retrying request to /chat/completions in 0.458443 seconds
+2026-09-23 18:46:00,082 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 18:46:00,083 - openai._base_client - INFO - Retrying request to /chat/completions in 0.809399 seconds
+2026-09-23 18:47:50,102 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 18:59:08,447 - skydiscover.evaluation.evaluator - INFO - Evaluated program 98cb6fd9-e283-4c96-a84b-4d44d7cce186 in 2259.81s: combined_score=0.9866, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6695.5971, cacti_node_nm=22.0000
+2026-09-23 18:59:08,447 - skydiscover.search.adaevolve.controller - INFO - Iteration 14: Program 98cb6fd9 (parent: 2b385e1d) completed in 2385.65s (llm: 125.84s, eval: 2259.81s)
+2026-09-23 18:59:08,448 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9866, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6695.5971, cacti_node_nm=22
+2026-09-23 19:01:47,336 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 19:01:47,415 - skydiscover.evaluation.evaluator - INFO - Evaluated program 599ff13c-8bd5-4ff7-a81d-de13bfa94dc4 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 19:05:33,686 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 19:05:34,454 - skydiscover.evaluation.evaluator - INFO - Evaluated program b150792c-6e99-4bfc-8d8c-4698d860f074 in 0.00s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 19:06:10,625 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 19:06:10,824 - skydiscover.evaluation.evaluator - INFO - Evaluated program b11df2b3-4d63-45e1-b9be-205ced54ec7b in 0.20s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 19:06:10,825 - skydiscover.search.adaevolve.controller - INFO - Iteration 19: Program b11df2b3 (parent: ad9bde2d) completed in 36.37s (llm: 36.17s, eval: 0.20s)
+2026-09-23 19:06:10,825 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+2026-09-23 19:09:04,768 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 19:09:04,865 - skydiscover.evaluation.evaluator - INFO - Evaluated program 61eba48a-d5e7-4933-9ca4-6cafa87829ac in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 19:11:26,047 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 19:11:26,120 - skydiscover.evaluation.evaluator - INFO - Evaluated program 206ace47-3769-4b87-b3d8-9c3fcd2dcefa in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 19:13:41,854 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 19:13:41,933 - skydiscover.evaluation.evaluator - INFO - Evaluated program 7e405230-7210-4c65-83b3-66044d6786f9 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 19:13:41,933 - skydiscover.search.adaevolve.controller - WARNING - Iteration 20: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 19:18:09,002 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 19:18:09,095 - skydiscover.evaluation.evaluator - INFO - Evaluated program c253a813-84b5-44e5-963f-b3618ebe7254 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 19:18:52,092 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 19:18:52,099 - skydiscover.evaluation.evaluator - INFO - Evaluated program 3ea819b6-8f22-41a5-8ba5-31632113d147 in 0.00s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 19:20:18,581 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 19:23:53,282 - skydiscover.evaluation.evaluator - INFO - Evaluated program 71c2a117-3dd7-4dc4-b681-c31345092b05 in 2163.18s: combined_score=0.9984, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6617.3274, cacti_node_nm=22.0000
+2026-09-23 19:23:53,282 - skydiscover.search.adaevolve.controller - INFO - Iteration 18: Program 71c2a117 (parent: b3a43e6b) completed in 2275.68s (llm: 112.51s, eval: 2163.18s)
+2026-09-23 19:23:53,282 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9984, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6617.3274, cacti_node_nm=22
+2026-09-23 19:23:53,787 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 19:23:53,788 - openai._base_client - INFO - Retrying request to /chat/completions in 0.468043 seconds
+2026-09-23 19:23:54,849 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 19:23:54,850 - openai._base_client - INFO - Retrying request to /chat/completions in 0.894446 seconds
+2026-09-23 19:23:56,205 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 19:23:56,207 - skydiscover.llm - WARNING - Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 19:23:58,774 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 19:23:58,775 - openai._base_client - INFO - Retrying request to /chat/completions in 0.478144 seconds
+2026-09-23 19:23:59,776 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 19:23:59,777 - openai._base_client - INFO - Retrying request to /chat/completions in 0.952884 seconds
+2026-09-23 19:24:01,319 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 19:24:01,321 - skydiscover.llm - WARNING - Error attempt 2/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 19:24:03,870 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 19:24:03,871 - openai._base_client - INFO - Retrying request to /chat/completions in 0.494908 seconds
+2026-09-23 19:24:04,977 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 19:24:04,979 - openai._base_client - INFO - Retrying request to /chat/completions in 0.767125 seconds
+2026-09-23 19:24:06,188 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 19:26:36,006 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 19:57:50,487 - skydiscover.evaluation.evaluator - INFO - Evaluated program c1f3259a-457b-4a8d-9d66-2e1c79a02d9f in 2251.90s: combined_score=0.9978, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6619.1868, cacti_node_nm=22.0000
+2026-09-23 19:57:50,488 - skydiscover.search.adaevolve.controller - INFO - Iteration 21: Program c1f3259a (parent: b3a43e6b) completed in 2338.39s (llm: 86.48s, eval: 2251.90s)
+2026-09-23 19:57:50,488 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9978, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6619.1868, cacti_node_nm=22
+2026-09-23 19:59:12,953 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 19:59:13,195 - skydiscover.evaluation.evaluator - INFO - Evaluated program 3b09a267-d84d-4552-b678-457fbce0e4df in 0.24s: combined_score=0.9978, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6619.1868, cacti_node_nm=22.0000
+2026-09-23 19:59:13,196 - skydiscover.search.adaevolve.controller - INFO - Iteration 23: Program 3b09a267 (parent: 2b385e1d) completed in 82.68s (llm: 82.44s, eval: 0.24s)
+2026-09-23 19:59:13,196 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9978, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6619.1868, cacti_node_nm=22
+2026-09-23 20:01:37,228 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:01:37,363 - skydiscover.evaluation.evaluator - INFO - Evaluated program be1f9579-3b7d-40f5-a4c2-ce578bd5d96b in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:04:34,211 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:04:34,311 - skydiscover.evaluation.evaluator - INFO - Evaluated program 155a815c-6e54-483d-9673-cc8a3c90576b in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 20:05:10,999 - skydiscover.evaluation.evaluator - INFO - Evaluated program 688a3e7f-c9e9-4a9a-9a63-5ba2e794f7ce in 2314.99s: combined_score=0.9979, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6617.6813, cacti_node_nm=22.0000
+2026-09-23 20:05:10,999 - skydiscover.search.adaevolve.controller - INFO - Iteration 22: Program 688a3e7f (parent: b3a43e6b) completed in 2464.81s (llm: 149.82s, eval: 2314.99s)
+2026-09-23 20:05:10,999 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9979, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6617.6813, cacti_node_nm=22
+2026-09-23 20:05:11,034 - skydiscover.search.adaevolve.controller - INFO - Global paradigm stagnation detected, generating breakthrough ideas...
+2026-09-23 20:05:48,576 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:05:48,579 - skydiscover.search.adaevolve.paradigm.generator - INFO - Generated 3 paradigms:
+2026-09-23 20:05:48,579 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [1] Feedback-Driven Chain-of-Thought Analysis (approach: chain-of-thought)
+2026-09-23 20:05:48,579 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [2] Simulated Multi-Persona Expert Panel (approach: role-playing)
+2026-09-23 20:05:48,579 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [3] Few-Shot Heuristic Mapping for Cache Mistakes (approach: few-shot)
+2026-09-23 20:05:48,579 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Set 3 new paradigms (best score: 1.000000)
+2026-09-23 20:05:48,579 - skydiscover.search.adaevolve.controller - INFO - Generated 3 breakthrough paradigms
+2026-09-23 20:05:48,583 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (1/2): Feedback-Driven Chain-of-Thought Analysis
+2026-09-23 20:06:27,604 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:06:27,655 - skydiscover.evaluation.evaluator - INFO - Evaluated program 126be83b-7eb8-4fb0-bab6-9c12b2ad0efb in 0.05s: combined_score=0.0000, status=schema_rejected, error=duplicate key 'train' at line 75, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-23 20:06:27,656 - skydiscover.search.adaevolve.controller - WARNING - Iteration 24: All 3 attempts failed: Eval failure: duplicate key 'train' at line 75, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+2026-09-23 20:06:27,660 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (1/2): Simulated Multi-Persona Expert Panel
+2026-09-23 20:06:59,253 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:06:59,516 - skydiscover.evaluation.evaluator - INFO - Evaluated program 12089985-b659-4096-8472-6fb92c476068 in 0.26s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 20:06:59,516 - skydiscover.search.adaevolve.controller - INFO - Iteration 26: Program 12089985 (parent: b3a43e6b) completed in 31.86s (llm: 31.60s, eval: 0.26s)
+2026-09-23 20:06:59,516 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+2026-09-23 20:06:59,553 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (1/2): Few-Shot Heuristic Mapping for Cache Mistakes
+2026-09-23 20:08:04,313 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:08:05,344 - skydiscover.evaluation.evaluator - INFO - Evaluated program 4e03054e-2ee2-4499-9385-3e2f8fd4c081 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:08:05,348 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (2/2): Feedback-Driven Chain-of-Thought Analysis
+2026-09-23 20:09:05,174 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:09:06,269 - skydiscover.evaluation.evaluator - INFO - Evaluated program 59f9974d-0524-49be-9661-4d43dc29a0e2 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:09:06,273 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (2/2): Simulated Multi-Persona Expert Panel
+2026-09-23 20:09:07,550 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:09:07,551 - openai._base_client - INFO - Retrying request to /chat/completions in 0.445700 seconds
+2026-09-23 20:09:09,138 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:09:09,140 - openai._base_client - INFO - Retrying request to /chat/completions in 0.975428 seconds
+2026-09-23 20:09:11,431 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:09:11,432 - skydiscover.llm - WARNING - Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 20:09:14,434 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:09:14,435 - openai._base_client - INFO - Retrying request to /chat/completions in 0.467889 seconds
+2026-09-23 20:09:15,864 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:09:15,865 - openai._base_client - INFO - Retrying request to /chat/completions in 0.876066 seconds
+2026-09-23 20:09:18,040 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:09:18,042 - skydiscover.llm - WARNING - Error attempt 2/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 20:10:03,421 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:10:03,560 - skydiscover.evaluation.evaluator - INFO - Evaluated program f140a1a3-426a-4186-aa21-0e13a279d64d in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:10:03,564 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (2/2): Few-Shot Heuristic Mapping for Cache Mistakes
+2026-09-23 20:10:03,564 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:11:32,739 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:11:32,874 - skydiscover.evaluation.evaluator - INFO - Evaluated program 51969f23-2a70-4612-94ba-1344ae5337ef in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:11:32,878 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:12:17,017 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:12:18,233 - skydiscover.evaluation.evaluator - INFO - Evaluated program b17e25a3-9983-437d-a7e5-22c7e18318b8 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure descripti... valid YAML dictionary>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:12:18,233 - skydiscover.search.adaevolve.controller - WARNING - Iteration 25: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure descripti... valid YAML dictionary>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:12:18,233 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:12:18,233 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:12:18,233 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:12:18,234 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:12:18,234 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:12:18,234 - skydiscover.search.adaevolve.controller - INFO - Global paradigm stagnation detected, generating breakthrough ideas...
+2026-09-23 20:12:57,040 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:12:57,044 - skydiscover.search.adaevolve.paradigm.generator - INFO - Generated 3 paradigms:
+2026-09-23 20:12:57,044 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [1] Pre-generation Feedback Analysis (Chain-of-Thought) (approach: chain-of-thought)
+2026-09-23 20:12:57,044 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [2] Error-to-Component Mapping Constraints (approach: format-constraint)
+2026-09-23 20:12:57,044 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [3] Few-Shot Demonstration of NEW_WORDS Creation (approach: few-shot)
+2026-09-23 20:12:57,044 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Archived 3 paradigms (improvement: +0.000000):
+2026-09-23 20:12:57,044 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Feedback-Driven Chain-of-Thought Analysis (uses: 2)
+2026-09-23 20:12:57,044 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Simulated Multi-Persona Expert Panel (uses: 2)
+2026-09-23 20:12:57,044 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Few-Shot Heuristic Mapping for Cache Mistakes (uses: 2)
+2026-09-23 20:12:57,044 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Set 3 new paradigms (best score: 1.000000)
+2026-09-23 20:12:57,044 - skydiscover.search.adaevolve.controller - INFO - Generated 3 breakthrough paradigms
+2026-09-23 20:12:57,048 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (1/2): Pre-generation Feedback Analysis (Chain-of-Thought)
+2026-09-23 20:14:03,333 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:14:03,471 - skydiscover.evaluation.evaluator - INFO - Evaluated program 1f82cb50-ff44-4ec0-b3d5-150e25ef9748 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:14:03,471 - skydiscover.search.adaevolve.controller - WARNING - Iteration 27: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:14:03,476 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (1/2): Error-to-Component Mapping Constraints
+2026-09-23 20:14:47,895 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:14:48,988 - skydiscover.evaluation.evaluator - INFO - Evaluated program 6679c084-357d-4452-bc2c-dbd42081a8df in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:14:48,992 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (1/2): Few-Shot Demonstration of NEW_WORDS Creation
+2026-09-23 20:16:00,750 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:16:01,819 - skydiscover.evaluation.evaluator - INFO - Evaluated program dd95c176-c636-49c3-bf5d-578a0b5adcd1 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:16:01,824 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (2/2): Pre-generation Feedback Analysis (Chain-of-Thought)
+2026-09-23 20:16:26,538 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:16:26,678 - skydiscover.evaluation.evaluator - INFO - Evaluated program 1eecc9b1-5ea4-43f4-9bb6-a4990ec8a0d8 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<concrete YAML structure description>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:16:26,683 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (2/2): Error-to-Component Mapping Constraints
+2026-09-23 20:16:57,293 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:16:57,557 - skydiscover.evaluation.evaluator - INFO - Evaluated program 4be024fc-fbec-47bd-9d82-38990e232b3b in 0.26s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 20:16:57,557 - skydiscover.search.adaevolve.controller - INFO - Iteration 29: Program 4be024fc (parent: b3a43e6b) completed in 30.87s (llm: 30.61s, eval: 0.26s)
+2026-09-23 20:16:57,557 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+2026-09-23 20:16:57,608 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (2/2): Few-Shot Demonstration of NEW_WORDS Creation
+2026-09-23 20:16:57,609 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:16:58,132 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:16:58,133 - openai._base_client - INFO - Retrying request to /chat/completions in 0.385103 seconds
+2026-09-23 20:16:58,942 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:16:58,943 - openai._base_client - INFO - Retrying request to /chat/completions in 0.858570 seconds
+2026-09-23 20:17:00,295 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:17:00,297 - skydiscover.llm - WARNING - Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 20:17:02,937 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:17:02,938 - openai._base_client - INFO - Retrying request to /chat/completions in 0.401778 seconds
+2026-09-23 20:17:03,921 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:17:03,922 - openai._base_client - INFO - Retrying request to /chat/completions in 0.766798 seconds
+2026-09-23 20:17:05,143 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:17:05,145 - skydiscover.llm - WARNING - Error attempt 2/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 20:17:06,524 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:17:06,671 - skydiscover.evaluation.evaluator - INFO - Evaluated program 76c3aa2a-4af0-4465-89bf-099243f8b034 in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_policy_nam...ctual documentation.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...ctual documentation.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 20:17:06,674 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:17:07,255 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:17:07,256 - openai._base_client - INFO - Retrying request to /chat/completions in 0.409850 seconds
+2026-09-23 20:17:07,580 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:17:07,581 - openai._base_client - INFO - Retrying request to /chat/completions in 0.460977 seconds
+2026-09-23 20:17:08,156 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:17:08,157 - openai._base_client - INFO - Retrying request to /chat/completions in 0.874146 seconds
+2026-09-23 20:17:08,539 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:17:08,540 - openai._base_client - INFO - Retrying request to /chat/completions in 0.904069 seconds
+2026-09-23 20:17:09,520 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:17:09,521 - skydiscover.llm - WARNING - Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 20:17:11,989 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:17:11,990 - openai._base_client - INFO - Retrying request to /chat/completions in 0.386615 seconds
+2026-09-23 20:19:20,053 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:19:20,063 - skydiscover.evaluation.evaluator - INFO - Evaluated program 307d4548-d5c9-4dc9-b1e7-3ffc01b03a45 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): NEW_WORDS
+2026-09-23 20:19:20,067 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:19:23,124 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:20:53,194 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:20:53,554 - skydiscover.evaluation.evaluator - INFO - Evaluated program 5b1b57e8-d599-4756-b95a-60ff9c1e71c5 in 0.35s: combined_score=0.0000, status=too_much_storage, error=this design declares 48.1 KB of replacement metadata at this LLC; the budget is 48 KB (the seed declares 47.4 KB): pay for new state by narrowing or removing state elsewhere
+2026-09-23 20:20:53,559 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:22:37,551 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:22:37,910 - skydiscover.evaluation.evaluator - INFO - Evaluated program 862ea074-a2a5-4f49-b87a-0e9ed3dba670 in 0.35s: combined_score=0.0000, status=words_refused, error=confident_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-23 20:22:37,910 - skydiscover.search.adaevolve.controller - WARNING - Iteration 30: All 3 attempts failed: Eval failure: confident_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+2026-09-23 20:22:37,910 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:22:37,910 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:22:37,910 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:22:37,910 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:22:37,911 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:22:37,911 - skydiscover.search.adaevolve.controller - INFO - Global paradigm stagnation detected, generating breakthrough ideas...
+2026-09-23 20:23:06,104 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:23:06,106 - skydiscover.search.adaevolve.paradigm.generator - INFO - Generated 3 paradigms:
+2026-09-23 20:23:06,107 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [1] Diagnostic-Driven Architectural Inversion Prompting (approach: diagnostic-driven-refactoring)
+2026-09-23 20:23:06,107 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [2] Formal Bit-Budget Ledger and Grammatical Constraint Scaffolding (approach: constraint-guided-scaffolding)
+2026-09-23 20:23:06,107 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [3] Atomic Delta-Mutation with Strict Canonical Line Bounding (approach: atomic-delta-mutation)
+2026-09-23 20:23:06,107 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Archived 3 paradigms (improvement: +0.000000):
+2026-09-23 20:23:06,107 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Pre-generation Feedback Analysis (Chain-of-Thought) (uses: 2)
+2026-09-23 20:23:06,107 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Error-to-Component Mapping Constraints (uses: 2)
+2026-09-23 20:23:06,107 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Few-Shot Demonstration of NEW_WORDS Creation (uses: 2)
+2026-09-23 20:23:06,107 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Set 3 new paradigms (best score: 1.000000)
+2026-09-23 20:23:06,107 - skydiscover.search.adaevolve.controller - INFO - Generated 3 breakthrough paradigms
+2026-09-23 20:23:06,111 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (1/2): Diagnostic-Driven Architectural Inversion Prompting
+2026-09-23 20:25:11,515 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:25:12,540 - skydiscover.evaluation.evaluator - INFO - Evaluated program bdcb4e95-9396-4a06-8d62-85a8c4411804 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:25:12,544 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (1/2): Formal Bit-Budget Ledger and Grammatical Constraint Scaffolding
+2026-09-23 20:25:16,205 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:25:16,206 - openai._base_client - INFO - Retrying request to /chat/completions in 0.459816 seconds
+2026-09-23 20:26:01,122 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:26:01,461 - skydiscover.evaluation.evaluator - INFO - Evaluated program 45b9b03c-1bc0-41a1-86da-2d63a2a2c79d in 0.33s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 20:26:01,462 - skydiscover.search.adaevolve.controller - INFO - Iteration 31: Program 45b9b03c (parent: b3a43e6b) completed in 48.92s (llm: 48.58s, eval: 0.33s)
+2026-09-23 20:26:01,462 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+2026-09-23 20:26:01,508 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (1/2): Atomic Delta-Mutation with Strict Canonical Line Bounding
+2026-09-23 20:26:31,848 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:26:32,146 - skydiscover.evaluation.evaluator - INFO - Evaluated program b3316a25-52bb-4c0b-9041-f7d37e7537d6 in 0.29s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 20:26:32,146 - skydiscover.search.adaevolve.controller - INFO - Iteration 32: Program b3316a25 (parent: b3a43e6b) completed in 30.64s (llm: 30.34s, eval: 0.29s)
+2026-09-23 20:26:32,146 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+2026-09-23 20:26:32,210 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (2/2): Diagnostic-Driven Architectural Inversion Prompting
+2026-09-23 20:26:54,969 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:26:55,233 - skydiscover.evaluation.evaluator - INFO - Evaluated program d9d3a2fd-0bf0-4c6d-866e-bd006f60fe0a in 0.26s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 20:26:55,233 - skydiscover.search.adaevolve.controller - INFO - Iteration 33: Program d9d3a2fd (parent: b3a43e6b) completed in 23.02s (llm: 22.76s, eval: 0.26s)
+2026-09-23 20:26:55,233 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+2026-09-23 20:26:55,290 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (2/2): Formal Bit-Budget Ledger and Grammatical Constraint Scaffolding
+2026-09-23 20:27:18,667 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:27:18,668 - openai._base_client - INFO - Retrying request to /chat/completions in 0.388196 seconds
+2026-09-23 20:27:50,790 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:27:51,058 - skydiscover.evaluation.evaluator - INFO - Evaluated program bb04c13a-bf4c-45af-8389-fba29dc85396 in 0.26s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 20:27:51,059 - skydiscover.search.adaevolve.controller - INFO - Iteration 34: Program bb04c13a (parent: b3a43e6b) completed in 55.77s (llm: 55.50s, eval: 0.26s)
+2026-09-23 20:27:51,059 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+2026-09-23 20:27:51,137 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (2/2): Atomic Delta-Mutation with Strict Canonical Line Bounding
+2026-09-23 20:27:51,138 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:29:55,075 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:29:56,109 - skydiscover.evaluation.evaluator - INFO - Evaluated program a89574b7-f93a-4c3e-b877-19fa9b9ee66b in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete, concrete...cture description here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:29:56,112 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:32:45,370 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:32:45,537 - skydiscover.evaluation.evaluator - INFO - Evaluated program eb0c1042-76df-4811-8633-76c645c4910d in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...ted.\n', 'state': '...'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 20:32:45,542 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:36:27,259 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:36:27,349 - skydiscover.evaluation.evaluator - INFO - Evaluated program f9acdf41-d1d2-477d-a528-c520c17e80f1 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 20:36:27,349 - skydiscover.search.adaevolve.controller - WARNING - Iteration 35: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 20:36:27,349 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:36:27,349 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:36:27,349 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:36:27,350 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:36:27,350 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:36:27,350 - skydiscover.search.adaevolve.controller - INFO - Global paradigm stagnation detected, generating breakthrough ideas...
+2026-09-23 20:36:37,372 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:36:37,373 - openai._base_client - INFO - Retrying request to /chat/completions in 0.382715 seconds
+2026-09-23 20:37:06,621 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:37:06,624 - skydiscover.search.adaevolve.paradigm.generator - INFO - Generated 3 paradigms:
+2026-09-23 20:37:06,624 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [1] Dominant-Mistake Contrastive Analysis via Diagnostic Anchors (approach: contrastive-reasoning)
+2026-09-23 20:37:06,624 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [2] Hardware-Budgeted Micro-Architecture Decomposition via Doc Specification (approach: task-decomposition)
+2026-09-23 20:37:06,624 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [3] Grammar-Native Composition without Syntactic Novelty (approach: schema-anchored-generation)
+2026-09-23 20:37:06,624 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Archived 3 paradigms (improvement: +0.000000):
+2026-09-23 20:37:06,624 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Diagnostic-Driven Architectural Inversion Prompting (uses: 2)
+2026-09-23 20:37:06,624 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Formal Bit-Budget Ledger and Grammatical Constraint Scaffolding (uses: 2)
+2026-09-23 20:37:06,624 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Atomic Delta-Mutation with Strict Canonical Line Bounding (uses: 2)
+2026-09-23 20:37:06,624 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Set 3 new paradigms (best score: 1.000000)
+2026-09-23 20:37:06,624 - skydiscover.search.adaevolve.controller - INFO - Generated 3 breakthrough paradigms
+2026-09-23 20:37:06,627 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (1/2): Dominant-Mistake Contrastive Analysis via Diagnostic Anchors
+2026-09-23 20:37:28,321 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:37:28,322 - openai._base_client - INFO - Retrying request to /chat/completions in 0.433923 seconds
+2026-09-23 20:37:32,488 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:37:32,489 - openai._base_client - INFO - Retrying request to /chat/completions in 0.848761 seconds
+2026-09-23 20:38:13,316 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:38:13,317 - skydiscover.llm - WARNING - Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 20:40:36,505 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:40:37,577 - skydiscover.evaluation.evaluator - INFO - Evaluated program 1e00bb2f-754e-4ddb-bce0-30a6f9610f69 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:40:37,580 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (1/2): Hardware-Budgeted Micro-Architecture Decomposition via Doc Specification
+2026-09-23 20:42:46,493 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:42:47,565 - skydiscover.evaluation.evaluator - INFO - Evaluated program 34aa1104-053f-4214-9f69-ee12b0d6b0c3 in 0.01s: combined_score=0.0000, status=schema_rejected, error=while scanning a simple key
+  in "<unicode string>", line 6, column 1:
+    <the rest of the actual YAML str ... 
+    ^
+could not find expected ':'
+  in "<unicode string>", line 7, column 1:
+    
+    ^
+2026-09-23 20:42:47,569 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (1/2): Grammar-Native Composition without Syntactic Novelty
+2026-09-23 20:44:40,881 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:44:41,010 - skydiscover.evaluation.evaluator - INFO - Evaluated program 41279140-7146-4fe8-b9ad-864231522911 in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_design_nam...tional details here.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...tional details here.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 20:44:41,010 - skydiscover.search.adaevolve.controller - WARNING - Iteration 36: All 3 attempts failed: Eval failure: 2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_design_nam...tional details here.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_design_nam...tional details here.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 20:44:41,014 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (2/2): Dominant-Mistake Contrastive Analysis via Diagnostic Anchors
+2026-09-23 20:45:30,170 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:45:30,444 - skydiscover.evaluation.evaluator - INFO - Evaluated program 31bde54a-ef2e-424c-a028-d2e1763b59e5 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 20:45:30,447 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (2/2): Hardware-Budgeted Micro-Architecture Decomposition via Doc Specification
+2026-09-23 20:45:50,071 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:45:50,072 - openai._base_client - INFO - Retrying request to /chat/completions in 0.417612 seconds
+2026-09-23 20:46:26,085 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:46:26,355 - skydiscover.evaluation.evaluator - INFO - Evaluated program a7722b6c-6bcc-4daf-973c-8a05e32f34bf in 0.26s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 20:46:26,356 - skydiscover.search.adaevolve.controller - INFO - Iteration 37: Program a7722b6c (parent: b3a43e6b) completed in 55.91s (llm: 55.64s, eval: 0.26s)
+2026-09-23 20:46:26,356 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+2026-09-23 20:46:26,426 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (2/2): Grammar-Native Composition without Syntactic Novelty
+2026-09-23 20:46:26,426 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:46:42,595 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:46:42,596 - openai._base_client - INFO - Retrying request to /chat/completions in 0.466891 seconds
+2026-09-23 20:49:11,819 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:49:11,873 - skydiscover.evaluation.evaluator - INFO - Evaluated program f990b977-66e3-4fd3-bcf5-70e13793a868 in 0.05s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+duel.follower_uses_b_when.threshold.str-enum[Threshold]
+  Input should be 'ZERO', 'MAX' or 'MAX_OVER_2' [type=enum, input_value='MID', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/enum
+duel.follower_uses_b_when.threshold.int
+  Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='MID', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/int_parsing
+2026-09-23 20:49:11,876 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:50:52,437 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:50:53,151 - skydiscover.evaluation.evaluator - INFO - Evaluated program 22993d04-38e6-4ad1-b09a-03b6ddfcc9b3 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the actual structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:50:53,154 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:52:48,812 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:52:48,915 - skydiscover.evaluation.evaluator - INFO - Evaluated program 942add07-2950-4d6f-82e0-029e864de560 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 20:52:48,915 - skydiscover.search.adaevolve.controller - WARNING - Iteration 38: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 20:52:48,915 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:52:48,915 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:52:48,915 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:52:48,916 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:52:48,916 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 20:52:48,916 - skydiscover.search.adaevolve.controller - INFO - Global paradigm stagnation detected, generating breakthrough ideas...
+2026-09-23 20:52:49,433 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:52:49,435 - openai._base_client - INFO - Retrying request to /chat/completions in 0.474682 seconds
+2026-09-23 20:52:50,444 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:52:50,446 - openai._base_client - INFO - Retrying request to /chat/completions in 0.769226 seconds
+2026-09-23 20:52:51,670 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:52:51,672 - skydiscover.llm - WARNING - Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 20:52:54,243 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:52:54,244 - openai._base_client - INFO - Retrying request to /chat/completions in 0.412501 seconds
+2026-09-23 20:53:24,827 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:53:24,831 - skydiscover.search.adaevolve.paradigm.generator - INFO - Generated 3 paradigms:
+2026-09-23 20:53:24,831 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [1] Micro-Architectural Hypothesis Testing via structured `doc` field (approach: scientific-method-structuring)
+2026-09-23 20:53:24,831 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [2] Cross-Pollination and Hybridization of Reference Designs (approach: design-synthesis)
+2026-09-23 20:53:24,831 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [3] Zero-Sum Budget Reallocation Game (approach: resource-constrained-optimization)
+2026-09-23 20:53:24,831 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Archived 3 paradigms (improvement: +0.000000):
+2026-09-23 20:53:24,831 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Dominant-Mistake Contrastive Analysis via Diagnostic Anchors (uses: 2)
+2026-09-23 20:53:24,831 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Hardware-Budgeted Micro-Architecture Decomposition via Doc Specification (uses: 2)
+2026-09-23 20:53:24,831 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Grammar-Native Composition without Syntactic Novelty (uses: 2)
+2026-09-23 20:53:24,832 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Set 3 new paradigms (best score: 1.000000)
+2026-09-23 20:53:24,832 - skydiscover.search.adaevolve.controller - INFO - Generated 3 breakthrough paradigms
+2026-09-23 20:53:24,836 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (1/2): Micro-Architectural Hypothesis Testing via structured `doc` field
+2026-09-23 20:55:18,053 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:55:19,143 - skydiscover.evaluation.evaluator - INFO - Evaluated program 2713e65b-b230-482e-baee-922fb0458768 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:55:19,149 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (1/2): Cross-Pollination and Hybridization of Reference Designs
+2026-09-23 20:57:17,658 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:57:17,961 - skydiscover.evaluation.evaluator - INFO - Evaluated program 947912b2-1b6d-4272-aa0f-9475db92c2d2 in 0.01s: combined_score=0.0000, status=words_refused, error=1 validation error for NewWord
+means
+  Field required [type=missing, input_value={'name': 'your_new_word', 'place': 'condition'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 20:57:17,965 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (1/2): Zero-Sum Budget Reallocation Game
+2026-09-23 20:59:18,878 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 20:59:19,978 - skydiscover.evaluation.evaluator - INFO - Evaluated program 0ac09849-5bd8-4730-928c-cfba41f3e158 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:59:19,978 - skydiscover.search.adaevolve.controller - WARNING - Iteration 39: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 20:59:19,982 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (2/2): Micro-Architectural Hypothesis Testing via structured `doc` field
+2026-09-23 20:59:25,880 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:59:25,881 - openai._base_client - INFO - Retrying request to /chat/completions in 0.443640 seconds
+2026-09-23 20:59:27,026 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:59:27,027 - openai._base_client - INFO - Retrying request to /chat/completions in 0.785753 seconds
+2026-09-23 20:59:28,298 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:59:28,300 - skydiscover.llm - WARNING - Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 20:59:30,791 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 20:59:30,793 - openai._base_client - INFO - Retrying request to /chat/completions in 0.422466 seconds
+2026-09-23 21:00:40,602 - skydiscover.evaluation.evaluator - INFO - Evaluated program 14c77fdb-986e-4d38-ad4c-0bcdf6a9f031 in 2477.47s: combined_score=0.9990, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6867.7689, cacti_node_nm=22.0000
+2026-09-23 21:00:40,603 - skydiscover.search.adaevolve.controller - INFO - Iteration 28: Program 14c77fdb (parent: 12089985) completed in 2613.93s (llm: 136.45s, eval: 2477.47s)
+2026-09-23 21:00:40,603 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9990, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6867.7689, cacti_node_nm=22
+2026-09-23 21:00:40,697 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (2/2): Cross-Pollination and Hybridization of Reference Designs
+2026-09-23 21:00:48,296 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 21:00:48,297 - openai._base_client - INFO - Retrying request to /chat/completions in 0.408648 seconds
+2026-09-23 21:01:17,412 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 21:01:17,413 - openai._base_client - INFO - Retrying request to /chat/completions in 0.859748 seconds
+2026-09-23 21:01:21,251 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-23 21:01:21,253 - skydiscover.llm - WARNING - Error attempt 1/3: Error code: 429 - [{'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}], retrying...
+2026-09-23 21:01:42,434 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:01:43,494 - skydiscover.evaluation.evaluator - INFO - Evaluated program 0c34872f-da7d-45f9-b2ec-64974007c836 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:01:43,498 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (2/2): Zero-Sum Budget Reallocation Game
+2026-09-23 21:01:43,498 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:02:28,480 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:02:29,434 - skydiscover.evaluation.evaluator - INFO - Evaluated program 7a3de55c-f977-49ee-9976-6f9551340572 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<complete, valid YAML st...d fields fully written>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:02:29,438 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:02:40,328 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:02:40,348 - skydiscover.evaluation.evaluator - INFO - Evaluated program 7cbe8101-e05a-48ce-8db5-5d72d9db5221 in 0.01s: combined_score=0.0000, status=schema_rejected, error=expected '<document start>', but found '<scalar>'
+  in "<unicode string>", line 5, column 5:
+    ... (your complete, concrete YAML st ... 
+        ^
+2026-09-23 21:02:40,353 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:04:14,119 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:05:35,747 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:05:35,893 - skydiscover.evaluation.evaluator - INFO - Evaluated program fe977009-e505-4aa3-a39e-3609baf49a05 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 21:05:35,893 - skydiscover.search.adaevolve.controller - WARNING - Iteration 40: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...h': 2, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 21:05:35,894 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:05:35,894 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:05:35,894 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:05:35,894 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:05:35,894 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:05:35,894 - skydiscover.search.adaevolve.controller - INFO - Global paradigm stagnation detected, generating breakthrough ideas...
+2026-09-23 21:06:17,790 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:06:17,793 - skydiscover.search.adaevolve.paradigm.generator - INFO - Generated 3 paradigms:
+2026-09-23 21:06:17,793 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [1] Micro-Level Intent Anchoring via YAML Comments (approach: localized-reasoning)
+2026-09-23 21:06:17,793 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [2] Cross-Domain Architecture Analogy Prompting (approach: analogy-prompting)
+2026-09-23 21:06:17,793 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [3] Bottleneck-First Trace Overfitting Strategy (approach: target-recalibration)
+2026-09-23 21:06:17,794 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Archived 3 paradigms (improvement: +0.000000):
+2026-09-23 21:06:17,794 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Micro-Architectural Hypothesis Testing via structured `doc` field (uses: 2)
+2026-09-23 21:06:17,794 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Cross-Pollination and Hybridization of Reference Designs (uses: 2)
+2026-09-23 21:06:17,794 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Zero-Sum Budget Reallocation Game (uses: 2)
+2026-09-23 21:06:17,794 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Set 3 new paradigms (best score: 1.000000)
+2026-09-23 21:06:17,794 - skydiscover.search.adaevolve.controller - INFO - Generated 3 breakthrough paradigms
+2026-09-23 21:06:17,797 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (1/2): Micro-Level Intent Anchoring via YAML Comments
+2026-09-23 21:08:23,241 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:08:24,350 - skydiscover.evaluation.evaluator - INFO - Evaluated program 96e1bca7-5336-4b06-ba2d-4ab388de39ac in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:08:24,355 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (1/2): Cross-Domain Architecture Analogy Prompting
+2026-09-23 21:11:47,354 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:11:47,499 - skydiscover.evaluation.evaluator - INFO - Evaluated program 23a8672f-fd67-4b95-b90d-e65a9ff18abf in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_policy_nam...itectural rationale.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...itectural rationale.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 21:11:47,502 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (1/2): Bottleneck-First Trace Overfitting Strategy
+2026-09-23 21:12:16,900 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:12:17,192 - skydiscover.evaluation.evaluator - INFO - Evaluated program b02bb859-a2f8-42b1-819d-45f3f3b1b8d4 in 0.29s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 21:12:17,193 - skydiscover.search.adaevolve.controller - INFO - Iteration 42: Program b02bb859 (parent: b3a43e6b) completed in 29.69s (llm: 29.40s, eval: 0.29s)
+2026-09-23 21:12:17,193 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22
+2026-09-23 21:12:17,278 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (2/2): Micro-Level Intent Anchoring via YAML Comments
+2026-09-23 21:14:18,202 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:14:19,311 - skydiscover.evaluation.evaluator - INFO - Evaluated program e8985838-3e40-44c6-ab03-c5eb950cb717 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:14:19,315 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (2/2): Cross-Domain Architecture Analogy Prompting
+2026-09-23 21:16:20,853 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:16:21,989 - skydiscover.evaluation.evaluator - INFO - Evaluated program d063c6d5-de47-47da-ade4-25e9f1441036 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the actual structure de...t, write the full YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:16:21,994 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (2/2): Bottleneck-First Trace Overfitting Strategy
+2026-09-23 21:16:21,994 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:18:24,817 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:18:24,962 - skydiscover.evaluation.evaluator - INFO - Evaluated program 01616351-3111-4cad-9edf-ae1341ecf37a in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:18:24,963 - skydiscover.search.adaevolve.controller - WARNING - Iteration 43: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:18:24,963 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:18:24,963 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:18:24,963 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:18:24,963 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:18:24,963 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:18:24,963 - skydiscover.search.adaevolve.controller - INFO - Global paradigm stagnation detected, generating breakthrough ideas...
+2026-09-23 21:18:57,528 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:18:57,532 - skydiscover.search.adaevolve.paradigm.generator - INFO - Generated 3 paradigms:
+2026-09-23 21:18:57,532 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [1] Pre-Generation Analytical Scratchpad (Chain-of-Thought) (approach: chain-of-thought)
+2026-09-23 21:18:57,532 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [2] Feedback-to-Component Decision Tree Mapping (approach: rule-based-guidance)
+2026-09-23 21:18:57,532 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [3] Anti-Pattern Pre-Flight Checklist Verification (approach: error-prevention)
+2026-09-23 21:18:57,532 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Archived 3 paradigms (improvement: +0.000000):
+2026-09-23 21:18:57,532 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Micro-Level Intent Anchoring via YAML Comments (uses: 2)
+2026-09-23 21:18:57,532 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Cross-Domain Architecture Analogy Prompting (uses: 2)
+2026-09-23 21:18:57,532 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Bottleneck-First Trace Overfitting Strategy (uses: 2)
+2026-09-23 21:18:57,532 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Set 3 new paradigms (best score: 1.000000)
+2026-09-23 21:18:57,532 - skydiscover.search.adaevolve.controller - INFO - Generated 3 breakthrough paradigms
+2026-09-23 21:18:57,536 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (1/2): Pre-Generation Analytical Scratchpad (Chain-of-Thought)
+2026-09-23 21:20:56,047 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:20:57,129 - skydiscover.evaluation.evaluator - INFO - Evaluated program 3bcaf7fc-a9ed-4648-baee-ec166f3ec75f in 0.02s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:20:57,133 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (1/2): Feedback-to-Component Decision Tree Mapping
+2026-09-23 21:22:49,184 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:22:50,288 - skydiscover.evaluation.evaluator - INFO - Evaluated program 1afb7c67-14fa-45a1-a021-24749811f8e2 in 0.02s: combined_score=0.0000, status=schema_rejected, error=expected '<document start>', but found '['
+  in "<unicode string>", line 6, column 5:
+    ... [rest of the actual YAML configu ... 
+        ^
+2026-09-23 21:22:50,292 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (1/2): Anti-Pattern Pre-Flight Checklist Verification
+2026-09-23 21:24:22,234 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:24:22,354 - skydiscover.evaluation.evaluator - INFO - Evaluated program 2278aee2-24aa-4ee6-adf6-7ae84770c4f6 in 0.02s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Field required [type=missing, input_value={'name': 'mockingjay', 'd...why.\n', 'state': '...'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 21:24:22,355 - skydiscover.search.adaevolve.controller - WARNING - Iteration 44: All 3 attempts failed: Eval failure: 2 validation errors for StructureDescription
+state
+  Input should be a valid list [type=list_type, input_value='...', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type
+victim
+  Field required [type=missing, input_value={'name': 'mockingjay', 'd...why.\n', 'state': '...'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 21:24:22,359 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (2/2): Pre-Generation Analytical Scratchpad (Chain-of-Thought)
+2026-09-23 21:25:31,527 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:25:32,640 - skydiscover.evaluation.evaluator - INFO - Evaluated program 628e54ff-c1ba-4ca8-be3e-5a16d93ee69d in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:25:32,645 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (2/2): Feedback-to-Component Decision Tree Mapping
+2026-09-23 21:27:39,267 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:27:39,413 - skydiscover.evaluation.evaluator - INFO - Evaluated program 83ba258b-f959-437f-92cf-12587317daaa in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...h': 1, 'init': 'ZERO'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 21:27:39,418 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (2/2): Anti-Pattern Pre-Flight Checklist Verification
+2026-09-23 21:27:39,418 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:29:45,631 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:29:46,700 - skydiscover.evaluation.evaluator - INFO - Evaluated program 18f8dfda-9318-4836-a2fd-d09a209798e0 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ...YAML. NO PLACEHOLDERS.>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:29:46,700 - skydiscover.search.adaevolve.controller - WARNING - Iteration 45: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the complete structure ...YAML. NO PLACEHOLDERS.>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:29:46,701 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:29:46,701 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:29:46,701 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:29:46,701 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:29:46,701 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:29:46,701 - skydiscover.search.adaevolve.controller - INFO - Global paradigm stagnation detected, generating breakthrough ideas...
+2026-09-23 21:30:35,589 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:30:35,592 - skydiscover.search.adaevolve.paradigm.generator - INFO - Generated 3 paradigms:
+2026-09-23 21:30:35,592 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [1] Multi-Feature Signature Contextualization via New Words (approach: feature-engineering)
+2026-09-23 21:30:35,592 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [2] Adaptive Bypassing via Set Dueling (approach: dynamic-arbitration)
+2026-09-23 21:30:35,592 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [3] Confidence-Gated Victim Selection with Custom Condition (approach: confidence-gating)
+2026-09-23 21:30:35,592 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Archived 3 paradigms (improvement: +0.000000):
+2026-09-23 21:30:35,592 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Pre-Generation Analytical Scratchpad (Chain-of-Thought) (uses: 2)
+2026-09-23 21:30:35,592 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Feedback-to-Component Decision Tree Mapping (uses: 2)
+2026-09-23 21:30:35,592 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Anti-Pattern Pre-Flight Checklist Verification (uses: 2)
+2026-09-23 21:30:35,592 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Set 3 new paradigms (best score: 1.000000)
+2026-09-23 21:30:35,592 - skydiscover.search.adaevolve.controller - INFO - Generated 3 breakthrough paradigms
+2026-09-23 21:30:35,596 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (1/2): Multi-Feature Signature Contextualization via New Words
+2026-09-23 21:31:02,024 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:31:02,117 - skydiscover.evaluation.evaluator - INFO - Evaluated program c899832d-dcb1-4d48-a015-df84d122c7e5 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<complete YAML structure description>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:31:02,123 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (1/2): Adaptive Bypassing via Set Dueling
+2026-09-23 21:34:16,734 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:34:17,782 - skydiscover.evaluation.evaluator - INFO - Evaluated program d88bfc05-698e-4007-b775-9881c64f5f5b in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete, valid YA...cture description here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:34:17,787 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (1/2): Confidence-Gated Victim Selection with Custom Condition
+2026-09-23 21:36:28,829 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:36:28,938 - skydiscover.evaluation.evaluator - INFO - Evaluated program 8834a523-da23-47db-bcde-f3a7c1184cd5 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 21:36:28,938 - skydiscover.search.adaevolve.controller - WARNING - Iteration 46: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 21:36:28,943 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (2/2): Multi-Feature Signature Contextualization via New Words
+2026-09-23 21:38:54,385 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:38:55,482 - skydiscover.evaluation.evaluator - INFO - Evaluated program 7e69b2f7-b8f7-49fa-88a9-82871ac32142 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:38:55,486 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (2/2): Adaptive Bypassing via Set Dueling
+2026-09-23 21:41:25,150 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:41:25,286 - skydiscover.evaluation.evaluator - INFO - Evaluated program b99f8c26-04d9-479e-a7b4-b30bbc56ce30 in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_policy_nam...itectural rationale.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...itectural rationale.\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 21:41:25,292 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (2/2): Confidence-Gated Victim Selection with Custom Condition
+2026-09-23 21:41:25,292 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:41:29,004 - skydiscover.evaluation.evaluator - INFO - Evaluated program 44a76ed6-4f5a-4df9-9b94-7e353482b6f2 in 2234.88s: combined_score=0.9996, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6862.5860, cacti_node_nm=22.0000
+2026-09-23 21:41:29,005 - skydiscover.search.adaevolve.controller - INFO - Iteration 41: Program 44a76ed6 (parent: 2b385e1d) completed in 2339.57s (llm: 104.69s, eval: 2234.88s)
+2026-09-23 21:41:29,005 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9996, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6862.5860, cacti_node_nm=22
+2026-09-23 21:41:29,117 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:41:29,117 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:41:29,117 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:41:29,118 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:41:29,118 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:41:29,118 - skydiscover.search.adaevolve.controller - INFO - Global paradigm stagnation detected, generating breakthrough ideas...
+2026-09-23 21:42:23,820 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:42:23,828 - skydiscover.search.adaevolve.paradigm.generator - INFO - Generated 3 paradigms:
+2026-09-23 21:42:23,828 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [1] Feature Engineering: Custom Access-Type FoldBit for Signatures (approach: architectural-feature-engineering)
+2026-09-23 21:42:23,828 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [2] Ensemble Policy: Set Dueling for Dynamic Insertion Arbitration (approach: set-dueling-ensemble)
+2026-09-23 21:42:23,828 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [3] Cache Pressure Heuristic: Fill-Driven Accelerated Aging (approach: dynamic-aging-heuristic)
+2026-09-23 21:42:23,828 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Archived 3 paradigms (improvement: +0.000000):
+2026-09-23 21:42:23,828 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Multi-Feature Signature Contextualization via New Words (uses: 2)
+2026-09-23 21:42:23,828 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Adaptive Bypassing via Set Dueling (uses: 2)
+2026-09-23 21:42:23,828 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Confidence-Gated Victim Selection with Custom Condition (uses: 2)
+2026-09-23 21:42:23,828 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Set 3 new paradigms (best score: 1.000000)
+2026-09-23 21:42:23,828 - skydiscover.search.adaevolve.controller - INFO - Generated 3 breakthrough paradigms
+2026-09-23 21:42:23,833 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (1/2): Feature Engineering: Custom Access-Type FoldBit for Signatures
+2026-09-23 21:43:55,082 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:43:56,164 - skydiscover.evaluation.evaluator - INFO - Evaluated program 4aa1cb04-0c75-4485-a83d-593a590f88c6 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete, concrete...cture description here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:43:56,164 - skydiscover.search.adaevolve.controller - WARNING - Iteration 47: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<your complete, concrete...cture description here>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:43:56,171 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (1/2): Ensemble Policy: Set Dueling for Dynamic Insertion Arbitration
+2026-09-23 21:46:01,127 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:46:02,191 - skydiscover.evaluation.evaluator - INFO - Evaluated program 6e433c3c-820f-4c3f-b4b5-26563a4a555e in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:46:02,196 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (1/2): Cache Pressure Heuristic: Fill-Driven Accelerated Aging
+2026-09-23 21:46:26,132 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:46:26,160 - skydiscover.evaluation.evaluator - INFO - Evaluated program 821e7e13-6c1f-44fc-8f5a-74074d2e8992 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<valid YAML structure de...ERS, NO ANGLE BRACKETS>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:46:26,166 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (2/2): Feature Engineering: Custom Access-Type FoldBit for Signatures
+2026-09-23 21:47:48,352 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:47:49,396 - skydiscover.evaluation.evaluator - INFO - Evaluated program 73bd6f3a-fe80-41a1-a06f-4d170be87a94 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:47:49,400 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (2/2): Ensemble Policy: Set Dueling for Dynamic Insertion Arbitration
+2026-09-23 21:48:16,384 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:48:16,486 - skydiscover.evaluation.evaluator - INFO - Evaluated program 2c0c4a7f-726d-40d1-a2c6-0ae533a8d703 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:48:16,486 - skydiscover.search.adaevolve.controller - WARNING - Iteration 48: All 3 attempts failed: Eval failure: 1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:48:16,491 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (2/2): Cache Pressure Heuristic: Fill-Driven Accelerated Aging
+2026-09-23 21:48:16,491 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:49:28,085 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:50:11,163 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:50:12,104 - skydiscover.evaluation.evaluator - INFO - Evaluated program 77e09391-f69b-4bb9-97a4-c03462474b38 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 21:50:12,108 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:50:36,543 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 21:50:36,554 - skydiscover.evaluation.evaluator - INFO - Evaluated program b16ae3f9-dbe0-41ef-b6ad-b0b306206eed in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 21:50:36,560 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 21:52:22,339 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 22:32:48,825 - skydiscover.evaluation.evaluator - INFO - Evaluated program 5a558b09-0f06-4ccf-92ea-7ed55abd3d54 in 2426.47s: combined_score=0.9987, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6870.0392, cacti_node_nm=22.0000
+2026-09-23 22:32:48,825 - skydiscover.search.adaevolve.controller - INFO - Iteration 50: Program 5a558b09 (parent: ad9bde2d) completed in 2532.27s (llm: 105.79s, eval: 2426.47s)
+2026-09-23 22:32:48,825 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9987, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6870.0392, cacti_node_nm=22
+2026-09-23 22:32:48,825 - skydiscover.search.adaevolve.controller - INFO - Checkpoint interval reached at iteration 50
+2026-09-23 22:32:48,826 - skydiscover.search.base_database - INFO - Database has 22 programs, best program score is combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 22:32:48,834 - skydiscover.search.utils.checkpoint_manager - INFO - [CHECKPOINT] Saved database with 22 programs to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_50
+2026-09-23 22:32:48,835 - skydiscover.search.adaevolve.database - INFO - Saved AdaEvolve state to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_50
+2026-09-23 22:32:48,835 - skydiscover.runner - INFO - Checkpoint 50: best=combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 22:32:48,835 - skydiscover.runner - INFO - Checkpoint saved to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_50
+2026-09-23 22:32:48,937 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 22:32:48,937 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 22:32:48,937 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 22:32:48,938 - skydiscover.search.adaevolve.database - INFO - Migration completed at iteration 50
+2026-09-23 22:32:48,938 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 22:32:48,938 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 22:32:48,938 - skydiscover.search.adaevolve.controller - INFO - Global paradigm stagnation detected, generating breakthrough ideas...
+2026-09-23 22:33:31,486 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 22:33:31,491 - skydiscover.search.adaevolve.paradigm.generator - INFO - Generated 3 paradigms:
+2026-09-23 22:33:31,491 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [1] Multi-Factor Bypass Gating via Custom Condition Word (approach: conditional-gating)
+2026-09-23 22:33:31,491 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [2] Access-Aware ETR Scaling via Custom Value Word (approach: dynamic-insertion)
+2026-09-23 22:33:31,491 - skydiscover.search.adaevolve.paradigm.generator - INFO -   [3] Spatial Context Enrichment via Custom FoldBit Word (approach: signature-enrichment)
+2026-09-23 22:33:31,491 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Archived 3 paradigms (improvement: +0.000000):
+2026-09-23 22:33:31,491 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Feature Engineering: Custom Access-Type FoldBit for Signatures (uses: 2)
+2026-09-23 22:33:31,491 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Ensemble Policy: Set Dueling for Dynamic Insertion Arbitration (uses: 2)
+2026-09-23 22:33:31,491 - skydiscover.search.adaevolve.paradigm.tracker - INFO -   [FAILED] Cache Pressure Heuristic: Fill-Driven Accelerated Aging (uses: 2)
+2026-09-23 22:33:31,491 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Set 3 new paradigms (best score: 1.000000)
+2026-09-23 22:33:31,491 - skydiscover.search.adaevolve.controller - INFO - Generated 3 breakthrough paradigms
+2026-09-23 22:33:31,649 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (1/2): Multi-Factor Bypass Gating via Custom Condition Word
+2026-09-23 22:33:44,668 - skydiscover.evaluation.evaluator - INFO - Evaluated program 1ba25b06-097f-4aa2-b003-54750a98e3ff in 2656.58s: combined_score=0.9994, status=ok, metadata_kb=46.0625, metadata_flipflop_bits=10.0000, metadata_bits_per_line=7.6771, metadata_area_mm2=0.0372, metadata_energy_uj=6484.9772, cacti_node_nm=22.0000
+2026-09-23 22:33:44,669 - skydiscover.search.adaevolve.controller - INFO - Iteration 49: Program 1ba25b06 (parent: b3a43e6b) completed in 2755.27s (llm: 98.69s, eval: 2656.58s)
+2026-09-23 22:33:44,669 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9994, status=ok, metadata_kb=46.0625, metadata_flipflop_bits=10, metadata_bits_per_line=7.6771, metadata_area_mm2=0.0372, metadata_energy_uj=6484.9772, cacti_node_nm=22
+2026-09-23 22:33:45,042 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (1/2): Access-Aware ETR Scaling via Custom Value Word
+2026-09-23 22:34:46,919 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 22:35:55,030 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 22:35:56,093 - skydiscover.evaluation.evaluator - INFO - Evaluated program 6e79e84c-df72-4668-a512-f5be48acd468 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 22:35:56,100 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (1/2): Spatial Context Enrichment via Custom FoldBit Word
+2026-09-23 22:37:58,034 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 22:37:59,213 - skydiscover.evaluation.evaluator - INFO - Evaluated program 3cd54458-87e5-4d15-ab6f-72b23729ab98 in 0.02s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the actual structure de...ERS. MUST BE COMPLETE.>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 22:37:59,221 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 1/3 (2/2): Multi-Factor Bypass Gating via Custom Condition Word
+2026-09-23 22:38:26,895 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 22:38:26,910 - skydiscover.evaluation.evaluator - INFO - Evaluated program a657835a-2aee-48fe-a0d8-69cb5c60b609 in 0.01s: combined_score=0.0000, status=malformed, error=candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 22:38:26,910 - skydiscover.search.adaevolve.controller - WARNING - Iteration 52: All 3 attempts failed: Eval failure: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+2026-09-23 22:38:26,917 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 2/3 (2/2): Access-Aware ETR Scaling via Custom Value Word
+2026-09-23 22:40:27,795 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 22:40:28,899 - skydiscover.evaluation.evaluator - INFO - Evaluated program f76db150-e06a-402d-88e2-6feb0fa49850 in 0.01s: combined_score=0.0000, status=schema_rejected, error=1 validation error for StructureDescription
+  Input should be a valid dictionary or instance of StructureDescription [type=model_type, input_value='<the structure description, YAML>', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+2026-09-23 22:40:28,905 - skydiscover.search.adaevolve.paradigm.tracker - INFO - Using paradigm 3/3 (2/2): Spatial Context Enrichment via Custom FoldBit Word
+2026-09-23 22:40:28,905 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 22:43:15,765 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 22:43:15,918 - skydiscover.evaluation.evaluator - INFO - Evaluated program 2cb961c9-21e8-4cd2-be89-eb47c1c837ea in 0.01s: combined_score=0.0000, status=schema_rejected, error=2 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'your_policy_nam...your changes here...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim
+  Field required [type=missing, input_value={'name': 'your_policy_nam...your changes here...\n'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+2026-09-23 22:43:15,924 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 22:49:21,823 - httpx - INFO - HTTP Request: POST https://aiplatform.googleapis.com/v1/projects/a3-chia-hack26ath-7727/locations/global/endpoints/openapi/chat/completions "HTTP/1.1 200 OK"
+2026-09-23 23:00:03,575 - skydiscover.runner - INFO - Signal 15 received, shutting down...
+2026-09-23 23:00:03,576 - skydiscover.search.default_discovery_controller - INFO - Graceful shutdown requested...
+2026-09-23 23:11:51,804 - skydiscover.evaluation.evaluator - INFO - Evaluated program 8cdfd003-1e3b-49f7-8e11-f5acbdfb08e2 in 2224.88s: combined_score=0.9986, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6868.3962, cacti_node_nm=22.0000
+2026-09-23 23:11:51,804 - skydiscover.search.adaevolve.controller - INFO - Iteration 51: Program 8cdfd003 (parent: b3a43e6b) completed in 2300.15s (llm: 75.27s, eval: 2224.88s)
+2026-09-23 23:11:51,804 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=0.9986, status=ok, metadata_kb=47.8750, metadata_flipflop_bits=0, metadata_bits_per_line=7.9792, metadata_area_mm2=0.0394, metadata_energy_uj=6868.3962, cacti_node_nm=22
+2026-09-23 23:11:52,034 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 23:11:52,035 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 23:11:52,035 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 23:25:17,849 - skydiscover.evaluation.evaluator - INFO - Evaluated program 67aa7a9b-3443-43b3-8b70-f35e822bbce4 in 2155.89s: combined_score=1.0000, status=ok, metadata_kb=30.0000, metadata_flipflop_bits=0.0000, metadata_bits_per_line=5.0000, metadata_area_mm2=0.0226, metadata_energy_uj=3848.2239, cacti_node_nm=22.0000
+2026-09-23 23:25:17,850 - skydiscover.search.adaevolve.controller - INFO - Iteration 53: Program 67aa7a9b (parent: 2b385e1d) completed in 2521.92s (llm: 365.90s, eval: 2155.89s)
+2026-09-23 23:25:17,850 - skydiscover.search.adaevolve.controller - INFO - Metrics: combined_score=1.0000, status=ok, metadata_kb=30.0000, metadata_flipflop_bits=0, metadata_bits_per_line=5.0000, metadata_area_mm2=0.0226, metadata_energy_uj=3848.2239, cacti_node_nm=22
+2026-09-23 23:25:18,088 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 23:25:18,088 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 23:25:18,089 - skydiscover.search.adaevolve.paradigm.tracker - INFO - All paradigms exhausted, will archive on next check
+2026-09-23 23:25:18,089 - skydiscover.search.adaevolve.controller - INFO - AdaEvolve completed
+2026-09-23 23:25:18,089 - skydiscover.search.base_database - INFO - Database has 31 programs, best program score is combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 23:25:18,089 - skydiscover.search.adaevolve.controller - INFO - AdaEvolve iteration stats saved to: /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/adaevolve_iteration_stats_20260923_162543.jsonl
+2026-09-23 23:25:18,100 - skydiscover.search.utils.checkpoint_manager - INFO - [CHECKPOINT] Saved database with 31 programs to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_100000
+2026-09-23 23:25:18,101 - skydiscover.search.adaevolve.database - INFO - Saved AdaEvolve state to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_100000
+2026-09-23 23:25:18,101 - skydiscover.runner - INFO - Checkpoint 100000: best=combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 23:25:18,101 - skydiscover.runner - INFO - Checkpoint saved to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/checkpoints/checkpoint_100000
+2026-09-23 23:25:18,491 - skydiscover.evaluation.evaluator - INFO - Evaluated program b3a43e6b-e00d-4115-9106-c99c49ee1199 in 0.39s: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 23:25:18,491 - skydiscover.runner - INFO - Test evaluation for best program: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000
+2026-09-23 23:25:18,491 - skydiscover.runner - INFO - Best program saved to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/best
+2026-09-23 23:25:18,492 - skydiscover.runner - INFO - Discovery completed. Best: combined_score=1.0000, status=ok, metadata_kb=47.3750, metadata_flipflop_bits=0.0000, metadata_bits_per_line=7.8958, metadata_area_mm2=0.0379, metadata_energy_uj=6604.4185, cacti_node_nm=22.0000, test_combined_score=1.0000, test_status=ok, test_metadata_kb=47.3750, test_metadata_flipflop_bits=0.0000, test_metadata_bits_per_line=7.8958, test_metadata_area_mm2=0.0379, test_metadata_energy_uj=6604.4185, test_cacti_node_nm=22.0000
+2026-09-23 23:25:18,493 - skydiscover.runner - INFO - Best program saved to /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/best

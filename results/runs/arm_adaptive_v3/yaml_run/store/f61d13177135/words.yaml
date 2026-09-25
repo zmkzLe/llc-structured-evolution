@@ -1,0 +1,68 @@
+- name: unified_etr_rank
+  place: value
+  params:
+    conf_table: table
+    div: {int: [1, 128]}
+    index: signature
+    max_etr: {int: [0, 15]}
+    rdp_table: table
+    scale: {int: [0, 16]}
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as 0. An absent 'conf_val' is treated as 0.
+    The maximum value for confidence is 3.
+    If 'conf_val' is 0, the returned value is max_etr.
+    Otherwise, calculates base_etr = rdp_val / div using integer division.
+    Calculates penalty = (3 - conf_val) * scale.
+    The final returned value is min(max_etr, base_etr + penalty).
+- name: incoming_rank_gt_threshold
+  place: condition
+  params:
+    conf_table: table
+    div: {int: [1, 128]}
+    index: signature
+    max_etr: {int: [0, 15]}
+    rdp_table: table
+    scale: {int: [0, 16]}
+    threshold: {int: [0, 15]}
+  means: >
+    Calculates the estimated time to reuse (ETR) for the incoming line (incoming_etr)
+    using the 'unified_etr_rank' logic: Reads 'rdp_val' from rdp_table[index]
+    and 'conf_val' from conf_table[index]. An absent 'rdp_val' or 'conf_val'
+    is treated as 0. The maximum value for confidence is 3.
+    If 'conf_val' is 0, incoming_etr = max_etr.
+    Otherwise, base_etr = rdp_val / div. penalty = (3 - conf_val) * scale.
+    Incoming_etr = min(max_etr, base_etr + penalty).
+    Returns true if incoming_etr is greater than threshold.
+- name: incoming_rank_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div: {int: [1, 128]}
+    index: signature
+    max_etr: {int: [0, 15]}
+    rdp_table: table
+    scale: {int: [0, 16]}
+  means: >
+    Calculates the estimated time to reuse (ETR) for the incoming line (incoming_etr)
+    using the 'unified_etr_rank' logic: Reads 'rdp_val' from rdp_table[index]
+    and 'conf_val' from conf_table[index]. An absent 'rdp_val' or 'conf_val'
+    is treated as 0. The maximum value for confidence is 3.
+    If 'conf_val' is 0, incoming_etr = max_etr.
+    Otherwise, base_etr = rdp_val / div. penalty = (3 - conf_val) * scale.
+    Incoming_etr = min(max_etr, base_etr + penalty).
+    Returns true if incoming_etr is greater than the absolute value of the victim way's key.
+- name: train_confidence_on_match
+  place: step
+  params:
+    conf_table: table
+    index: signature
+    prediction: state
+    reality: state
+    good_thresh: {int: [0, 127]}
+    bad_thresh: {int: [0, 127]}
+  means: >
+    Compares a prediction to a reality, both passed as state values from a sampler entry.
+    Calculates diff = abs(prediction - reality). If diff is less than or equal to good_thresh,
+    it increments the entry in conf_table at the given index. If diff is greater than or
+    equal to bad_thresh, it decrements the entry. The confidence table is saturating.

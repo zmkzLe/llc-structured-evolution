@@ -1,0 +1,5 @@
+Candidate ? FAILED at words_refused; it was not scored.
+Reason: 1 validation error for NewWord
+params
+  Value error, parameter 'mode': 'BypassFeedbackMode' is not a symbol list [type=value_error, input_value={'table': 'table', 'index...: {'symbol': 'TrainOp'}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

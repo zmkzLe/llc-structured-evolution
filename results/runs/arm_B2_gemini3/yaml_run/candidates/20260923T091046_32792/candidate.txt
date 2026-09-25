@@ -1,0 +1,112 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay
+doc: >
+  Mockingjay simplified: using a 5-bit RRPV that maps ETR directly to Mockingjay's priority order.
+  Positive ETR (15 down to 1) decays to 0. 0 jumps to 16 (overdue). Overdue (16 to 30) increments to 31.
+  This naturally prioritizes overdue lines (16..31) over predicted lines (0..15), matching Mockingjay exactly.
+  Bypass strictly enforces RDP > victim RRPV, ensuring overdue lines are never bypassed.
+
+state:
+  - name: rrpv
+    scope: per_line
+    kind: counter
+    width: 5
+    init: 15
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 3
+    init: 0
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 5
+    init: ZERO
+
+victim:
+  key: rrpv
+  extremum: max
+  tie_break: first
+  on_search: none
+  bypass_when:
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 1}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 12
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 4096
+    width: 4
+    max: 15
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 6
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 12, init: ZERO}
+      - {name: timestamp, kind: counter, width: 5, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 1}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 1}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 15}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - when: {counter: {counter: etr_clock, cmp: eq, threshold: 0}}
+        set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 0}}
+      each_way:
+        except_touched: true
+        set: {rrpv: {words: {tick_mockingjay: {state: rrpv}}}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {rrpv: {const: 15}}
+      stop: true
+    - set: {rrpv: {table: rdp, index: pc_sig, div: 1}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    set: {rrpv: {const: 15}}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {rrpv: {const: 15}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: tick_mockingjay
+  place: value
+  params: {state: state}
+  means: >
+    Reads the state field. If the value is between 1 and 15 inclusive, returns the value minus 1.
+    If the value is 0, returns 16.
+    If the value is 16 or greater, returns the value plus 1, clamped to 31.

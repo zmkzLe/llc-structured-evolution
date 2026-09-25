@@ -1,0 +1,3 @@
+===== STRUCTURE_DESCRIPTION =====`?
+3.  [ ] Is the YAML description of the policy complete and valid, starting from the `name:` key? (Do not use placeholder text like `<the structure description, YAML>`).
+4.  [ ] Does it include the `===== NEW_WORDS =====

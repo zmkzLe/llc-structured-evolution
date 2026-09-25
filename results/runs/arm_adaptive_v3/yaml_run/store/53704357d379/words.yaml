@@ -1,0 +1,41 @@
+- name: access_etr_logic
+  place: value
+  params: {rdp_table: table, conf_table: table, index: signature, div: {int: [1, 128]}, max_etr: {int: [0, 15]}, rdp_absent_val: {int: [-15, 15]}, rdp_thresh: {int: [0, 127]}}
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as a special value, and an absent 'conf_val' is treated as 0.
+    The 'rdp' table must be declared with 'unset: true'.
+    If 'conf_val' is 0, returns max_etr.
+    If 'rdp_val' is absent (but 'conf_val' is not 0), returns rdp_absent_val.
+    If 'rdp_val' is greater than rdp_thresh, returns max_etr.
+    Otherwise, returns the minimum of max_etr and 'rdp_val' divided by 'div' (integer division).
+- name: unified_etr_exceeds_victim
+  place: condition
+  params: {rdp_table: table, conf_table: table, index: signature, div: {int: [1, 128]}, max_etr: {int: [0, 15]}, rdp_absent_val: {int: [-15, 15]}, rdp_thresh: {int: [0, 127]}}
+  means: >
+    Computes a predicted ETR value using the same logic as the 'access_etr_logic' value word.
+    It reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as a special value, and an absent 'conf_val' is treated as 0.
+    The 'rdp' table must be declared with 'unset: true'.
+    If 'conf_val' is 0, the predicted ETR is max_etr.
+    If 'rdp_val' is absent (but 'conf_val' is not 0), the predicted ETR is rdp_absent_val.
+    If 'rdp_val' is greater than rdp_thresh, the predicted ETR is max_etr.
+    Otherwise, the predicted ETR is the minimum of max_etr and 'rdp_val' divided by 'div'.
+    The function returns true if this predicted ETR is greater than the absolute value of the victim way's key.
+- name: train_sampler_match
+  place: step
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 127]
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    sample: state
+    scale:
+      int: [1, 2]
+  means: >
+    Performs training for a sampler match based on the reuse distance 'sample' (age).
+    First, it trains the rdp_table using the 'toward' operation. The target value is min(sample * scale, rdp_table.max). The entry moves one step toward the target if the difference from the target is at least min_diff.
+    Second, if the 'sample' value is less than conf_thresh, it increments the conf_table entry at the same index.

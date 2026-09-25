@@ -1,0 +1,10 @@
+===== STRUCTURE_DESCRIPTION =====
+# In this section, replace the placeholder below with your complete design.
+# Start with the `name` and `doc` fields.
+# The `doc` field should start with a one-line summary of your change and why you made it.
+<the structure description, YAML>
+===== NEW_WORDS =====
+
+# In this section, define any new words your design uses.
+# If you use no new words, provide an empty list: []
+[]

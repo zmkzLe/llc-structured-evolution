@@ -1,0 +1,25 @@
+Guidance version 18, written after 182 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.99928 (-0.07% against the seed)
+- name: rdp_and_conf_check
+  place: condition
+  params:
+    conf_cmp: {symbol: Comparison}
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_cmp: {symbol: Comparison}
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: True only if both table conditions are met for the given index. It checks if the entry in rdp_table
+    at the index is present and satisfies rdp_cmp against rdp_thresh. It also checks if the entry in conf_table
+    at the same index satisfies conf_cmp against conf_thresh. Both checks must pass. An absent entry in
+    rdp_table makes the whole condition false.
+
+Refused among the last 10 candidates, and why: malformed 3 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 6 (Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 13 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<your complete structure...ription, in valid YAML>'); 10 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+You have made no progress because you are overwhelmingly submitting malformed proposals; nine of the last ten were rejected for basic formatting errors. The only change that did not lose ground was a tiny improvement from refining `victim.bypass_when` with the new `rdp_and_conf_check` condition, confirming the bypass decision is the correct focus. However, the policy is failing on traces with the most headroom by making contradictory mistakes: it makes a vast number of `wrong_bypass` errors on `605.mcf_s` and `619.lbm_s`, while making `should_bypass` errors on `627.cam4_s`. This indicates the bypass logic is not adaptive. The largest mistake is `wrong_bypass`, so the policy must learn to be less aggressive when it incorrectly bypasses a useful line. To achieve this, it needs to remember what it has bypassed and use a subsequent miss to one of those lines as a signal to adjust its strategy. The vocabulary cannot express this "check if recently bypassed" logic, so a new procedure word is needed to create this feedback loop. You must stop submitting invalid designs and avoid changing `procedures.access` or `state`, as these modifications have consistently hurt performance.

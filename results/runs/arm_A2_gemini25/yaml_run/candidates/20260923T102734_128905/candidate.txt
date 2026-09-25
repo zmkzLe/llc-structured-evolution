@@ -1,0 +1,147 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+# Reference: DPC4-ChampSim/replacement/mockingjay, single-core build. Sizes are for
+# the DPC4 LLC, 4096 x 12: INF_RD 95, INF_ETR 11, MAX_RD 73, 11-bit signatures,
+# 32 sampled sets. The multi-core build folds the core id instead of the hit bit,
+# inserts an unknown signature at INF_ETR, and scales prefetch samples by less.
+name: mockingjay_rebalanced_conf
+doc: >
+  Builds on mockingjay_rebalanced_predictor by adding a confidence mechanism to the RDP
+  table. A 2-bit confidence counter (rdp_conf) is added per RDP entry. Confidence
+  increases on sampled hits and decreases on sampled misses/evictions. Bypass decisions
+  are now gated by this confidence: a line is bypassed only if its predicted reuse
+  distance is long AND the prediction has high confidence. This aims to reduce
+  wrong_bypass mistakes by making bypasses more selective and reliable.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - confident_long_reuse: {rdp_table: rdp, conf_table: rdp_conf, index: pc_sig, threshold: 73}
+    - when:
+        table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}
+        table: {table: rdp_conf, index: pc_sig, cmp: is_max, threshold: MAX}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 10              # Reduced from 11 to free up state
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 1024             # Reduced from 2048 due to smaller signature
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: rdp_conf            # NEW: Confidence table
+    scope: global
+    kind: saturating
+    entries: 1024             # Matches rdp table entries
+    width: 2                  # 2-bit saturating counter
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 6                   # Increased from 5 using saved state
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 10, init: ZERO} # Matches pc_sig low_bits
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train_rdp_hit: {rdp_table: rdp, conf_table: rdp_conf, index: signature, age: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train_rdp_hit: {rdp_table: rdp, conf_table: rdp_conf, index: signature, age: age, scale: 1, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train_rdp_miss: {rdp_table: rdp, conf_table: rdp_conf, index: signature}
+        free: true
+    on_replace:
+      - train_rdp_miss: {rdp_table: rdp, conf_table: rdp_conf, index: signature}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: train_rdp_hit
+  place: step
+  params: {rdp_table: table, conf_table: table, index: signature, age: state, scale: {int: [1,10]}, min_diff: {int: [0, 127]}}
+  means: >
+    Trains the rdp_table at the given index with the 'toward' op, using the provided age, scale, and min_diff.
+    The rdp_table must be 'unset'. Then, increments the conf_table entry at the same index.
+
+- name: train_rdp_miss
+  place: step
+  params: {rdp_table: table, conf_table: table, index: signature}
+  means: >
+    Increments the rdp_table entry at the given index. The rdp_table must be 'unset', so an absent entry
+    becomes rdp_table.max. Then, decrements the conf_table entry at the same index.
+
+- name: confident_long_reuse
+  place: condition
+  params: {rdp_table: table, conf_table: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    True if the rdp_table entry at index is present and its value is greater than the threshold,
+    AND the conf_table entry at the same index is at its maximum value. False otherwise.
+    The rdp_table must be 'unset'.

@@ -1,0 +1,12 @@
+- name: pred_exceeds_positive_victim
+  place: condition
+  params:
+    table: table
+    index: signature
+    div: {int: [1, 1024]}
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(table[index] / div).
+    Reads the 'etr' field of the victim line. The condition is true only if the
+    victim's ETR is non-negative AND the predicted ETR is greater than the victim's
+    ETR. If the table entry is absent, the predicted ETR is 0, and the condition is
+    false. The 'etr' field must be a signed per_line state field.

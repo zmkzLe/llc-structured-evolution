@@ -1,0 +1,83 @@
+===== STRUCTURE_DESCRIPTION =====` block. The `NEW_WORDS` block is also required, even if empty. Do not write placeholders like `<the structure description, YAML>`.
+2.  **FOCUS ON THE GUIDANCE:** The "Guidance from this run so far" section below is not just context; it is your primary instruction. It identifies the key weakness in the current design and tells you what to fix.
+3.  **THE CORE TASK:** Your goal is to fix the high number of `wrong_bypass` errors by implementing a mechanism to track bypassed cache lines. This will require adding new state and logic.
+
+== Guidance from this run so far ==
+Guidance version 38, written after 382 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.98046 (-1.95% against the seed)
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the
+    fill was bypassed.
+
+Refused among the last 10 candidates, and why: malformed 4 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; candidate is missing section(s): NEW_WORDS). schema_rejected 6 (Input should be a valid dictionary or instance of StructureDescription (written: '<your complete and valid... description goes here>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the complete and valid ... description goes here>'))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 13 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 10 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+You must stop submitting invalid proposals, as nearly all your attempts, including the last ten, are refused for containing placeholder text, missing required sections like `STRUCTURE_DESCRIPTION`, or using invalid syntax such as in your attempt to check the way index. This has prevented any evaluation of your ideas, and your best score remains no better than Mockingjay. The few valid candidates that were scored show that your changes to `on_access` and `on_fill`, and your new word `is_bypassed_fill`, have failed to improve performance. The largest opportunity for improvement remains the bypass decision. On traces with high headroom like `605.mcf_s` and `619.lbm_s`, the dominant error is `wrong_bypass`, while on `627.cam4_s` it is `should_bypass`. These opposing mistakes show the policy cannot distinguish good bypasses from bad ones because it does not remember what it has bypassed. To correct the numerous `wrong_bypass` errors, the policy needs to remember addresses it previously chose not to insert. Since the vocabulary lacks a way to declare state for addresses not in the cache, you should propose a new word to define a structure that tracks recently bypassed lines, enabling the policy to learn when a bypassed line is requested again.
+
+== DESIGN STRATEGY: IMPLEMENTING A BYPASS TRACKER ==
+The guidance clearly points to a single problem: the policy makes poor bypass decisions because it doesn't remember what it has bypassed. Your task is to fix this.
+
+1.  **The Logic:**
+    *   When the policy decides to **bypass** a line, record its address (or a tag/signature) in a new tracking structure.
+    *   On every subsequent **access** (hit or miss), check if the address is in your tracker.
+    *   If there is a **match**, it means a bypassed line was requested soon after. This is a "wrong bypass". You should train the predictor (the `rdp` table) to be *less* aggressive about bypassing for that PC signature (e.g., `op: decrement`).
+    *   When an entry is **evicted** from your tracker without being accessed, it suggests the bypass was correct. You can train the predictor to be *more* aggressive (e.g., `op: increment`).
+
+2.  **The Challenge: Metadata Budget (48 KB)**
+    *   The seed policy, Mockingjay, already uses ~47.4 KB of the 48 KB available.
+    *   Adding a new tracking structure (e.g., a `sampler`) will cost metadata bits. You cannot exceed the 48 KB limit.
+    *   **Therefore, you MUST reduce the size of existing state to pay for your new tracker.**
+
+3.  **Making Space: Trade-offs**
+    *   To afford a sufficiently large bypass tracker, analyze Mockingjay's state declarations and shrink one or more of them.
+    *   **State components to consider shrinking:**
+        - `etr` (per-line): `width: 5`. Could it be 4?
+        - `set_clock` (per-set): `width: 8`. Could it be smaller?
+        - `rdp` table: `entries: 2048`, `width: 7`. Can you reduce entries or width?
+        - `sampled_cache` sampler: This is the main predictor trainer. Shrinking it is risky, but it's an option.
+    *   In your `doc` field, you must **justify your choices**: explain what you shrank, by how much, and why you believe that trade-off is worth it to afford your bypass tracker.
+
+4.  **Implementation Details:**
+    *   You can implement the tracker using a `sampler`. A previous attempt used a tiny `sampler` (`mirror: 4`, `ways: 2`) which was likely too small to be effective. Your tracker needs to be large enough to capture recent bypasses.
+    *   You will need a way to detect a bypassed fill to trigger the installation into your tracker. Reuse the `is_bypassed_fill` new word, which has been accepted before. You must declare it verbatim in the `NEW_WORDS` section.
+    *   Place the logic correctly: check the tracker on `on_access`, and install into it during `on_fill` only when a bypass occurs.
+
+THE VOCABULARY
+The description is checked against a fixed vocabulary before anything is built.
+Every key, symbol and value is defined in "The meaning of every word" at the end
+of this message, which also says when ChampSim calls each event. An unknown key
+or symbol, a value outside its declared width, or a reference to a name that is
+not declared is refused, and the reason comes back to you.
+
+NEW WORDS
+Where the fixed vocabulary cannot express what you want, declare a new word in
+the NEW_WORDS section and use it in the description. Each word is a mapping:
+- name: lower-case letters, digits and underscores, starting with a letter
+- place: where it may be written: condition (a clause of `when` or
+  `bypass_when`), value (the value of a `set` or `install` field), step (a
+  rule's action), or the name of a symbol list it joins: Extremum, TieBreak,
+  SearchSideEffect, SignatureSource, FoldBit or SignatureHash
+- params: the parameters it takes, each with a type: state, table, signature or
+  sampler (the name of one declared in the description), access_types (a list
+  of access types), {int: [lo, hi]} (an integer in that range), or
+  {symbol: <ListName>}, where <ListName> is the name of ONE of the vocabulary's
+  symbol lists, never a list of values: `cmp: {symbol: Comparison}` takes gt or
+  any other member of Comparison. Inside a sampler, one of the sampled entry's
+  fields, or its age, is passed as a `state` parameter. A symbol-list member
+  takes no parameters.
+- means: what the code does, in at least 8 words, exact enough that a programmer
+  implements it without guessing: every input it reads, the arithmetic, the
+  width, the order of operations, the tie-break.
+`params` is a mapping from parameter name to type, never a list. A complete
+declaration, one item of the NEW_WORDS list:
+```
+- name: reuse_below
+  place: condition
+  params: {table: table, index: signature, limit: {int: [0, 127]}}
+  means: >
+    True when the entry of the table at the index is present and its value is
+    below the limit; an absent entry counts as below. Nothing is written.

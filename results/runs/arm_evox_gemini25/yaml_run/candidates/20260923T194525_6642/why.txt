@@ -1,0 +1,11 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 3 validation errors for StructureDescription
+victim.bypass_when.0
+  Value error, 'when': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'when': {'table': {'tabl... 'gt', 'threshold': 73}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+victim.bypass_when.1
+  Value error, 'when': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'when': {'table': {'tabl...x': 'pc_sig', 'div': 8}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+on_hit.1
+  Value error, a rule needs exactly one of `set`, `use_duel`, `sample`, `train`, `run`, `each_way` or a declared step word, or only `stop` / `free` [type=value_error, input_value={'when': {'table': {'tabl...ig', 'op': 'decrement'}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

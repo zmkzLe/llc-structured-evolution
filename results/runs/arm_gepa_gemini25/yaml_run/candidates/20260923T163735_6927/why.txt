@@ -1,0 +1,26 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 16 validation errors for StructureDescription
+on_access.0.set.table.ConstValue
+  Input should be a valid dictionary or instance of ConstValue [type=model_type, input_value='bypassed_tracker', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+on_access.0.set.table.TickValue
+  Input should be a valid dictionary or instance of TickValue [type=model_type, input_value='bypassed_tracker', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+on_access.0.set.table.CounterGatedValue
+  Input should be a valid dictionary or instance of CounterGatedValue [type=model_type, input_value='bypassed_tracker', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+on_access.0.set.table.SignatureValue
+  Input should be a valid dictionary or instance of SignatureValue [type=model_type, input_value='bypassed_tracker', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+on_access.0.set.table.AddValue
+  Input should be a valid dictionary or instance of AddValue [type=model_type, input_value='bypassed_tracker', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+on_access.0.set.table.ReadValue
+  Input should be a valid dictionary or instance of ReadValue [type=model_type, input_value='bypassed_tracker', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+on_access.0.set.table.TableValue
+  Input should be a valid dictionary or instance of TableValue [type=model_type, input_value='bypassed_tracker', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_type
+on_access.0.set.table.DeclaredValue
+  Input should be a valid dictionary or instance of DeclaredValue [type=model_type, input_value='bypassed_tracker', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/model_typ

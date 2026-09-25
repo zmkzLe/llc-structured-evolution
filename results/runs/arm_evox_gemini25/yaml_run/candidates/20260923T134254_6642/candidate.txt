@@ -1,0 +1,6 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  My hypothesis and a brief description of the change I made.
+<the rest of your YAML structure description>
+===== NEW_WORDS =====

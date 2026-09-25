@@ -1,0 +1,30 @@
+- name: train_fast_adapt
+  place: step
+  params:
+    table: table
+    index: signature
+    age: state
+    margin: {int: [1, 127]}
+    jump: {int: [1, 127]}
+    min_diff: {int: [1, 127]}
+    max_val: {int: [1, 127]}
+  means: >
+    Reads the table entry at the index.
+    If the entry is absent, it is set to the age, clamped at max_val.
+    Else, if the entry is strictly greater than the age plus the margin, the entry is decreased by the jump value, clamped at 0.
+    Else, if the age is strictly greater than the entry plus the margin, the entry is increased by the jump value, clamped at max_val.
+    Else, if the absolute difference between the entry and the age is at least min_diff, the entry is incremented by 1 if age > entry, or decremented by 1 if age < entry, clamped between 0 and max_val.
+    The final value is written to the table entry.
+
+- name: train_add
+  place: step
+  params:
+    table: table
+    index: signature
+    amount: {int: [1, 127]}
+    max_val: {int: [1, 127]}
+  means: >
+    Reads the table entry at the index.
+    If the entry is absent, it is set to the amount, clamped at max_val.
+    Else, the entry is increased by the amount, clamped at max_val.
+    The final value is written to the table entry.

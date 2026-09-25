@@ -1,0 +1,26 @@
+{
+ "bypass_history_allows": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "is_bypassed_fill": {
+  "better": 0,
+  "failed": 2,
+  "same": 0,
+  "unknown": 0,
+  "used": 4,
+  "worse": 2
+ },
+ "was_tracked_as_bypassed": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ }
+}

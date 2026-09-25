@@ -1,0 +1,29 @@
+Candidate ? FAILED at words_refused; it was not scored.
+Reason: 20 validation errors for NewWord
+params.bypassed_flag_field.str
+  Input should be a valid string [type=string_type, input_value={'sampler_field': 'flag'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.bypassed_flag_field.IntRange.int
+  Field required [type=missing, input_value={'sampler_field': 'flag'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.bypassed_flag_field.IntRange.sampler_field
+  Extra inputs are not permitted [type=extra_forbidden, input_value='flag', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.bypassed_flag_field.SymbolOf.symbol
+  Field required [type=missing, input_value={'sampler_field': 'flag'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.bypassed_flag_field.SymbolOf.sampler_field
+  Extra inputs are not permitted [type=extra_forbidden, input_value='flag', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.sampler_signature_field.str
+  Input should be a valid string [type=string_type, input_value={'sampler_field': 'counter'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.sampler_signature_field.IntRange.int
+  Field required [type=missing, input_value={'sampler_field': 'counter'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.sampler_signature_field.IntRange.sampler_field
+  Extra inputs are not permitted [type=extra_forbidden, input_value='counter', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.sampler_signature_field.SymbolOf.symbol
+  Field required [type=missing, input_value={'sampler_field': 'counter'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/

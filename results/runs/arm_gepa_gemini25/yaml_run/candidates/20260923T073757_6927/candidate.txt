@@ -1,0 +1,92 @@
+===== STRUCTURE_DESCRIPTION =====
+# Reference: DPC4-ChampSim/replacement/mockingjay, single-core build. Sizes are for
+# the DPC4 LLC, 4096 x 12: INF_RD 95, INF_ETR 11, MAX_RD 73, 11-bit signatures,
+# 32 sampled sets. The multi-core build folds the core id instead of the hit bit,
+# inserts an unknown signature at INF_ETR, and scales prefetch samples by less.
+name: mockingjay
+doc: >
+  Mockingjay: each line holds an estimated time to reuse (ETR), counted down every
+  8 accesses to its set; the victim is the line with the largest |ETR|, an overdue
+  (negative) one on ties. A predictor table keyed by the hit-or-miss PC signature
+  gives the ETR on insertion, and a fill predicted to be reused after every line in
+  the set is bypassed. A sampled shadow cache on 32 sets measures reuse distances
+  with an 8-bit per-set clock and trains the predictor one step at a time; entries
+  older than INF_RD train it up as scans. Writebacks are inserted at -INF_ETR and
+  train nothing.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+... (truncated)
+```
+
+## GUIDANCE FOR NEXT DESIGN ITERATION
+
+Based on the provided evaluation results and diagnostics, your next design iteration should focus on addressing the most impactful failure modes. Analyze the `kept_dead`, `evicted_sooner`, `should_bypass`, and `wrong_bypass` metrics, particularly for traces where performance is flat (1.0000 vs MJ) or where these counts are high.
+
+Here are specific areas to consider for modification, linked to the feedback metrics:
+
+1.  **High `wrong_bypass` counts:** This indicates that the current bypass logic is too aggressive or mispredicts reuse for lines that are actually useful.
+    *   **Potential fixes:**
+        *   **Adjust `rdp` bypass thresholds:** Make the `bypass_when` conditions less strict (e.g., increase `threshold: 73` for `cmp: gt`, or modify the `div: 8` for `table_exceeds_victim`).
+        *   **Refine `pc_sig`:** The `pc_sig` might not be capturing enough context to differentiate between truly dead and useful lines. Consider adding more `fold` bits (e.g., access type, set index bits) or changing the hash.
+        *   **Improve `rdp` training:** If the `rdp` values are too high for useful lines, review the `on_match`, `sweep`, and `on_replace` rules in the `sampled_cache` to ensure the `rdp` is accurately decremented for reused lines and incremented for dead ones. The `scale` or `min_diff` parameters in `train: op: toward` could be adjusted.
+        *   **Introduce new state/predictor:** If `pc_sig` is insufficient, a new signature or table might be needed to better predict bypass decisions.
+
+2.  **High `should_bypass` counts:** This suggests that lines are being inserted that are never reused. The current bypass logic is failing to identify these.
+    *   **Potential fixes:**
+        *   **Adjust `rdp` bypass thresholds:** Make the `bypass_when` conditions more strict (e.g., decrease `threshold: 73` for `cmp: gt`, or modify the `div: 8` for `table_exceeds_victim`) to bypass more aggressively.
+        *   **Refine `pc_sig`:** Similar to `wrong_bypass`, `pc_sig` might not be capturing enough context.
+        *   **Improve `rdp` training:** If `rdp` values are too low for dead lines, review the `on_match`, `sweep`, and `on_replace` rules in the `sampled_cache` to ensure the `rdp` is accurately incremented for dead lines.
+
+3.  **High `kept_dead` counts:** Lines are staying in the cache that are never reused, displacing potentially useful lines.
+    *   **Potential fixes:**
+        *   **ETR aging:** The `etr_clock` and `etr` decrement logic (`each_way: set: {etr: {add: -1}}`) might be too slow. Consider increasing the frequency of `etr` decrement or using a larger decrement step.
+        *   **Victim selection:** The `victim: extremum: max_magnitude, tie_break: prefer_negative` might not be effectively targeting truly dead lines. Explore alternative `tie_break` strategies or a different `key` if a more accurate "deadness" metric can be developed.
+        *   **Initial ETR on fill:** If lines are inserted with ETRs that are too high, they might linger. Review `on_fill` logic, especially the `etr` values derived from `rdp`.
+
+4.  **High `evicted_sooner` counts:** Lines that would have been reused quickly are evicted.
+    *   **Potential fixes:**
+        *   **ETR promotion on hit:** The `on_hit` logic sets `etr` based on `rdp` or to `0` (implicitly, by running `access` which sets it based on `rdp`). This might not be promoting lines effectively enough. Consider a more aggressive promotion strategy (e.g., setting `etr` to a very low negative value on hit, or to a value that reflects a very short reuse distance).
+        *   **Victim selection:** Ensure the `victim` selection correctly prioritizes lines with high reuse potential (low ETR).
+
+**Constraints Reminder:**
+*   Each design is one iteration. Focus on one or two key issues.
+*   Metadata budget: `metadata_kb` must not exceed 48 KB. Pay attention to the size of new tables or sampler fields.
+*   Change limit: Maximum 600 canonical lines change against the closest earlier design. Make targeted, incremental changes.
+*   If existing vocabulary is insufficient, use the `NEW_WORDS` section with clear definitions.
+
+Your next proposed design should start with a `doc` entry clearly stating what changed and why, referencing the feedback you've addressed.
+
+## Task
+Suggest improvements to the prompt that will improve its COMBINED_SCORE.
+The system maintains diversity across these dimensions: score, complexity.
+Different prompts with similar combined_score but different strategies are valuable.
+
+Provide the complete rewritten prompt.
+
+IMPORTANT: Your rewritten prompt must serve the same task as the original prompt,
+but with improved instructions, structure, or reasoning guidance.
+Do NOT change the task the prompt is designed for - only improve HOW it instructs the LLM.
+
+Be thoughtful about your changes and explain your reasoning thoroughly.
+Consider these prompt engineering strategies:
+- Clearer step-by-step reasoning instructions
+- Better output format constraints
+- More precise task framing and role definitions
+- Adding or refining examples
+- Reducing ambiguity in instructions
+
+IMPORTANT: If an instruction header of "## IMPORTANT: ..." is given below the "# Current Prompt", you MUST follow it. Otherwise,
+focus on targeted improvements of the prompt.

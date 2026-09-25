@@ -1,0 +1,14 @@
+- name: pred_exceeds_avg_and_victim_etr
+  place: condition
+  params:
+    div:
+      int: [1, 1024]
+    index: signature
+    table: table
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(table[index] / div).
+    Calculates the integer average of the absolute values of the 'etr' field across all valid resident lines in the set.
+    The victim way has already been selected by the hardware. The condition reads the absolute value of the 'etr' field of the victim way.
+    The condition is true if the predicted ETR is greater than this victim ETR AND the predicted ETR is also greater than the average ETR.
+    If the table entry for the index is absent, the predicted ETR is 0, and the condition is false.
+    The 'etr' field must be a per_line state field.

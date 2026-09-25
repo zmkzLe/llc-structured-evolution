@@ -1,0 +1,339 @@
+===== STRUCTURE_DESCRIPTION =====
+# Reference: DPC4-ChampSim/replacement/mockingjay, single-core build. Sizes are for
+# the DPC4 LLC, 4096 x 12: INF_RD 95, INF_ETR 11, MAX_RD 73, 11-bit signatures,
+# 32 sampled sets. The multi-core build folds the core id instead of the hit bit,
+# inserts an unknown signature at INF_ETR, and scales prefetch samples by less.
+name: mockingjay
+doc: >
+  Mockingjay: each line holds an estimated time to reuse (ETR), counted down every
+  8 accesses to its set; the victim is the line with the largest |ETR|, an overdue
+  (negative) one on ties. A predictor table keyed by the hit-or-miss PC signature
+  gives the ETR on insertion, and a fill predicted to be reused after every line in
+  the set is bypassed. A sampled shadow cache on 32 sets measures reuse distances
+  with an 8-bit per-set clock and trains the predictor one step at a time; entries
+  older than INF_RD train it up as scans. Writebacks are inserted at -INF_ETR and
+  train nothing.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+```
+
+== Guidance from this run so far ==
+Guidance version 21, written after 212 candidates.
+
+New words accepted this run: none yet. A new word's name must be one no design of this run has used.
+
+Refused among the last 10 candidates, and why: malformed 2 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 8 (Input should be a valid dictionary or instance of StructureDescription (written: '<your complete YAML structure description here>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); on_fill.1.when Value error, 'way': not a word of the grammar here, nor a declared condition word (written: {'way': 'NUM_WAY'}))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 14 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the complete YAML struc...ription of your policy>'); 10 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 2 times (schema_rejected): on_fill.1.when Value error, 'way': not a word of the grammar here, nor a declared condition word (written: {'way': {'cmp': 'eq', 'threshold': 12}})
+
+You must stop submitting malformed proposals; the vast majority of your attempts are being refused for basic errors like providing placeholder text or omitting the `STRUCTURE_DESCRIPTION` and `NEW_WORDS` sections, which has prevented any improvement over the Mockingjay seed. The most promising opportunity for a higher score lies in addressing the `wrong_bypass` mistake, which is the largest error on high-headroom traces like `605.mcf_s`, `619.lbm_s`, and `459.GemsFDTD`. This error means the policy incorrectly bypasses lines that are reused sooner than lines kept in the cache, pointing to a flaw in how it decides what to insert. To fix this, the policy needs to learn from these incorrect bypasses. Since the existing vocabulary cannot track accesses to non-resident lines, you should introduce a new word that defines a structure for recording data about bypassed lines. This will enable the policy to be trained on its `wrong_bypass` errors. While other mistakes like `should_bypass` on `627.cam4_s` and `kept_dead` on `657.xz_s` exist, correcting the frequent `wrong_bypass` error is the most direct path to a better design.
+
+---
+
+### Reference Manual
+
+The following sections from the original prompt are provided for your reference. They contain the full definition of the vocabulary, syntax, and examples of other policies.
+
+<details>
+<summary>Click to expand Reference Manual</summary>
+
+== Other designs written in this vocabulary ==
+Complete, validated designs, for the forms they use, not to copy. Any of their parts can be
+combined with any of the seed's, and a new word can express what none of them has.
+--- LRU: recency stamps, the oldest evicted ---
+```yaml
+# Reference: DPC4-ChampSim/replacement/lru
+name: lru
+doc: >
+  Least recently used: a global clock is stamped into a line on fill and on
+  non-write hits; the victim is the smallest stamp.
+
+state:
+  - name: recency
+    scope: per_line
+    kind: counter
+    width: 64
+    init: ZERO
+  - name: clock
+    scope: global
+    kind: counter
+    width: 64
+    init: ZERO
+
+victim:
+  key: recency
+  extremum: min
+  tie_break: first
+  on_search: none
+
+on_fill:
+  - set: {recency: {tick: clock}}
+
+on_hit:
+  - when: {type_not_in: [WRITE]}
+    set: {recency: {tick: clock}}
+```
+--- SRRIP: re-reference intervals, aged on a miss ---
+```yaml
+# Textbook SRRIP. ChampSim's srrip module (archived) never receives fill events,
+# so it does not match this description.
+name: srrip
+doc: >
+  Static RRIP: a 2-bit RRPV per line; evict the first way at the maximum, aging
+  the set by the shortfall if none has reached it. Insert at MAX-1, promote to 0.
+
+state:
+  - name: rrpv
+    scope: per_line
+    kind: counter
+    width: 2
+    init: MAX
+
+victim:
+  key: rrpv
+  extremum: max
+  tie_break: first
+  on_search: age_to_max
+
+on_fill:
+  - set: {rrpv: {const: MAX_MINUS_1}}
+
+on_hit:
+  - set: {rrpv: {const: ZERO}}
+```
+--- DRRIP: two insertion rules the sets choose between by set dueling ---
+```yaml
+# Reference: DPC4-ChampSim/replacement/drrip
+name: drrip
+doc: >
+  Dynamic RRIP: set dueling between SRRIP insertion (MAX-1) and BRRIP insertion
+  (MAX, every 32nd fill at MAX-1), arbitrated by a per-CPU saturating PSEL counter.
+
+state:
+  - name: rrpv
+    scope: per_line
+    kind: counter
+    width: 2
+    init: ZERO
+  - name: psel
+    scope: per_cpu
+    kind: saturating
+    width: 10
+    init: MID
+  - name: brrip_ctr
+    scope: global
+    kind: counter
+    width: 6
+    init: ZERO
+
+victim:
+  key: rrpv
+  extremum: max
+  tie_break: first
+  on_search: age_to_max
+
+duel:
+  selector: psel
+  arm_a:                  # SRRIP
+    set: {rrpv: {const: MAX_MINUS_1}}
+  arm_b:                  # BRRIP
+    set:
+      rrpv:
+        default: {const: MAX}
+        counter: brrip_ctr
+        every_n: 32
+        then: {const: MAX_MINUS_1}
+  leader_a_category: 1
+  leader_b_category: 0
+  leader_a_delta: 1
+  leader_b_delta: -1
+  follower_uses_b_when: {counter: psel, cmp: gt, threshold: MAX_OVER_2}  # 512 > 511: followers start on BRRIP
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {rrpv: {const: MAX_MINUS_1}}
+    stop: true
+  - use_duel: true
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    set: {rrpv: {const: MAX_MINUS_1}}
+    stop: true
+  - set: {rrpv: {const: ZERO}}
+```
+--- SHiP: a PC-signature table trained by a sampler, deciding insertion ---
+```yaml
+# Reference: DPC4-ChampSim/replacement/ship. Sizes are for the DPC4 LLC, 4096 x 12.
+name: ship
+doc: >
+  SHiP: a per-CPU table of 3-bit saturating counters, indexed by the instruction
+  address, predicts whether a filled line will be reused. A shadow LRU sampler on
+  the sampled sets trains it: a matched entry counts its signature down, and an
+  entry replaced before it was ever matched counts it up. A fill whose counter is
+  at its maximum goes in at MAX, any other at MAX-1, a writeback always at MAX-1;
+  a hit resets to 0; the victim is RRIP's.
+
+state:
+  - name: rrpv
+    scope: per_line
+    kind: counter
+    width: 2
+    init: MAX
+  - name: access_count
+    scope: global
+    kind: counter
+    width: 64
+    init: ZERO
+
+victim:
+  key: rrpv
+  extremum: max
+  tie_break: first
+  on_search: age_to_max
+
+signatures:
+  - name: pc_sig
+    source: ip
+    low_bits: 32
+    modulo: 16381
+
+tables:
+  - name: shct
+    scope: per_cpu
+    kind: saturating
+    entries: 16384
+    width: 3
+    init: ZERO
+
+samplers:
+  - name: sampler
+    scope: per_cpu
+    sets: category_zero
+    ways: 12
+    tag_bits: 46              # the line address above the LLC set index
+    fields:
+      - {name: used, kind: flag, width: 1, init: ZERO}
+      - {name: sig, kind: counter, width: 14, init: ZERO}   # ChampSim keeps the IP; only its signature is read
+      - {name: last_used, kind: counter, width: 64, init: ZERO}
+    victim: {key: last_used, extremum: min, tie_break: first}
+    on_match:
+      - train: {table: shct, index: sig, op: decrement}
+      - set: {used: {const: 1}, last_used: {tick: access_count}}
+    on_replace:
+      - when: {counter: {counter: used, cmp: eq, threshold: ZERO}}
+        train: {table: shct, index: sig, op: increment}
+    install: {used: {const: ZERO}, sig: {signature: pc_sig}, last_used: {tick: access_count}}
+
+on_access:
+  - sample: sampler
+
+on_hit:
+  - set: {rrpv: {const: ZERO}}
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {rrpv: {const: MAX_MINUS_1}}
+    stop: true
+  - set: {rrpv: {const: MAX_MINUS_1}}
+  - when: {table: {table: shct, index: pc_sig, cmp: is_max, threshold: MAX}}
+    set: {rrpv: {const: MAX}}

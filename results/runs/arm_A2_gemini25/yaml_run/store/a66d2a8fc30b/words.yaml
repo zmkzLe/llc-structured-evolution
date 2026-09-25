@@ -1,0 +1,14 @@
+- name: rdp_and_conf_gt
+  place: condition
+  params:
+    conf_tbl: table
+    conf_thresh:
+      int: [0, 3]
+    rdp_tbl: table
+    rdp_thresh:
+      int: [0, 127]
+    sig: signature
+  means: >
+    True if the entry for the signature 'sig' in table 'rdp_tbl' is present and its value is greater
+    than 'rdp_thresh', AND the entry for 'sig' in table 'conf_tbl' is present and its value is greater
+    than or equal to 'conf_thresh'. False otherwise.

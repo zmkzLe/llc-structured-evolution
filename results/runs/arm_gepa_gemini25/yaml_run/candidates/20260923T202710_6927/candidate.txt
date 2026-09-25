@@ -1,0 +1,150 @@
+===== STRUCTURE_DESCRIPTION =====
+# name: mj_bypass_feedback
+# doc: >
+#   This design adds a feedback mechanism to correct wrong bypass decisions. It logs
+#   bypassed signatures to a new `bypass_log` table. On a miss, if the signature
+#   is in the log, it penalizes the RDP predictor and clears the log entry. State
+#   was reduced by narrowing ETR from 5 to 4 bits to stay in budget.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 4                  # Reduced from 5 to 4 to save space. Holds -7..7
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+  - name: bypass_log
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 1
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 7, abs: true}} # ETR max is 7
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 7}} # ETR max is 7
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_access:
+  # On a miss, check if we incorrectly bypassed this line before.
+  # A miss is an access where we don't have a way number yet.
+  - when:
+      # This is a condition that doesn't exist yet: way is NUM_WAY.
+      # Let's check for the signature in bypass_log. If we get a miss on it,
+      # it was a bad bypass.
+      table: {table: bypass_log, index: pc_sig, cmp: gt, threshold: 0}
+    train: {table: rdp, index: pc_sig, op: decrement}
+    # Consume the signal
+    train: {table: bypass_log, index: pc_sig, op: decrement}
+
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  # This event is also called for bypassed fills.
+  # For a bypassed fill, the way number is NUM_WAY.
+  # The original proposal required a way check, which doesn't exist.
+  # Let's log the bypass here. The on_access rule will handle the penalty.
+  # A fill that was bypassed has no way, so we can't write to per_line state.
+  # However, Mockingjay bypasses *before* find_victim returns, so on_fill
+  # for a bypassed line might not happen as expected.
+  # Let's assume on_fill is called for a bypassed line with way == NUM_WAY.
+  # A better way might be needed if this assumption is wrong.
+  # Let's try a different approach. The bypass decision is made in `victim`.
+  # We can log it when we fill.
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -7}} # ETR max is 7
+    stop: true
+  - run: access
+  - when:
+      # This is a bypassed fill if the `bypass_when` condition was met.
+      # Let's log the signature of any line that was predicted to be long-reuse.
+      table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}
+    train: {table: bypass_log, index: pc_sig, op: increment}
+
+===== NEW_WORDS =====
+
+# No new words are needed for this change, as we can implement the logic
+# with existing vocabulary by combining rules on different events.

@@ -1,0 +1,34 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_bypass_tracker
+doc: >
+  This design introduces a mechanism to track bypassed lines that are later hit,
+  and uses this information to refine the bypass decision to reduce wrong_bypass errors.
+  (Further detailed description of changes here.)
+
+state:
+  # ... your state fields ...
+
+victim:
+  # ... your victim definition ...
+
+signatures:
+  # ... your signatures ...
+
+tables:
+  # ... your tables ...
+
+samplers:
+  # ... your samplers ...
+
+procedures:
+  # ... your procedures ...
+
+on_access:
+  # ... your on_access rules ...
+
+on_hit:
+  # ... your on_hit rules ...
+
+on_fill:
+  # ... your on_fill rules ...
+===== NEW_WORDS =====

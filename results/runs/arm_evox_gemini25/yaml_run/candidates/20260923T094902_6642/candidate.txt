@@ -1,0 +1,155 @@
+===== STRUCTURE_DESCRIPTION =====
+# Doc: Added a wrong bypass predictor (WBP) to mitigate "wrong_bypass" issues.
+# The WBP is trained by a new `bypassed_sampler` which tracks lines that were
+# bypassed but later hit in the cache. The `set_clock` width and related timestamps
+# were reduced by 1 bit to fit within the metadata budget.
+name: mockingjay
+doc: >
+  Mockingjay: each line holds an estimated time to reuse (ETR), counted down every
+  8 accesses to its set; the victim is the line with the largest |ETR|, an overdue
+  (negative) one on ties. A predictor table keyed by the hit-or-miss PC signature
+  gives the ETR on insertion, and a fill predicted to be reused after every line in
+  the set is bypassed. A sampled shadow cache on 32 sets measures reuse distances
+  with an 8-bit per-set clock and trains the predictor one step at a time; entries
+  older than INF_RD train it up as scans. Writebacks are inserted at -INF_ETR and
+  train nothing.
+  This version adds a Wrong Bypass Predictor (WBP) to learn from past wrong bypasses.
+  A new `bypassed_sampler` tracks lines that were initially bypassed. If a bypassed
+  line is later accessed (hits in the main cache), the WBP is incremented for its
+  PC signature. The `bypass_when` condition now consults the WBP, avoiding bypass
+  for signatures frequently associated with wrong bypasses. To stay within the
+  metadata budget, the `set_clock` and related timestamp fields have been reduced
+  from 8 to 7 bits.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 7                  # CHANGED: Reduced from 8 to 7 bits to save metadata
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+    - {table: {table: wrong_bypass_predictor, index: pc_sig, cmp: is_max, threshold: MAX}} # NEW: Don't bypass if WBP is max (i.e., this signature has been wrongly bypassed often)
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: wrong_bypass_predictor # NEW TABLE: Tracks PC signatures frequently associated with wrong bypasses
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2                  # 0-3 counter
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 7, init: ZERO} # CHANGED: Reduced from 8 to 7 bits
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+  - name: bypassed_sampler # NEW SAMPLER: Tracks lines that were bypassed to detect wrong_bypass events
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 2       # Reduced from 4 to 2 for metadata budget
+    ways: 1                   # Reduced from 5 to 1 for metadata budget
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: bypassed_timestamp, kind: counter, width: 7, init: ZERO} # Matches new set_clock width
+    age: {clock: set_clock, stamp: bypassed_timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      # This means a line that was previously bypassed is now hitting in the main cache.
+      # This is a "wrong bypass" event, so train the wrong_bypass_predictor.
+      - train: {table: wrong_bypass_predictor, index: signature, op: increment}
+      - free: true # Remove from bypassed_sampler as it's now resident/useful
+    install: {signature: {signature: pc_sig}, bypassed_timestamp: {read: set_clock}}
+    # No on_replace or sweep needed for this sampler, as its purpose is just to detect hits on bypassed lines.
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+  - sample: bypassed_sampler # NEW: Sample bypassed_sampler on hit to detect if this hit was a "wrong bypass"
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+  - when: {way: {cmp: eq, threshold: NUM_WAY}} # NEW: If this fill was a bypass (ChampSim indicates bypass by setting way to NUM_WAY)
+    sample: bypassed_sampler                   # then record its signature in the bypassed_sampler
+===== NEW_WORDS =====

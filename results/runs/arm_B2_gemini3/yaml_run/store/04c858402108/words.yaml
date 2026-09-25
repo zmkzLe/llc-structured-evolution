@@ -1,0 +1,14 @@
+- name: resident_aware_bypass
+  place: condition
+  params:
+    table: table
+    index: signature
+    field: state
+    div: {int: [1, 16]}
+    limit: {int: [0, 127]}
+  means: >
+    True when the entry of the table at the index is present and either its
+    value is strictly greater than the limit, or no way of the set has its
+    field strictly less than zero and the table entry divided by div is strictly
+    greater than the maximum of that field across all ways of the set. False
+    otherwise. Nothing is written.

@@ -1,0 +1,8 @@
+- name: overdue_or_furthest
+  place: Extremum
+  params: {}
+  means: >
+    Ways are scanned 0 to NUM_WAY-1. If any way has a negative key value, the
+    way with the minimum signed key value is chosen, breaking ties by
+    tie_break. If no way has a negative key value, the way with the maximum
+    signed key value is chosen, breaking ties by tie_break.

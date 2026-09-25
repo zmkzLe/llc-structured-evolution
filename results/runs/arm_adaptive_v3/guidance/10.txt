@@ -1,0 +1,99 @@
+Guidance version 10, written after 102 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 15 scored design(s); best 1.00266 (+0.27% against the seed)
+- name: deconfident_rdp_gt
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+    threshold:
+      int: [0, 127]
+  means: 'Reads the value ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An
+    absent entry in rdp_table is treated as a value of 0. The conf_table is assumed to be fully initialized,
+    and its maximum value is 3. Calculates an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val)
+    * scale). If the result of the subtraction is negative, it is treated as 0. Returns true if this adjusted_rdp
+    is greater than the threshold.
+
+    '
+# used by 19 scored design(s); best 1.00266 (+0.27% against the seed)
+- name: deconfident_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent rdp_val
+    is treated as 0. The conf_table is assumed to be fully initialized, and its maximum value is 3. Calculates
+    an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val) * scale). If the result of the subtraction
+    is negative, it is treated as 0. Calculates a predicted_etr value as adjusted_rdp divided by div,
+    using integer division. Returns true if predicted_etr is greater than the absolute value of the victim
+    way''s key.'
+# used by 6 scored design(s); best 1.00266 (+0.27% against the seed)
+- name: train_sampler_match
+  place: step
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 127]
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    sample: state
+    scale:
+      int: [1, 2]
+  means: Performs training for a sampler match based on the reuse distance 'sample' (age). First, it trains
+    the rdp_table using the 'toward' operation. The target value is min(sample * scale, rdp_table.max).
+    The entry moves one step toward the target if the difference from the target is at least min_diff.
+    Second, if the 'sample' value is less than conf_thresh, it increments the conf_table entry at the
+    same index.
+# used by 1 scored design(s); best 1.00266 (+0.27% against the seed)
+- name: etr_with_confidence_cost
+  place: value
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent ''rdp_val''
+    is treated as 0. An absent ''conf_val'' is treated as 0. The maximum value for confidence is 3. Calculates
+    a base_etr = rdp_val / div using integer division. Calculates a penalty = (3 - conf_val) * scale.
+    The final returned value is min(max_etr, base_etr + penalty).
+
+    '
+# used by 1 scored design(s); best 1.00251 (+0.25% against the seed)
+- name: etr_with_confidence_penalty
+  place: value
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent ''rdp_val''
+    is treated as 0. ''conf_val'' is read from its table, with an absent entry read as its init value
+    (0). The maximum value for confidence is 3. Calculates a base_etr = rdp_val / div using integer division.
+    Calculates an adjustment = (3 - conf_val). The final returned value is min(max_etr, base_etr + adjustment).
+
+    '
+Names also taken (declared by a design not scored yet, or not shown above): access_etr_logic, unified_etr_exceeds_victim, confidence_ranked_etr, confidence_penalized_etr, strong_confidence_etr, train_rdp_conf_on_match, high_rdp_and_confident_bypass, confidence_adjusted_etr, train_rdp_and_rpc_on_match, rdp_confidence_etr_rank, incoming_etr_exceeds_victim, high_rdp_and_confid
+
+Refused among the last 10 candidates, and why: words_refused 7 (name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'incoming_etr_exceeds_victim_confident'); confidence_penalized_etr, train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name; penalized_etr_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name)
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 8 times (words_refused): train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name; 5 times (words_refused): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'incoming_penalized_etr_exceeds_victim'); 4 times (words_refused): the new words must be a YAML list of words
+
+You continue to waste most of your proposals on basic errors. You must stop redefining words like `train_sampler_match`; invent a new, syntactically valid name for each new idea, as the frequent `already declared` and `invalid name` refusals are preventing progress. Your small improvements, including in the best design `82befa3bfb0e`, have come from defining new words like `deconfident_exceeds_victim` and applying them to `victim.bypass_when` and `procedures.access`. This strategy of using confidence to moderate reuse predictions is the only one that has paid off. However, your policy remains inconsistent, making many `wrong_bypass` mistakes on traces like `605.mcf_s` and `619.lbm_s` while also making `kept_dead` mistakes on `627.cam4_s` and `654.roms_s`. This indicates your bypass and eviction decisions use conflicting criteria. You should focus on creating a single, unified value function to estimate a line's time to reuse, perhaps evolving the logic from `etr_with_confidence_cost`. This function should be used to evaluate both incoming lines for bypass and resident lines for eviction. The vocabulary may lack a way to define one complex value calculation and apply it to both an incoming line and a potential victim; a new value word that computes a robust estimated-time-to-reuse from both `rdp_table` and `conf_table` would let you use it consistently, addressing both mistake types.

@@ -1,0 +1,12 @@
+===== STRUCTURE_DESCRIPTION =====
+# A complete, valid YAML description of your design goes here.
+# Start from the Mockingjay seed and make your targeted change.
+name: my_new_design
+doc: >
+  My one-line summary of the change and why I made it.
+  (followed by more detail if needed)
+...
+===== NEW_WORDS =====
+
+# A YAML list of any new words your design uses.
+# If you don't add new words, this section must still be present but can be empty.

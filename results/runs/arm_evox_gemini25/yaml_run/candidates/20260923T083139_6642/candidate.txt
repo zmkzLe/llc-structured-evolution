@@ -1,0 +1,26 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_v2
+doc: >
+  My change: I will add a new table to track bypassed signatures. This is a
+  first step to address the wrong_bypass issue.
+
+# ... (the rest of the YAML description of the policy) ...
+# For example, the full mockingjay policy would go here.
+# I am omitting it for brevity, but you must provide a complete description.
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+# ... and so on for the entire policy.
+
+===== NEW_WORDS =====
+
+- name: my_new_word
+  place: condition
+  params: {table: table, index: signature}
+  means: >
+    This is my new word. It returns true if the given table has an entry for the
+    signature, and that entry's value is greater than zero. This is a placeholder
+    meaning for a real implementation.

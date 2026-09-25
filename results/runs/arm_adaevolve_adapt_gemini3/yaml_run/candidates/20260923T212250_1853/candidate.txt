@@ -1,0 +1,8 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Your actual documentation explaining the changes.
+state:
+  - name: example_state
+... [rest of the actual YAML configuration] ...
+===== NEW_WORDS =====

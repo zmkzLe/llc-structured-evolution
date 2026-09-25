@@ -1,0 +1,91 @@
+Guidance version 14, written after 142 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 11 scored design(s); best 1.00400 (+0.40% against the seed)
+- name: train_sampler_match
+  place: step
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 127]
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    sample: state
+    scale:
+      int: [1, 2]
+  means: Performs training for a sampler match based on the reuse distance 'sample' (age). First, it trains
+    the rdp_table using the 'toward' operation. The target value is min(sample * scale, rdp_table.max).
+    The entry moves one step toward the target if the difference from the target is at least min_diff.
+    Second, if the 'sample' value is less than conf_thresh, it increments the conf_table entry at the
+    same index.
+# used by 2 scored design(s); best 1.00400 (+0.40% against the seed)
+- name: unified_etr_rank
+  place: value
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent ''rdp_val''
+    is treated as 0. An absent ''conf_val'' is treated as 0. The maximum value for confidence is 3. If
+    ''conf_val'' is 0, the returned value is max_etr. Otherwise, calculates base_etr = rdp_val / div using
+    integer division. Calculates penalty = (3 - conf_val) * scale. The final returned value is min(max_etr,
+    base_etr + penalty).
+
+    '
+# used by 1 scored design(s); best 1.00400 (+0.40% against the seed)
+- name: incoming_rank_gt_threshold
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+    threshold:
+      int: [0, 15]
+  means: 'Calculates the estimated time to reuse (ETR) for the incoming line (incoming_etr) using the
+    ''unified_etr_rank'' logic: Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index].
+    An absent ''rdp_val'' or ''conf_val'' is treated as 0. The maximum value for confidence is 3. If ''conf_val''
+    is 0, incoming_etr = max_etr. Otherwise, base_etr = rdp_val / div. penalty = (3 - conf_val) * scale.
+    Incoming_etr = min(max_etr, base_etr + penalty). Returns true if incoming_etr is greater than threshold.
+
+    '
+# used by 1 scored design(s); best 1.00400 (+0.40% against the seed)
+- name: incoming_rank_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Calculates the estimated time to reuse (ETR) for the incoming line (incoming_etr) using the
+    ''unified_etr_rank'' logic: Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index].
+    An absent ''rdp_val'' or ''conf_val'' is treated as 0. The maximum value for confidence is 3. If ''conf_val''
+    is 0, incoming_etr = max_etr. Otherwise, base_etr = rdp_val / div. penalty = (3 - conf_val) * scale.
+    Incoming_etr = min(max_etr, base_etr + penalty). Returns true if incoming_etr is greater than the
+    absolute value of the victim way''s key.
+
+    '
+Names also taken (declared by a design not scored yet, or not shown above): modulated_etr, modulated_etr_gt_threshold, modulated_etr_exceeds_victim, deconfident_rdp_gt, deconfident_exceeds_victim, etr_with_confidence_cost, etr_with_confidence_penalty, bypass_if_worse_than_all, access_etr_logic, unified_etr_exceeds_victim, confidence_ranked_etr, confidence_penalized_etr, str
+
+Refused among the last 10 candidates, and why: words_refused 8 (train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name; name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'incoming_rank_exceeds_all_residents'); the new words must be a YAML list of words)
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 9 times (schema_rejected): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mj_recovery_from_4bit_clock_and_unified_rank'); 7 times (words_refused): penalized_etr_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name; 6 times (words_refused): the new words must be a YAML list of words
+
+You must stop submitting proposals that are immediately refused for basic errors, as you did over eighty times by providing invalid names, incorrect YAML, or attempting to redefine existing words like `train_sampler_match`. Your only lasting gains came from defining new value words, such as `unified_etr_rank`, that combine reuse prediction and confidence, and using them in `victim.bypass_when`. However, this approach is still flawed, leading to a high number of `wrong_bypass` mistakes on traces with significant headroom like `605.mcf_s` and `619.lbm_s`. Your recent attempt to solve this with the `bypass_if_worse_than_all` condition failed, proving that simply making the bypass decision stricter is not the correct path. This failure, combined with the `kept_dead` errors on `627.cam4_s`, indicates the underlying rank prediction is inaccurate. Instead of modifying the bypass rule again, focus on improving the accuracy of the rank itself. The vocabulary currently lacks a way to train the confidence component of your rank; `train_sampler_match` only updates the reuse distance prediction. Propose a new `step` word that adjusts an entry's confidence value based on whether its past reuse predictions proved correct, which would require new logic to track and evaluate prediction outcomes.

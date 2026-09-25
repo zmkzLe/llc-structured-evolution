@@ -1,0 +1,2 @@
+===== STRUCTURE_DESCRIPTION =====` marker line.
+*   [ ] The block contains the `===== NEW_WORDS =====

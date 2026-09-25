@@ -1,0 +1,17 @@
+- name: margin_better_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    limit:
+      int: [0, 127]
+    margin:
+      int: [0, 15]
+    table: table
+  means: >
+    True when the entry of the table at the index is present and either its value is strictly greater
+    than the limit, or both the field of the victim way chosen by find_victim is greater than or equal
+    to zero and the table entry divided by div (integer division) is strictly greater than the sum of
+    that field of the victim way and the margin. False otherwise. Nothing is written.

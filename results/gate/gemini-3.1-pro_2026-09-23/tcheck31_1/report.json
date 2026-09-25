@@ -1,0 +1,65 @@
+{
+  "429.mcf-192B": {
+    "port_ok": true,
+    "generated_ok": true,
+    "cycles": [
+      40740244,
+      40740244
+    ],
+    "instructions": [
+      5000001,
+      5000001
+    ],
+    "bypasses_in_port": 239775,
+    "log": {
+      "lines": 799908,
+      "differing": 0,
+      "first": null,
+      "length_port": 799908,
+      "length_generated": 799908
+    },
+    "identical": true
+  },
+  "483.xalancbmk-127B": {
+    "port_ok": true,
+    "generated_ok": true,
+    "cycles": [
+      22154479,
+      22154479
+    ],
+    "instructions": [
+      5000001,
+      5000001
+    ],
+    "bypasses_in_port": 53957,
+    "log": {
+      "lines": 343144,
+      "differing": 0,
+      "first": null,
+      "length_port": 343144,
+      "length_generated": 343144
+    },
+    "identical": true
+  },
+  "450.soplex-247B": {
+    "port_ok": true,
+    "generated_ok": true,
+    "cycles": [
+      7347097,
+      7347097
+    ],
+    "instructions": [
+      5000003,
+      5000003
+    ],
+    "bypasses_in_port": 0,
+    "log": {
+      "lines": 254497,
+      "differing": 0,
+      "first": null,
+      "length_port": 254497,
+      "length_generated": 254497
+    },
+    "identical": true
+  }
+}

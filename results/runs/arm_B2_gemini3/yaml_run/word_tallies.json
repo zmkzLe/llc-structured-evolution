@@ -1,0 +1,194 @@
+{
+ "better_bypass": {
+  "better": 11,
+  "failed": 3,
+  "same": 0,
+  "unknown": 0,
+  "used": 25,
+  "worse": 11
+ },
+ "bypass_exceeds_average": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "dynamic_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "dynamic_max_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "dynamic_resident_bypass": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "live_max_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "live_relative_bypass": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "live_victim_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "margin_better_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "mj_better_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 1,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "overdue_guarded_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "predicted_exceeds_live_victim": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "resident_average_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "resident_aware_bypass": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "safe_exceeds_victim": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "safe_victim_bypass": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "signed_greater": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "signed_greater_than": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "signed_gt": {
+  "better": 1,
+  "failed": 3,
+  "same": 0,
+  "unknown": 0,
+  "used": 8,
+  "worse": 4
+ },
+ "smart_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "strict_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "strict_live_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "thrash_aware_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "tick_mockingjay": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ }
+}

@@ -1,0 +1,3 @@
+===== STRUCTURE_DESCRIPTION =====`.
+- It must be followed by your policy description in YAML.
+- Then, you must have the `===== NEW_WORDS =====

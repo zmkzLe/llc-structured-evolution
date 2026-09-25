@@ -1,0 +1,148 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay
+doc: >
+  Addresses 'wrong_bypass' by introducing a Bypass Prediction Table (bpt) which tracks
+  the propensity of PC signatures to be wrongly bypassed. A new word
+  'manage_bypass_feedback' is used to train this table. When a line is bypassed, its
+  PC signature is added to an internal tracker. If that line is subsequently accessed
+  before being evicted from the tracker, it's a 'wrong_bypass', and the bpt entry for
+  that signature is decremented. If it's evicted from the tracker without reuse, it's
+  a 'good_bypass', and bpt is incremented. The rdp table size is halved to make room
+  for bpt. The bypass decision now uses bpt to dynamically adjust the RDP threshold:
+  signatures with a history of 'wrong_bypass' are less likely to be bypassed.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: {dynamic_threshold: {base_threshold: 73, adjust_table: bpt, adjust_index: pc_sig, adjust_scale: -5}}}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 1024             # Halved to make room for BPT and bypass feedback tracker
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bpt
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 3                  # 0-7, tracks wrong_bypass propensity
+    init: MID                 # Start neutral (4)
+    max: 7
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - manage_bypass_feedback: {table: bpt, index: pc_sig, mode: check_access, on_wrong_bypass: decrement, on_good_bypass: increment}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - when: {way: {cmp: eq, threshold: NUM_WAY}} # This is a bypassed fill
+    manage_bypass_feedback: {table: bpt, index: pc_sig, mode: add_bypassed, on_wrong_bypass: decrement, on_good_bypass: increment}
+  - run: access
+===== NEW_WORDS =====
+
+- name: dynamic_threshold
+  place: value
+  params: {base_threshold: {int: [0, 127]}, adjust_table: table, adjust_index: signature, adjust_scale: {int: [-10, 10]}}
+  means: >
+    Computes a threshold by `base_threshold + (adjust_table[adjust_index] * adjust_scale)`. The result is clamped
+    between 0 and 127. An absent entry in `adjust_table` counts as 0 for adjustment.
+
+- name: manage_bypass_feedback
+  place: step
+  params: {table: table, index: signature, mode: {symbol: BypassFeedbackMode}, on_wrong_bypass: {symbol: TrainOp}, on_good_bypass: {symbol: TrainOp}}
+  means: >
+    This step manages an internal, small (8-entry) LRU shadow structure that tracks recently bypassed PC signatures and their timestamp.
+    When `mode` is `add_bypassed`: The current access's `index` is added to the shadow structure. If the structure is full, the LRU entry is evicted.
+    When `mode` is `check_access`: The shadow structure is checked for a match with the current access's `index`.
+        If a match is found (a 'hit'), it indicates a `wrong_bypass`. The `table` entry at `index` is updated using `on_wrong_bypass`, and the matched entry is removed from the shadow structure.
+        If an entry is evicted from the shadow structure (due to `add_bypassed` or LRU replacement) *without* being 'hit' by `check_access` (i.e., a `good_bypass`), the `table` entry at its `index` is updated using `on_good_bypass`.
+    The internal LRU shadow structure has a metadata cost of 0.02 KB, and its contents are not directly accessible by other rules.
+
+- name: BypassFeedbackMode
+  type: symbol_list
+  members: [add_bypassed, check_access]

@@ -1,0 +1,14 @@
+- name: train_rdp_and_rpc_on_match
+  place: step
+  params:
+    rdp_table: table
+    rpc_table: table
+    index: signature
+    sample: state
+    scale: {int: [1, 2]}
+    min_diff: {int: [0, 127]}
+  means: >
+    This step performs two training actions for a sampler match. First, it trains the rdp_table
+    using the 'toward' operation. The target value is min(sample * scale, rdp_table.max).
+    The entry moves one step toward the target if the difference is at least min_diff.
+    Second, it trains the rpc_table at the same index using the 'increment' operation.

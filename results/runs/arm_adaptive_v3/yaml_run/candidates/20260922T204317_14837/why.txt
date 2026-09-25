@@ -1,0 +1,2 @@
+Candidate 92d960b473f0 FAILED at words_refused; it was not scored.
+Reason: deconfident_rdp_gt: already declared in this run with another definition; a word is never changed, so declare a new name

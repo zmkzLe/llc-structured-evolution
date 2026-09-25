@@ -1,0 +1,47 @@
+- name: etr_from_rdp_and_confidence
+  place: value
+  params:
+    rdp_table: table
+    conf_table: table
+    index: signature
+    div: {int: [1, 128]}
+    max_etr: {int: [0, 15]}
+    bonus: {int: [0, 4]}
+  means: >
+    Reads `rdp_val` from rdp_table[index] and `conf_val` from conf_table[index].
+    An absent `rdp_val` is treated as 0. An absent `conf_val` is treated as 0.
+    The maximum value for confidence is 3. If `rdp_val` is greater than 73, the
+    function returns `max_etr`. Otherwise, it calculates a `base_etr = rdp_val / div`
+    using integer division. It calculates an `adjustment = bonus * (3 - conf_val)`.
+    The final returned value is `min(max_etr, base_etr + adjustment)`.
+- name: penalized_etr_exceeds_victim
+  place: condition
+  params:
+    rdp_table: table
+    conf_table: table
+    index: signature
+    div: {int: [1, 128]}
+    penalty: {int: [0, 16]}
+  means: >
+    Reads `rdp_val` from rdp_table[index] and `conf_val` from conf_table[index].
+    An absent `rdp_val` is treated as 0. An absent `conf_val` is treated as 0.
+    The maximum value for confidence is 3. Calculates an adjusted RDP value:
+    `adjusted_rdp = rdp_val - (penalty * (3 - conf_val))`. If the result is
+    negative, it is treated as 0. Calculates a `predicted_etr` value as
+    `adjusted_rdp / div`, using integer division. Returns true if `predicted_etr`
+    is greater than the absolute value of the victim way's key.
+- name: penalized_rdp_bypass
+  place: condition
+  params:
+    rdp_table: table
+    conf_table: table
+    index: signature
+    threshold: {int: [0, 127]}
+    penalty: {int: [0, 16]}
+  means: >
+    Reads `rdp_val` from rdp_table[index] and `conf_val` from conf_table[index].
+    An absent entry in `rdp_table` makes the condition false. An absent `conf_val`
+    is treated as 0. The maximum value for confidence is 3. Calculates an adjusted
+    RDP value: `adjusted_rdp = rdp_val - (penalty * (3 - conf_val))`. If the result
+    is negative, it is treated as 0. Returns true if this `adjusted_rdp` is
+    greater than the `threshold`.

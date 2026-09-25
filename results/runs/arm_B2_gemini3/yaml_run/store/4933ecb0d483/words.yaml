@@ -1,0 +1,12 @@
+- name: bypass_exceeds_average
+  place: condition
+  params:
+    table: table
+    index: signature
+    div: {int: [1, 16]}
+    field: state
+    margin: {int: [0, 31]}
+  means: >
+    True when the entry of the table at the index is present, and its value divided by div
+    is strictly greater than the sum of the absolute values of the field across all ways
+    in the set divided by the number of ways, plus the margin. False otherwise. Nothing is written.

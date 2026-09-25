@@ -1,0 +1,13 @@
+===== STRUCTURE_DESCRIPTION =====
+# Your design's name and a one-line doc comment explaining the change.
+# ... the rest of your YAML design description ...
+name: my_design_v1
+doc: >
+  Addresses wrong_bypass by adding a confidence table and tracking recent bypasses.
+
+...
+===== NEW_WORDS =====
+
+# A YAML list of any new words you declare.
+# If you do not declare new words, you must write an empty list `[]`.
+[]

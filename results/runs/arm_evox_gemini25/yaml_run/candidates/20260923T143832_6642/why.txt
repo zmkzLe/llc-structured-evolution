@@ -1,0 +1,32 @@
+Candidate ? FAILED at words_refused; it was not scored.
+Reason: 20 validation errors for NewWord
+params.target_sampler.str
+  Input should be a valid string [type=string_type, input_value={'sampler': 'name'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.target_sampler.IntRange.int
+  Field required [type=missing, input_value={'sampler': 'name'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.target_sampler.IntRange.sampler
+  Extra inputs are not permitted [type=extra_forbidden, input_value='name', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.target_sampler.SymbolOf.symbol
+  Field required [type=missing, input_value={'sampler': 'name'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.target_sampler.SymbolOf.sampler
+  Extra inputs are not permitted [type=extra_forbidden, input_value='name', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.rdp_table.str
+  Input should be a valid string [type=string_type, input_value={'table': 'name'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.rdp_table.IntRange.int
+  Field required [type=missing, input_value={'table': 'name'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.rdp_table.IntRange.table
+  Extra inputs are not permitted [type=extra_forbidden, input_value='name', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.rdp_table.SymbolOf.symbol
+  Field required [type=missing, input_value={'table': 'name'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.rdp_table.SymbolOf.table
+  Extra inputs are not permitted [type=extra_forbidden, input_value='name', input_type=str]
+    For further informa

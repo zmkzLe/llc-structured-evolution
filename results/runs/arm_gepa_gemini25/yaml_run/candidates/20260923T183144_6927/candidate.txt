@@ -1,0 +1,17 @@
+===== STRUCTURE_DESCRIPTION =====
+# Your complete YAML structure description goes here.
+# Start by copying the Mockingjay seed and making your changes.
+name: my_new_design_name
+doc: >
+  A one-line description of what you changed and why. For example:
+  "Adds a table to track bypassed signatures and penalize wrong bypasses."
+# ... the rest of your complete YAML description ...
+victim:
+  # ...
+on_fill:
+  # ...
+
+===== NEW_WORDS =====
+
+# If your design uses new words, their YAML declarations go here.
+# If not, this section can be empty, but the marker line must be present.

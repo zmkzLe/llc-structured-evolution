@@ -1,0 +1,26 @@
+===== STRUCTURE_DESCRIPTION =====
+name: my_new_policy_v1
+doc: >
+  My clear, one-line explanation of the change and why it should work.
+# ... the rest of the valid YAML structure ...
+state:
+# ...
+tables:
+  - name: bypass_tracker
+    scope: global
+    kind: counter
+    entries: 2048
+    width: 1 # A simple 1-bit flag
+# ... more tables
+victim:
+# ...
+on_fill:
+  - # ... my new rule using my new word ...
+# ...
+===== NEW_WORDS =====
+
+- name: my_new_word
+  place: step
+  params: { ... }
+  means: >
+    My precise, 8+ word explanation of what this word does.

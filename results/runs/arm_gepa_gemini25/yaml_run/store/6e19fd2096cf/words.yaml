@@ -1,0 +1,20 @@
+- name: predict_bypass_and_log
+  place: condition
+  params: {log_table: table, predictor_table: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    Checks if the value in predictor_table at the given index is greater than the threshold.
+    An absent entry in predictor_table is treated as 0. If the condition is met, this
+    word has a side effect: it computes an index for log_table by taking the current
+    access's line address modulo the number of entries in log_table. It then stores the
+    value of the `index` signature parameter at that location in log_table. After the
+    potential side effect, it returns true if the predictor's value was greater than the
+    threshold, and false otherwise.
+- name: punish_for_wrong_bypass
+  place: step
+  params: {log_table: table, predictor_table: table}
+  means: >
+    Computes an index for log_table by taking the current access's line address modulo
+    the number of entries in log_table. It looks up this index in log_table. If a valid
+    entry is found, it reads the logged PC signature from the table. It then uses this
+    logged PC signature as an index to decrement the corresponding entry in predictor_table.
+    Finally, it invalidates the entry in log_table to consume the feedback signal.

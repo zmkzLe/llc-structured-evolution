@@ -1,0 +1,2 @@
+Candidate 94f6130d4985 FAILED at words_refused; it was not scored.
+Reason: pred_gt_victim_with_conf: already declared in this run with another definition; a word is never changed, so declare a new name

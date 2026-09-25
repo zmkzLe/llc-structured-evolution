@@ -1,0 +1,82 @@
+{
+ "confident_bypass_rdp": {
+  "better": 5,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 6,
+  "worse": 1
+ },
+ "confident_bypass_victim": {
+  "better": 5,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 7,
+  "worse": 2
+ },
+ "confident_rdp_greater_than": {
+  "better": 3,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 17,
+  "worse": 14
+ },
+ "confident_table_exceeds_victim": {
+  "better": 3,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 18,
+  "worse": 15
+ },
+ "incoming_rdp_worse_than_victim": {
+  "better": 4,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 4,
+  "worse": 0
+ },
+ "my_confident_rdp_exceeds_victim": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "my_confident_rdp_gt_threshold": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "negate_table_value": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "train_rdp_inc_conf_inc": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "train_rdp_toward_conf_dec": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ }
+}

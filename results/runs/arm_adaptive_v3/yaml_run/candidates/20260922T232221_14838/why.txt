@@ -1,0 +1,2 @@
+Candidate edb3e1b10007 FAILED at words_refused; it was not scored.
+Reason: train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name

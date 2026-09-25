@@ -1,0 +1,6 @@
+- name: is_confident
+  place: condition
+  params: {table: table, index: signature, threshold: {int: [0, 3]}}
+  means: >
+    True when the entry of the table at the index is greater than or equal to the threshold.
+    The table is expected to be fully initialized (not 'unset').

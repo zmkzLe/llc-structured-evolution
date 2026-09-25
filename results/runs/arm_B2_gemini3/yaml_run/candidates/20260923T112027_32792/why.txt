@@ -1,0 +1,2 @@
+Candidate 2927fcd86a8f FAILED at words_refused; it was not scored.
+Reason: signed_gt: already declared in this run with another definition; a word is never changed, so declare a new name

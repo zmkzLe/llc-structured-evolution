@@ -1,0 +1,14 @@
+Guidance version 45, written after 452 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.98046 (-1.95% against the seed)
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the
+    fill was bypassed.
+
+Refused among the last 10 candidates, and why: malformed 4 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 4 (Input should be a valid dictionary or instance of StructureDescription (written: '<your complete policy de...iption, in YAML format>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')). words_refused 2 (name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'rdp_predicts_scan_and_no_bad_history'); name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'rdp_high_and_not_bypassed_before'))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 13 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 9 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: None); 3 times (words_refused): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'rdp_exceeds_victim_if_not_tracked')
+
+You have made no progress because nearly all your proposals are refused for fundamental formatting errors, such as being invalid YAML or missing the `STRUCTURE_DESCRIPTION` and `NEW_WORDS` sections. You must stop submitting syntactically invalid candidates and using invalid names for new words like `rdp_high_and_not_bypassed_before`. The few scored attempts, which modified `on_access` and `on_fill`, all worsened the score, indicating that simple tweaks have not been effective. The largest opportunity for improvement remains in correcting bypass decisions. On traces with high headroom like `605.mcf_s`, `619.lbm_s`, and `459.GemsFDTD-1491B`, the dominant mistake is `wrong_bypass`, where useful lines are not inserted into the cache. Conversely, on `627.cam4_s`, the main error is `should_bypass`. To address these mistakes, the policy must remember the access history of non-resident lines, which the current vocabulary cannot do. You need to propose a new word that declares a stateful structure, like a table, to track signatures of bypassed lines that are requested again. This would allow the `on_fill` logic to query this history and make better-informed bypass decisions, reducing both `wrong_bypass` and `should_bypass` errors.

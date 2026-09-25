@@ -1,0 +1,11 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 3 validation errors for StructureDescription
+name
+  String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_with_wrong_bypass_learner', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_pattern_mismatch
+procedures.access.7.when
+  Value error, 'hit': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'hit': False}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+on_fill.2.when
+  Value error, 'way': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'way': 'NUM_WAY'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

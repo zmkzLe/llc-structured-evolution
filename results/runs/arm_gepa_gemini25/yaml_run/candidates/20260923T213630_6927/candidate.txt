@@ -1,0 +1,140 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_log_feedback
+doc: >
+  Addresses wrong_bypass errors by adding a bypass log for precise negative feedback.
+  A new table, bypass_log, records the PC signature of instructions that cause a bypass,
+  indexed by the bypassed address. On a subsequent miss to that address, the fill event
+  identifies the wrong bypass, penalizes the predictor entry for the logged PC signature,
+  and clears the log entry. Metadata space is created by reducing sampler ways from 5 to 4.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - predict_bypass_and_log: {log_table: bypass_log, predictor_table: rdp, index: pc_sig, threshold: 73}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bypass_log
+    scope: global
+    kind: counter
+    entries: 256
+    width: 11
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 4
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - punish_for_wrong_bypass: {log_table: bypass_log, predictor_table: rdp}
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+
+- name: predict_bypass_and_log
+  place: condition
+  params: {log_table: table, predictor_table: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    Checks if the value in predictor_table at the given index is greater than the threshold.
+    An absent entry in predictor_table is treated as 0. If the condition is met, this
+    word has a side effect: it computes an index for log_table by taking the current
+    access's line address modulo the number of entries in log_table. It then stores the
+    value of the `index` signature parameter at that location in log_table. After the
+    potential side effect, it returns true if the predictor's value was greater than the
+    threshold, and false otherwise.
+- name: punish_for_wrong_bypass
+  place: step
+  params: {log_table: table, predictor_table: table}
+  means: >
+    Computes an index for log_table by taking the current access's line address modulo
+    the number of entries in log_table. It looks up this index in log_table. If a valid
+    entry is found, it reads the logged PC signature from the table. It then uses this
+    logged PC signature as an index to decrement the corresponding entry in predictor_table.
+    Finally, it invalidates the entry in log_table to consume the feedback signal.

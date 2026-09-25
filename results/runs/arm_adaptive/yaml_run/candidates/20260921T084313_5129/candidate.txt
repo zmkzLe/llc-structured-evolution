@@ -1,0 +1,139 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_correct_confidence
+doc: >
+  Fixes the confidence logic of a previous attempt and restores the sampler to its
+  original size. Confidence in a scan (no reuse) is now correctly learned:
+  confidence is incremented on eviction without reuse, and decremented on reuse.
+  A bypass requires both a long predicted reuse distance and high confidence in
+  that prediction. The sampler size is kept at 5 ways to not harm the RDP's
+  accuracy, and the extra confidence table fits within the 48KB budget.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when: # Bypass when RDP predicts long reuse AND confidence is high.
+    - confident_rdp_greater_than: {conf_table: rdp_conf, rdp_table: rdp, index: pc_sig, threshold: 73}
+    - confident_table_exceeds_victim: {conf_table: rdp_conf, rdp_table: rdp, index: pc_sig, div: 8}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+  - name: rdp_conf # Tracks confidence in RDP's scan prediction.
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 5 # Restore original Mockingjay sampler size.
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match: # A reuse was detected.
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - train: {table: rdp_conf, index: signature, op: decrement} # Decrement confidence in scan.
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep: # A line aged out without reuse (scan-like behavior).
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp_conf, index: signature, op: increment} # Increment confidence in scan.
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace: # A line was evicted without reuse (scan).
+      - train: {table: rdp_conf, index: signature, op: increment} # Increment confidence in scan.
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: confident_rdp_greater_than
+  place: condition
+  params: {conf_table: table, rdp_table: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    True if the entry for the index in conf_table is present and at its maximum value, AND
+    the entry for the same index in rdp_table is present and has a value greater than the threshold.
+    False otherwise.
+- name: confident_table_exceeds_victim
+  place: condition
+  params: {conf_table: table, rdp_table: table, index: signature, div: {int: [1, 1024]}}
+  means: >
+    True if the entry for the index in conf_table is present and at its maximum value, AND
+    the value from rdp_table[index]/div (integer division) is greater than the absolute
+    value of the victim key of the way the victim search chose. An absent entry in rdp_table
+    is treated as a value of 0. False otherwise.

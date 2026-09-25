@@ -1,0 +1,16 @@
+- name: confident_pred_gt_victim_etr
+  place: condition
+  params:
+    rdp_tbl: table
+    conf_tbl: table
+    index: signature
+    div: {int: [1, 1024]}
+    conf_thresh: {int: [0, 3]}
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(rdp_tbl[index] / div).
+    If the rdp_tbl entry for the index is absent, the predicted ETR is 0 and the condition is false.
+    Otherwise, finds the absolute value of the 'etr' field of the victim line ('victim_etr')
+    and reads the confidence value from conf_tbl[index].
+    The condition is true if the predicted ETR is strictly greater than victim_etr AND
+    the confidence value is greater than or equal to conf_thresh.
+    The 'etr' field must be a per_line state field. This can only be used in 'bypass_when'.

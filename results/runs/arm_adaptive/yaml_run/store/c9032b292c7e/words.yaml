@@ -1,0 +1,23 @@
+- name: negate_table_value
+  place: value
+  params: {table: table, index: signature, div: {int: [1, 1024]}}
+  means: >
+    Reads the entry from the table at the index, an unsigned value. Divides it by div
+    (integer division). Returns the negation of the result, as a two's complement
+    number with the same width as the target field. An absent entry is treated as 0,
+    so the result is 0.
+- name: confident_rdp_greater_than
+  place: condition
+  params: {conf_table: table, rdp_table: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    True if the entry for the index in conf_table is present and at its maximum value, AND
+    the entry for the same index in rdp_table is present and has a value greater than the threshold.
+    False otherwise.
+- name: confident_table_exceeds_victim
+  place: condition
+  params: {conf_table: table, rdp_table: table, index: signature, div: {int: [1, 1024]}}
+  means: >
+    True if the entry for the index in conf_table is present and at its maximum value, AND
+    the value from rdp_table[index]/div (integer division) is greater than the absolute
+    value of the victim key of the way the victim search chose. An absent entry in rdp_table
+    is treated as a value of 0. False otherwise.

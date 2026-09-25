@@ -1,0 +1,5 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: expected '<document start>', but found '['
+  in "<unicode string>", line 6, column 5:
+    ... [rest of the actual YAML configu ... 
+        ^

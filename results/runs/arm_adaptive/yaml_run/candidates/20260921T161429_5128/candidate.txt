@@ -1,0 +1,145 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_confident_bypass_v2
+doc: >
+  Builds on 'mockingjay_faster_learning' by adding a confidence mechanism to the
+  bypass logic. A new 2-bit confidence counter (`rdp_confidence`) is added per
+  PC signature. This counter is incremented on sampled reuses and decremented
+  on sampler evictions or when a sampled line becomes too old without reuse.
+  Bypass decisions now require a minimum confidence level (threshold 2 out of 3)
+  in the RDP prediction, aiming to significantly reduce 'wrong_bypass' errors.
+  The previous improvements (reactive RDP training, conservative initial ETR) are retained.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - confident_bypass_rdp: {rdp_table: rdp, conf_table: rdp_confidence, index: pc_sig, rdp_thresh: 73, conf_thresh: 2}
+    - confident_bypass_victim: {rdp_table: rdp, conf_table: rdp_confidence, index: pc_sig, div: 8, conf_thresh: 2}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+  - name: rdp_confidence
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2 # 0-3 confidence level
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true # Too old to be a reuse distance, don't increment confidence
+      - when: {type_in: [PREFETCH]}
+        train_rdp_toward_conf_inc: {rdp_table: rdp, conf_table: rdp_confidence, index: signature, scale: 2, min_diff: 4}
+        free: true
+        stop: true
+      - when: {type_not_in: [PREFETCH]}
+        train_rdp_toward_conf_inc: {rdp_table: rdp, conf_table: rdp_confidence, index: signature, scale: 1, min_diff: 4}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train_rdp_inc_conf_dec: {rdp_table: rdp, conf_table: rdp_confidence, index: signature}
+        free: true
+    on_replace:
+      - train_rdp_inc_conf_dec: {rdp_table: rdp, conf_table: rdp_confidence, index: signature}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 4}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: train_rdp_toward_conf_inc
+  place: step
+  params:
+    rdp_table: table
+    conf_table: table
+    index: signature
+    scale: {int: [1, 10]}
+    min_diff: {int: [1, 127]}
+  means: >
+    Trains the rdp_table toward the value 'age' (from the sampler's current entry), scaled by scale,
+    with a minimum difference of min_diff. Simultaneously, increments the conf_table entry at the same index.
+    The rdp_table training is identical to the 'toward' TrainOp. The conf_table training is identical
+    to the 'increment' TrainOp.
+- name: train_rdp_inc_conf_dec
+  place: step
+  params:
+    rdp_table: table
+    conf_table: table
+    index: signature
+  means: >
+    Increments the rdp_table entry at the given index. Simultaneously, decrements the conf_table
+    entry at the same index. The training for each table is identical to the 'increment' and 'decrement'
+    TrainOps respectively.

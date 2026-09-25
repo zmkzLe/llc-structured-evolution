@@ -1,0 +1,28 @@
+- name: data_address
+  place: SignatureSource
+  params: {}
+  means: >
+    A signature source. Its value is the 64-bit data address of the current access.
+- name: is_bypass_fill
+  place: condition
+  params: {}
+  means: >
+    A condition that is true only when called during an on_fill event for a bypassed fill.
+    In ChampSim's replacement_cache_fill, this corresponds to when the 'way'
+    parameter equals NUM_WAY.
+- name: log_bypass
+  place: step
+  params: {log_table: table, log_index: signature, value_sig: signature}
+  means: >
+    Writes the value of the signature 'value_sig' into the 'log_table' at the index
+    given by 'log_index'. This action sets the entry's valid bit and overwrites any
+    existing value.
+- name: punish_if_logged
+  place: step
+  params: {log_table: table, log_index: signature, predictor_table: table}
+  means: >
+    Checks the 'log_table' at the index given by 'log_index'. If a valid entry is
+    present, it reads the entry's value, which is treated as an index into the
+    'predictor_table'. It then decrements the counter in the 'predictor_table' at
+    that index. Finally, it invalidates the entry in the 'log_table' to consume the
+    signal. If no entry is present in 'log_table', it does nothing.

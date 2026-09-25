@@ -1,0 +1,143 @@
+===== STRUCTURE_DESCRIPTION =====
+# Based on Mockingjay. Introduces a per-set bypass_aggressiveness_bias counter
+# to dynamically adjust bypass thresholds. This bias is incremented when a
+# sampler entry is replaced without reuse (suggesting a should_bypass scenario)
+# and decremented when a sampler entry is matched (suggesting a correct insertion
+# or potential wrong_bypass averted). This aims to make the bypass decision
+# more nuanced, addressing both should_bypass and wrong_bypass errors.
+# To fit the new state, the sampler's extra_index_bits are reduced from 4 to 3,
+# decreasing the number of sampler sets and saving 4.8KB of state.
+name: mockingjay_dynamic_bypass
+doc: >
+  Mockingjay with dynamic bypass aggressiveness. A per-set bias counter adjusts
+  the RDP bypass thresholds. This bias is increased when a sampler entry is
+  evicted without reuse (suggesting a useless insertion in the main cache for
+  that set), making future bypasses more aggressive. It is decreased when a
+  sampler entry is reused (suggesting a useful insertion), making future
+  bypasses less aggressive. Sampler size reduced to accommodate new state.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+  - name: bypass_aggressiveness_bias # New state field for dynamic bypass threshold
+    scope: per_set
+    kind: saturating
+    width: 2                  # 0, 1, 2, 3. Small range for bias.
+    init: 1                   # Start in the middle (0, 1, 2, 3)
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    # Original condition: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    # New condition uses dynamic_threshold_cmp: threshold = 73 - bypass_aggressiveness_bias.
+    # Higher bias means lower threshold, making bypass more likely.
+    - dynamic_threshold_cmp: {table: rdp, index: pc_sig, cmp: gt, base_threshold: 73, bias_field: bypass_aggressiveness_bias}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 3       # Reduced from 4 to 3 (512 -> 256 sampler sets) to save 4.8KB, making space for bypass_aggressiveness_bias
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        # When a useful prefetch is observed, decrease bias to make bypass less aggressive for this set.
+        set: {bypass_aggressiveness_bias: {add: -1}}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        # When a useful (non-prefetch) access is observed, decrease bias to make bypass less aggressive for this set.
+        set: {bypass_aggressiveness_bias: {add: -1}}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+      # When a useless insertion is observed, increase bias to make bypass more aggressive for this set.
+      - set: {bypass_aggressiveness_bias: {add: 1}}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+
+- name: dynamic_threshold_cmp
+  place: condition
+  params: {table: table, index: signature, cmp: {symbol: Comparison}, base_threshold: {int: [0, 127]}, bias_field: state}
+  means: >
+    True when the entry of the table at the index, if present, compares to
+    (base_threshold - bias_field.value) according to cmp.
+    An absent entry counts as false.

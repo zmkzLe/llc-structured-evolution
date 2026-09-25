@@ -1,0 +1,9 @@
+===== STRUCTURE_DESCRIPTION =====
+    name: a_short_descriptive_name
+    doc: >
+      One line explaining what this design changes and why.
+    # ... rest of your valid YAML description goes here ...
+
+    ===== NEW_WORDS =====
+
+    # ... your new word declarations, if any, go here ...

@@ -1,0 +1,11 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 3 validation errors for StructureDescription
+samplers.1.sets.str-enum[SampledSets]
+  Input should be 'category_zero' [type=enum, input_value={'const': 64}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/enum
+samplers.1.sets.function-after[_power_of_two(), MirrorSets].mirror
+  Field required [type=missing, input_value={'const': 64}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+samplers.1.sets.function-after[_power_of_two(), MirrorSets].const
+  Extra inputs are not permitted [type=extra_forbidden, input_value=64, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden

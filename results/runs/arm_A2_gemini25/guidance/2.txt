@@ -1,0 +1,58 @@
+Guidance version 2, written after 20 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 1.00184 (+0.18% against the seed)
+- name: rdp_and_conf_gt
+  place: condition
+  params:
+    conf_tbl: table
+    conf_thresh:
+      int: [0, 3]
+    rdp_tbl: table
+    rdp_thresh:
+      int: [0, 127]
+    sig: signature
+  means: True if the entry for the signature 'sig' in table 'rdp_tbl' is present and its value is greater
+    than 'rdp_thresh', AND the entry for 'sig' in table 'conf_tbl' is present and its value is greater
+    than or equal to 'conf_thresh'. False otherwise.
+# used by 2 scored design(s); best 0.99802 (-0.20% against the seed)
+- name: train_rdp_hit
+  place: step
+  params:
+    age: state
+    conf_table: table
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    scale:
+      int: [1, 10]
+  means: 'Trains the rdp_table at the given index with the ''toward'' op, using the provided age, scale,
+    and min_diff. The rdp_table must be ''unset''. Then, increments the conf_table entry at the same index.
+
+    '
+# used by 2 scored design(s); best 0.99802 (-0.20% against the seed)
+- name: train_rdp_miss
+  place: step
+  params: {conf_table: table, index: signature, rdp_table: table}
+  means: 'Increments the rdp_table entry at the given index. The rdp_table must be ''unset'', so an absent
+    entry becomes rdp_table.max. Then, decrements the conf_table entry at the same index.
+
+    '
+# used by 2 scored design(s); best 0.99802 (-0.20% against the seed)
+- name: confident_long_reuse
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    threshold:
+      int: [0, 127]
+  means: True if the rdp_table entry at index is present and its value is greater than the threshold,
+    AND the conf_table entry at the same index is at its maximum value. False otherwise. The rdp_table
+    must be 'unset'.
+
+Refused among the last 10 candidates, and why: schema_rejected 4 (duplicate key 'train' at line 86, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.; name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mj_revert_size_keep_rel_bypass_v2'); duplicate key 'train' at line 87, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.). words_refused 3 (rdp_and_conf_gt: already declared in this run with another definition; a word is never changed, so declare a new name; name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'table_exceeds_victim_and_conf_gt'); name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'predicted_reuse_exceeds_all_resident'))
+Refusal kinds seen more than once among the last 20 candidates, a pattern to stop: 3 times (schema_rejected): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mj_revert_size_keep_rel_bypass_v2'); 3 times (schema_rejected): duplicate key 'train' at line 86, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+
+The sole improvement over Mockingjay came from 3714da345231, which successfully combined changes to `samplers`, `tables`, and `victim.bypass_when` with the new condition word `rdp_and_conf_gt`. This indicates that evolving table-based state and the logic that uses it is a promising direction. However, your largest remaining mistake on high-headroom traces like `605.mcf_s-1644B` and `619.lbm_s-2677B` is `wrong_bypass`, where you discard useful data, while on `627.cam4_s-573B` you make `should_bypass` mistakes. This shows your current bypass logic is inaccurate. To fix this, you must refine the `victim.bypass_when` condition. The vocabulary may lack a way to compare an incoming line's predicted reuse against the predicted reuse of all resident lines; a new word could express this comparison to better inform the bypass decision and reduce `wrong_bypass` errors. You should stop modifying `signatures` and `procedures.access`, as these changes have consistently hurt performance. Furthermore, avoid complex training logic like `train_rdp_hit` which has failed, and stop submitting proposals with invalid names or duplicate keys, as these syntax and structural errors are causing many rejections and preventing progress.

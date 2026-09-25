@@ -1,0 +1,14 @@
+Candidate ? FAILED at words_refused; it was not scored.
+Reason: 4 validation errors for NewWord
+params.action.str
+  Input should be a valid string [type=string_type, input_value={'symbol': ['record_bypas...eck_and_train_on_miss']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.action.IntRange.int
+  Field required [type=missing, input_value={'symbol': ['record_bypas...eck_and_train_on_miss']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.action.IntRange.symbol
+  Extra inputs are not permitted [type=extra_forbidden, input_value=['record_bypass', 'check_and_train_on_miss'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.action.SymbolOf.symbol
+  Input should be a valid string [type=string_type, input_value=['record_bypass', 'check_and_train_on_miss'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type

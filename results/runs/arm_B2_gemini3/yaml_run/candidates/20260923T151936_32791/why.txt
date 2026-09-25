@@ -1,0 +1,32 @@
+Candidate 2f4301e6bdb8: score 0.99574, the geometric mean over 17 traces of its IPC over Mockingjay's on the same trace (20M warm-up + 50M measured); Mockingjay, the seed and the design to beat, scores 1.0: behind.
+Closest earlier design: d743d8dd1193 (similarity 0.975, score 1.00084, change -0.00510). Parts changed: samplers, state.
+New words: better_bypass (condition).
+
+Per trace. vs MJ: IPC over Mockingjay's on that trace. change: minus the closest design's.
+MPKI: LLC misses per 1000 instructions. memory: share of all cycles stalled on the memory
+hierarchy at any level; LLC: the part of it stalled on LLC hits; DRAM: the part stalled on
+DRAM. retire: share of all cycles spent retiring instructions, which no replacement policy
+changes. headroom: share of the sampled misses Belady's MIN avoids on this candidate's own
+stream. Then the sampled fills judged against MIN: kept a dead line, evicted a line reused
+sooner, should have bypassed, bypassed wrongly (change from the closest design in brackets).
+trace                      vs MJ   change   MPKI  memory   LLC   DRAM  retire headroom       kept_dead  evicted_sooner  should_bypass   wrong_bypass
+410.bwaves-1963B          0.9950  -0.0063  18.04   76.9%  1.0%  60.4%   20.6%     3.5%      236 (+236)          0 (+0)         0 (+0)      1557 (+3)
+429.mcf-192B              0.9880  -0.0120  52.62   90.4%  6.4%  73.9%    6.3%     1.7%      104 (-202)         7 (-66)      14 (-107)   2512 (+2243)
+433.milc-127B             1.0029  +0.0027  21.43   82.9%  0.0%  77.1%   12.6%    32.5%     1844 (-347)       242 (+36)    1356 (-189)  19399 (+3072)
+434.zeusmp-10B            1.0015  +0.0010   2.43   63.3%  0.0%  44.3%   33.3%    16.2%          6 (-8)          0 (+0)       31 (-40)    1152 (+200)
+437.leslie3d-149B         1.0012  -0.0052   8.26   84.2%  0.0%  76.5%   14.0%    25.6%        734 (+7)          0 (+0)     355 (-287)   5252 (+1372)
+450.soplex-247B           1.0353  +0.0036  20.35   83.7%  4.7%  75.7%   12.5%    17.5%     1592 (-443)    10979 (+121)   1733 (-1106)  13095 (+2574)
+459.GemsFDTD-1491B        1.0031  -0.0003  27.63   89.8%  0.8%  86.2%    9.1%    33.3%        47 (+23)          0 (+0)         0 (+0)    28211 (-19)
+470.lbm-1274B             1.0043  -0.0001  26.21   86.8%  0.0%  86.8%   12.8%    20.9%   10505 (-1217)    18750 (-556)      186 (-97)   5439 (+1983)
+483.xalancbmk-127B        0.9198  -0.0524  21.15   86.2%  4.3%  79.5%   10.0%    20.8%     3129 (+767)    3893 (-1405)   4570 (-1256)  26571 (+5804)
+603.bwaves_s-1740B        0.9984  -0.0043  19.48   78.5%  0.0%  55.3%   19.6%     7.2%          0 (+0)          0 (+0)         0 (+0)     3432 (+90)
+605.mcf_s-1644B           0.9784  -0.0216 139.32   88.1%  1.2%  66.4%    7.9%    45.1%   18317 (+1714)     504 (-1880)        1 (-18) 219202 (+5927)
+619.lbm_s-2677B           0.9972  -0.0004  82.93   91.6%  0.0%  87.4%    8.0%    44.1%     62814 (-81)          0 (+0)       12 (-22)   109696 (-90)
+623.xalancbmk_s-10B       0.9850  -0.0082   4.69   72.0% 14.4%  51.1%   23.0%    22.8%      1051 (+36)     2106 (+301)    5865 (+210)    1591 (-144)
+625.x264_s-20B            1.0015  +0.0015   1.39   42.1%  0.0%  25.2%   54.1%     3.4%        24 (-13)          0 (+0)       71 (-88)       41 (+41)
+627.cam4_s-573B           0.9998  -0.0002   0.14   23.7%  0.0%   0.7%   60.4%    47.2%         24 (-8)          0 (+0)       37 (-16)         0 (+0)
+654.roms_s-1390B          1.0108  +0.0084  35.47   90.7%  0.1%  88.0%    8.5%    30.2%   15019 (-2315)      112 (-177)   1218 (-2282) 36927 (+10828)
+657.xz_s-2302B            1.0099  +0.0105   1.38   47.9%  2.0%  26.7%   33.9%    33.7%       1050 (-1)        14 (-11)      366 (-30)     139 (+130)
+
+All traces, sampled fills: kept_dead 116496 (-1852), evicted_sooner 36607 (-3637), should_bypass 15815 (-5328), wrong_bypass 474216 (+34014). The largest kind of mistake is wrong_bypass. Mistakes of every kind are addressed by changing what the policy remembers or how it decides, not by moving one threshold.
+Metadata: 48.00 KB SRAM, 0.0391 mm2 at 22 nm (reported, not scored).

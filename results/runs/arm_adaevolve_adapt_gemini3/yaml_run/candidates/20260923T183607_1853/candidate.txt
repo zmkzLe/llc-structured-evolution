@@ -1,0 +1,14 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Your explanation of what changed and why...
+state:
+  - name: example_field
+    scope: per_line
+    kind: counter
+    width: 2
+    init: ZERO
+# ... (all other required fields for your policy) ...
+===== NEW_WORDS =====
+
+# (Your new words list here. If none, leave blank, but the marker above MUST be present)

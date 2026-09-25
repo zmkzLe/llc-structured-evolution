@@ -1,0 +1,12 @@
+- name: pred_exceeds_all_resident
+  place: condition
+  params:
+    table: table
+    index: signature
+    div: {int: [1, 1024]}
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(table[index] / div).
+    The condition is true if this predicted ETR is greater than the absolute value
+    of the 'etr' field of every valid line currently in the set. If the table entry
+    for the index is absent, the predicted ETR is 0, and the condition is false.
+    The 'etr' field must be a per_line state field. This can only be used in victim.bypass_when.

@@ -1,0 +1,129 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mj_confident_victim_bypass
+doc: >
+  Replaces the previous blended ETR bypass with a more direct comparison to the
+  victim's ETR, incorporating a confidence check. The policy now bypasses only
+  if the incoming line's predicted ETR is strictly greater than the victim line's
+  absolute ETR, AND the RDP prediction itself indicates high confidence (i.e., the
+  RDP value is above a specific threshold). This addresses the guidance to use
+  a more direct victim ETR comparison combined with confidence, aiming to reduce
+  both wrong_bypass and kept_dead errors more effectively. The static bypass
+  threshold is integrated into the confidence check.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - pred_gt_victim_and_confident: {table: rdp, index: pc_sig, div: 8, confidence_threshold: 73}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: pred_gt_victim_and_confident
+  place: condition
+  params:
+    table: table
+    index: signature
+    div: {int: [1, 1024]}
+    confidence_threshold: {int: [0, 95]}
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(table[index] / div).
+    Finds the absolute value of the 'etr' field of the victim line ('victim_etr').
+    The condition is true if the predicted ETR is strictly greater than 'victim_etr'
+    AND the table entry for the index in 'table' is present and its value is strictly
+    greater than 'confidence_threshold'.
+    If the table entry for the index is absent, the predicted ETR is 0, and the condition is false.
+    The 'etr' field must be a per_line state field. This can only be used in 'bypass_when'.

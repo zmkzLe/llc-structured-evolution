@@ -1,0 +1,91 @@
+Guidance version 16, written after 162 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 12 scored design(s); best 1.00400 (+0.40% against the seed)
+- name: train_sampler_match
+  place: step
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 127]
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    sample: state
+    scale:
+      int: [1, 2]
+  means: Performs training for a sampler match based on the reuse distance 'sample' (age). First, it trains
+    the rdp_table using the 'toward' operation. The target value is min(sample * scale, rdp_table.max).
+    The entry moves one step toward the target if the difference from the target is at least min_diff.
+    Second, if the 'sample' value is less than conf_thresh, it increments the conf_table entry at the
+    same index.
+# used by 4 scored design(s); best 1.00400 (+0.40% against the seed)
+- name: unified_etr_rank
+  place: value
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent ''rdp_val''
+    is treated as 0. An absent ''conf_val'' is treated as 0. The maximum value for confidence is 3. If
+    ''conf_val'' is 0, the returned value is max_etr. Otherwise, calculates base_etr = rdp_val / div using
+    integer division. Calculates penalty = (3 - conf_val) * scale. The final returned value is min(max_etr,
+    base_etr + penalty).
+
+    '
+# used by 3 scored design(s); best 1.00400 (+0.40% against the seed)
+- name: incoming_rank_gt_threshold
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+    threshold:
+      int: [0, 15]
+  means: 'Calculates the estimated time to reuse (ETR) for the incoming line (incoming_etr) using the
+    ''unified_etr_rank'' logic: Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index].
+    An absent ''rdp_val'' or ''conf_val'' is treated as 0. The maximum value for confidence is 3. If ''conf_val''
+    is 0, incoming_etr = max_etr. Otherwise, base_etr = rdp_val / div. penalty = (3 - conf_val) * scale.
+    Incoming_etr = min(max_etr, base_etr + penalty). Returns true if incoming_etr is greater than threshold.
+
+    '
+# used by 3 scored design(s); best 1.00400 (+0.40% against the seed)
+- name: incoming_rank_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    max_etr:
+      int: [0, 15]
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Calculates the estimated time to reuse (ETR) for the incoming line (incoming_etr) using the
+    ''unified_etr_rank'' logic: Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index].
+    An absent ''rdp_val'' or ''conf_val'' is treated as 0. The maximum value for confidence is 3. If ''conf_val''
+    is 0, incoming_etr = max_etr. Otherwise, base_etr = rdp_val / div. penalty = (3 - conf_val) * scale.
+    Incoming_etr = min(max_etr, base_etr + penalty). Returns true if incoming_etr is greater than the
+    absolute value of the victim way''s key.
+
+    '
+Names also taken (declared by a design not scored yet, or not shown above): modulated_etr, modulated_etr_gt_threshold, modulated_etr_exceeds_victim, deconfident_rdp_gt, deconfident_exceeds_victim, etr_with_confidence_cost, etr_with_confidence_penalty, bypass_if_worse_than_all, incoming_worse_than_all, access_etr_logic, unified_etr_exceeds_victim, confidence_ranked_etr, conf
+
+Refused among the last 10 candidates, and why: schema_rejected 1 (Value error, procedure(s) train_and_free declared but never run by any event (written: {'name': 'mj_confidence_f...ue}, {'run': 'access'}]})). words_refused 4 (the new words must be a YAML list of words; train_rdp_and_confidence: already declared in this run with another definition; a word is never changed, so declare a new name)
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 9 times (words_refused): train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name; 5 times (words_refused): the new words must be a YAML list of words; 5 times (words_refused): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'incoming_rank_exceeds_all_residents')
+
+You are wasting the majority of your proposals on basic errors; you must stop trying to redefine existing words like `high_rdp_and_confident_bypass` and `train_sampler_match`, and you must use valid, lowercase names instead of constructs like `mockingjay_confidence_full_clock`. Your most effective changes have been defining new words, such as `deconfident_exceeds_victim`, that combine reuse distance and confidence, and using them to alter `victim.bypass_when`. However, this strategy remains inaccurate, causing a high number of `wrong_bypass` mistakes on traces with significant headroom like `605.mcf_s` and `619.lbm_s`. The prevalence of `kept_dead` mistakes on `627.cam4_s`, the trace with the most room for improvement, further proves your ranking of resident lines is also flawed. Both mistake types stem from poor reuse prediction. Your primary training step, `train_sampler_match`, only updates the `rdp_table` and does not train confidence, while your recent attempts to train confidence have failed. To improve prediction, you need to learn from your mistakes. The vocabulary currently lacks a way to penalize confidence when a line is evicted without being reused. Propose a new `step` word that runs upon eviction to decrement the confidence for a signature if its associated line was predicted to have a long reuse time but was evicted instead.

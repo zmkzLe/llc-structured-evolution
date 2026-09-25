@@ -1,0 +1,47 @@
+Guidance version 20, written after 202 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.99928 (-0.07% against the seed)
+- name: rdp_and_conf_check
+  place: condition
+  params:
+    conf_cmp: {symbol: Comparison}
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_cmp: {symbol: Comparison}
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: True only if both table conditions are met for the given index. It checks if the entry in rdp_table
+    at the index is present and satisfies rdp_cmp against rdp_thresh. It also checks if the entry in conf_table
+    at the same index satisfies conf_cmp against conf_thresh. Both checks must pass. An absent entry in
+    rdp_table makes the whole condition false.
+# used by 1 scored design(s); best 0.99784 (-0.22% against the seed)
+- name: predict_bypass_and_record
+  place: condition
+  params:
+    filter: table
+    index: signature
+    predictor: table
+    threshold:
+      int: [0, 127]
+  means: 'Checks the value in the predictor table at the given index. If the value is greater than the
+    threshold, this condition has a side effect: it trains the filter table at the same index by calling
+    increment. After the potential side effect, it returns true if the predictor''s value was greater
+    than the threshold, and false otherwise. An absent predictor entry is treated as 0 and returns false.
+
+    '
+# used by 1 scored design(s); best 0.99784 (-0.22% against the seed)
+- name: punish_wrong_bypass
+  place: step
+  params: {bypassed_table: table, index: signature, predictor_table: table}
+  means: Provides negative feedback for an incorrect bypass decision. It decrements the entry in the predictor_table
+    at the given index. It also consumes the trigger by decrementing the entry in the bypassed_table at
+    the same index, effectively resetting its flag.
+
+Refused among the last 10 candidates, and why: malformed 5 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 4 (Input should be a valid dictionary or instance of StructureDescription (written: '<the complete structure ...ription, in valid YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<your complete structure...ription, in valid YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 13 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 12 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+Your progress is stalled because nearly all your proposals are refused for basic formatting errors like missing sections or invalid YAML; you must stop submitting invalid designs to make progress. The only changes that have not hurt performance were coordinated adjustments to `samplers`, `tables`, and `victim.bypass_when` using the new word `rdp_and_conf_check`. In contrast, modifying `procedures.access`, `state`, or `on_fill` has consistently worsened scores and should be avoided. The largest opportunity lies in resolving contradictory bypass behavior on traces with high headroom. On `605.mcf_s` and `619.lbm_s`, the policy makes hundreds of thousands of `wrong_bypass` mistakes, yet on `627.cam4_s` the main error is `should_bypass`. This indicates a single bypass heuristic is inadequate. To address the dominant `wrong_bypass` issue, the policy must learn to be less aggressive. While the recent attempt with `predict_bypass_and_record` failed, a more targeted feedback loop is needed. The policy needs a way to remember lines it bypassed so a later miss to one can signal the bypass was a mistake and reduce future bypassing. The vocabulary cannot express this "track bypassed line and train on miss" logic, so a new procedure word is required to implement this feedback.

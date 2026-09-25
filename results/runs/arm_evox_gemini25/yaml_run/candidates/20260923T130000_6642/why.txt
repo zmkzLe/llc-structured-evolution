@@ -1,0 +1,4 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 1 validation error for StructureDescription
+  Value error, on_fill[1]: 'update_bypass_and_rdp' current_way: 'way' is not an integer in 0..12 [type=value_error, input_value={'name': 'mockingjay_v1',...'}}, {'run': 'access'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

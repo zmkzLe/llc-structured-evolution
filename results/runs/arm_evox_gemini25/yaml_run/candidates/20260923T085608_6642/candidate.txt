@@ -1,0 +1,163 @@
+===== STRUCTURE_DESCRIPTION =====
+# doc: Mockingjay with an added "Bypass Re-reference Predictor" to reduce wrong_bypass errors.
+#      A 1-bit table `bypassed_reused_predictor` flags PC signatures that were recently
+#      wrongly bypassed. A `last_bypassed_sig_per_hashed_set` table tracks the last bypassed
+#      signature per a subset of sets to train the predictor. The `bypass_when` logic
+#      dynamically adjusts the RDP threshold, making it harder to bypass lines with flagged PC signatures.
+name: mockingjay_brp
+doc: >
+  Mockingjay: each line holds an estimated time to reuse (ETR), counted down every
+  8 accesses to its set; the victim is the line with the largest |ETR|, an overdue
+  (negative) one on ties. A predictor table keyed by the hit-or-miss PC signature
+  gives the ETR on insertion, and a fill predicted to be reused after every line in
+  the set is bypassed. A sampled shadow cache on 32 sets measures reuse distances
+  with an 8-bit per-set clock and trains the predictor one step at a time; entries
+  older than INF_RD train it up as scans. Writebacks are inserted at -INF_ETR and
+  train nothing. This version adds a Bypass Re-reference Predictor (BRP) to mitigate
+  wrong_bypass errors. It uses `bypassed_reused_predictor` (1-bit per pc_sig) to flag
+  signatures prone to wrong bypasses, and `last_bypassed_sig_per_hashed_set` to detect
+  re-references of bypassed lines. The bypass decision is adapted by increasing the
+  RDP threshold if the BRP flags the current access's PC signature.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    # Modify bypass condition using adjusted_rdp_threshold
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: {adjusted_rdp_threshold: {base_threshold: 73, brp_table: bypassed_reused_predictor, brp_index: pc_sig, brp_penalty_if_set: 5}}}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bypassed_reused_predictor # NEW: 1-bit table to flag PC_sigs prone to wrong_bypass
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 1                  # 0 or 1. 1 means "recently wrongly bypassed"
+    init: ZERO
+  - name: last_bypassed_sig_per_hashed_set # NEW: Stores PC_sig of last bypassed line for a subset of sets
+    scope: global
+    kind: counter
+    entries: 256              # Hashed sets to fit budget (4096 / 16 = 256)
+    width: 11                 # Same width as pc_sig
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    # NEW: If a miss occurs and its pc_sig matches the last bypassed sig for this hashed set,
+    # it means a recently bypassed line was re-referenced. Flag this pc_sig in BRP.
+    - when: {way: NUM_WAY} # If it's a miss
+      when: {table: {table: last_bypassed_sig_per_hashed_set, index: {get_hashed_set_index: {modulo: 256}}, cmp: eq, threshold: {signature: pc_sig}}}
+      train: {table: bypassed_reused_predictor, index: pc_sig, op: increment} # Set to 1 (saturating 1-bit counter)
+    # NEW: If a line is inserted (not bypassed), reset its BRP flag.
+    - when: {way: {cmp: lt, threshold: NUM_WAY}} # If it's an insertion (not a bypass)
+      train: {table: bypassed_reused_predictor, index: pc_sig, op: decrement} # Set to 0 (saturating 1-bit counter)
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+  # NEW: On a bypass (fill with way == NUM_WAY), record the pc_sig in the hashed set's table.
+  - when: {way: NUM_WAY}
+    set: {last_bypassed_sig_per_hashed_set: {index: {get_hashed_set_index: {modulo: 256}}, value: {signature: pc_sig}}}
+===== NEW_WORDS =====
+
+- name: get_hashed_set_index
+  place: value
+  params: {modulo: {int: [2, 4096]}}
+  means: >
+    Returns the current cache set index modulo the given 'modulo' value. This is used
+    to hash the set index to a smaller range for table lookups.
+- name: adjusted_rdp_threshold
+  place: value
+  params: {base_threshold: {int: [0, 127]}, brp_table: table, brp_index: signature, brp_penalty_if_set: {int: [0, 10]}}
+  means: >
+    Calculates an adjusted RDP threshold by adding 'brp_penalty_if_set' to 'base_threshold'
+    if the entry in 'brp_table' at 'brp_index' is 1 (indicating a recent wrong_bypass for this signature);
+    otherwise, it returns 'base_threshold'. This makes it harder to bypass lines
+    that are predicted to be wrongly bypassed.

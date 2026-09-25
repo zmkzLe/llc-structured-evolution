@@ -1,0 +1,4 @@
+yaml
+    bypass_when:
+      - incoming_rdp_worse_than_victim: {rdp_table: rdp, index: pc_sig, multiplier: 8}
+      - table: {table: rdp, index: pc_sig, cmp: gt, threshold: 85}

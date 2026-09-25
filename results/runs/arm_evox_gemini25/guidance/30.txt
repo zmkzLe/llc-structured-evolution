@@ -1,0 +1,14 @@
+Guidance version 30, written after 302 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.98046 (-1.95% against the seed)
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the
+    fill was bypassed.
+
+Refused among the last 10 candidates, and why: malformed 3 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 6 (name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mockingjay_wrong_bypass_learning') tables.1 Value error, table 'wrong_bypass_table' is signed; a table holds unsigned counters (written: {'name': 'wrong_bypass_ta...dth': ; Input should be a valid dictionary or instance of StructureDescription (written: '<the complete structure description, in YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 17 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 6 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+You must stop submitting incomplete proposals and placeholder text like `<the structure description, YAML>`, as nearly all your recent attempts were refused for this reason, preventing any progress. The one scored attempt, `836be74a3731`, performed worse than the seed, indicating that its simultaneous changes to `on_access`, `on_fill`, `samplers`, and `state` were not effective. No change has yet improved the score. The largest opportunity for improvement remains on traces with significant headroom, such as `605.mcf_s`, `619.lbm_s`, and `459.GemsFDTD`, where the dominant mistake is `wrong_bypass`. This error occurs because the policy incorrectly bypasses lines that are reused sooner than resident lines. To correct this, the policy must learn from these mistakes, but it currently has no way to remember which lines it has bypassed. The `is_bypassed_fill` condition you introduced is insufficient. The vocabulary lacks a way to declare state for addresses not in the cache. You should propose a new word to define a structure that tracks recently bypassed lines, perhaps by their address hash. This new state would allow the policy to detect when a bypassed line is accessed again, enabling it to learn from its `wrong_bypass` errors and refine its insertion logic.

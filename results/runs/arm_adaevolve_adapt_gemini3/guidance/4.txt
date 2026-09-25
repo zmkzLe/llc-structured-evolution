@@ -1,0 +1,58 @@
+Guidance version 4, written after 40 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.99859 (-0.14% against the seed)
+- name: confident_bypass
+  place: condition
+  params:
+    conf: table
+    index: signature
+    table: table
+    threshold:
+      int: [0, 127]
+  means: 'True when the entry of the table at the index is present and its value is greater than the threshold,
+    and the entry of the conf table at the index is greater than 1. False otherwise.
+
+    '
+# used by 1 scored design(s); best 0.99859 (-0.14% against the seed)
+- name: confident_exceeds_victim
+  place: condition
+  params:
+    conf: table
+    div:
+      int: [1, 16]
+    index: signature
+    table: table
+  means: True when the entry of the table at the index is present, its value divided by div (integer division)
+    is greater than the absolute value of the victim key of the way the victim search chose, and the entry
+    of the conf table at the index is greater than 1. False on an absent entry. Only inside victim.bypass_when.
+# used by 1 scored design(s); best 0.96862 (-3.14% against the seed)
+- name: overdue_then_max
+  place: Extremum
+  params: {}
+  means: 'Finds the victim way by scanning ways 0 to NUM_WAY-1. Any way with a negative key is prioritized
+    over any way with a non-negative key; among ways with negative keys, the most negative (smallest signed
+    value) wins; among ways with non-negative keys, the largest signed value wins. Ties are broken by
+    the declared tie_break.
+
+    '
+# used by 1 scored design(s); best 0.96862 (-3.14% against the seed)
+- name: bypass_overdue_aware
+  place: condition
+  params:
+    div:
+      int: [1, 64]
+    index: signature
+    min_rd:
+      int: [1, 127]
+    table: table
+  means: Evaluates whether an incoming fill should bypass. Returns true only if the table entry at index
+    is present and strictly greater than min_rd, the chosen victim way has a non-negative key (meaning
+    no resident line is overdue), and the table entry divided by div is greater than or equal to the chosen
+    victim way's key. Otherwise returns false.
+Names also taken (declared by a design not scored yet, or not shown above): overdue_or_furthest
+
+Refused among the last 10 candidates, and why: malformed 5 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 4 (state.0.width Field required (written: {'name': 'example_field'}) state.0.scope Field required (written: {'name': 'example_field'}) victim Field required (written: {'name': 'your_policy_nam...ame': 'example_field'}]}); Input should be a valid dictionary or instance of StructureDescription (written: None))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 13 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 10 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+
+No changes have paid off yet; modifying victim.bypass_when, new_words, samplers, and tables lost by up to 0.00141, altering on_fill, on_hit, procedures.access, procedures.age_set, and procedures.etr_from_rdp lost by 0.01708, and changing victim.extremum and victim.tie_break lost by 0.03138. Stop omitting the STRUCTURE_DESCRIPTION and NEW_WORDS sections, and stop submitting placeholder text like '<the structure description, YAML>' or '...', as these cause malformed and schema_rejected refusals. The traces with the most headroom are 627.cam4_s-573B at 52.4%, where the largest mistake is should_bypass, and 605.mcf_s-1644B at 44.4% and 619.lbm_s-2677B at 43.9%, which both suffer heavily from wrong_bypass. Furthermore, 459.GemsFDTD-1491B and 433.milc-127B also struggle primarily with wrong_bypass, while 657.xz_s-2302B suffers from kept_dead. To address the severe wrong_bypass mistakes on 605.mcf_s-1644B, 619.lbm_s-2677B, 459.GemsFDTD-1491B, and 433.milc-127B, the policy must change how it decides to bypass fills, perhaps by remembering a confidence metric in the tables to track which signatures actually see reuse before resident lines. To fix should_bypass on 627.cam4_s-573B, the insertion decision needs to better identify lines that will never be reused. For the kept_dead mistakes on 657.xz_s-2302B, the victim selection must age lines more aggressively to evict them once their reuse window passes. A new word could express a custom condition that combines the signature's expected time to reuse with a dynamic confidence threshold, allowing the policy to better separate useful fills from dead ones in a way the base vocabulary cannot.

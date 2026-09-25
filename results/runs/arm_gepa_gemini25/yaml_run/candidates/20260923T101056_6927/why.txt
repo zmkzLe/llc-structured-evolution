@@ -1,0 +1,26 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 33 validation errors for StructureDescription
+procedures.access.1.each_way.set.etr.ConstValue.const
+  Field required [type=missing, input_value={'clamped_sum': {'a': 'et..., 'min': -11, 'max': 11}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+procedures.access.1.each_way.set.etr.ConstValue.clamped_sum
+  Extra inputs are not permitted [type=extra_forbidden, input_value={'a': 'etr', 'b': {'negat...': 2, 'cold_rate': 0}}}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+procedures.access.1.each_way.set.etr.ConstValue.min
+  Extra inputs are not permitted [type=extra_forbidden, input_value=-11, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+procedures.access.1.each_way.set.etr.ConstValue.max
+  Extra inputs are not permitted [type=extra_forbidden, input_value=11, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+procedures.access.1.each_way.set.etr.TickValue.tick
+  Field required [type=missing, input_value={'clamped_sum': {'a': 'et..., 'min': -11, 'max': 11}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+procedures.access.1.each_way.set.etr.TickValue.clamped_sum
+  Extra inputs are not permitted [type=extra_forbidden, input_value={'a': 'etr', 'b': {'negat...': 2, 'cold_rate': 0}}}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+procedures.access.1.each_way.set.etr.TickValue.min
+  Extra inputs are not permitted [type=extra_forbidden, input_value=-11, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+procedures.access.1.each_way.set.etr.TickValue.max
+  Extra inputs are not permitted [type=extra_forbidden, input_value=11, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidd

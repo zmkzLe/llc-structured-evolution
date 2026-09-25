@@ -1,0 +1,156 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_conf_adj_rank
+doc: >
+  Integrates confidence into the eviction key. A new per-line field 'rank'
+  replaces 'etr'. Its value is calculated using a new word 'confidence_adjusted_rank'
+  which penalizes the predicted reuse distance based on its confidence. This makes
+  victim selection more robust, aiming to reduce 'kept_dead' errors. The relative
+  bypass condition, by comparing against this new confidence-aware rank, should
+  also help reduce 'wrong_bypass' errors.
+
+state:
+  - name: rank
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: rank_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: rank
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - high_rdp_and_confident_bypass: {rdp_table: rdp, conf_table: bypass_confidence, index: pc_sig, rdp_thresh: 73, conf_thresh: 0}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bypass_confidence
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - train: {table: bypass_confidence, index: signature, op: decrement}
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 8}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 8}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: bypass_confidence, index: signature, op: increment}
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: bypass_confidence, index: signature, op: increment}
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: rank_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: rank, cmp: lt, threshold: 11, abs: true}}
+        set: {rank: {add: -1}}
+    - when: {counter: {counter: rank_clock, cmp: eq, threshold: 8}}
+      set: {rank_clock: {const: 0}}
+    - set: {rank_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {rank: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {rank: {const: 11}}
+      stop: true
+    - set:
+        rank:
+          confidence_adjusted_rank:
+            rdp_table: rdp
+            conf_table: bypass_confidence
+            index: pc_sig
+            div: 8
+            scale: 4
+            max_rank: 11
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {rank: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: high_rdp_and_confident_bypass
+  place: condition
+  params: {rdp_table: table, conf_table: table, index: signature, rdp_thresh: {int: [0, 127]}, conf_thresh: {int: [0, 3]}}
+  means: >
+    True when the entry for the index in rdp_table is present and its value is
+    greater than rdp_thresh, AND the entry for the same index in conf_table has a
+    value greater than conf_thresh. An absent entry in rdp_table makes the condition
+    false. An absent entry in conf_table is read as its init value.
+- name: confidence_adjusted_rank
+  place: value
+  params:
+    rdp_table: table
+    conf_table: table
+    index: signature
+    div: {int: [1, 128]}
+    scale: {int: [0, 16]}
+    max_rank: {int: [0, 15]}
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as 0. An absent 'conf_val' is read as its init value (0).
+    The maximum value for confidence is assumed to be 3.
+    Calculates a penalty = (3 - conf_val) * scale.
+    Calculates an adjusted_rdp = rdp_val - penalty. If the result is negative, it is treated as 0.
+    The final rank is min(max_rank, adjusted_rdp / div), using integer division.

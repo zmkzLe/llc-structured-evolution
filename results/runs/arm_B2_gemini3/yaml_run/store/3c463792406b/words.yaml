@@ -1,0 +1,9 @@
+- name: smart_bypass
+  place: condition
+  params: {table: table, index: signature, field: state, div: {int: [1, 16]}}
+  means: >
+    True when the entry of the table at the index is present, and either
+    the table entry is greater than or equal to 95, or the victim way chosen
+    by find_victim has its field greater than or equal to 0 and the table entry
+    divided by div is strictly greater than that victim way's field. False if
+    the table entry is absent or if neither condition holds. Nothing is written.

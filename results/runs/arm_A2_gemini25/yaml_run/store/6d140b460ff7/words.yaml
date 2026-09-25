@@ -1,0 +1,16 @@
+- name: confident_bypass_on_worse_pred
+  place: condition
+  params:
+    rdp_tbl: table
+    conf_tbl: table
+    index: signature
+    div: {int: [1, 1024]}
+    conf_thresh: {int: [0, 3]}
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(rdp_tbl[index] / div).
+    Reads the confidence value from conf_tbl[index]. If the confidence entry is absent,
+    it is considered 0. The victim way has already been selected. The condition reads the
+    absolute value of the 'etr' field of the victim way. The condition is true if the
+    predicted ETR is strictly greater than the victim's absolute ETR AND the confidence
+    value is greater than or equal to the conf_thresh. If the rdp_tbl entry is absent,
+    the predicted ETR is 0, and the condition is false.

@@ -1,0 +1,95 @@
+Guidance version 2, written after 20 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 6 scored design(s); best 1.00084 (+0.08% against the seed)
+- name: better_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    limit:
+      int: [0, 127]
+    table: table
+  means: True when the entry of the table at the index is present and either its value is strictly greater
+    than the limit, or both the field of the victim way chosen by find_victim is greater than or equal
+    to zero and the table entry divided by div (integer division) is strictly greater than that field
+    of the victim way. False otherwise. Nothing is written.
+# used by 3 scored design(s); best 0.99975 (-0.03% against the seed)
+- name: signed_gt
+  place: condition
+  params:
+    field: state
+    min_val:
+      int: [-16, 0]
+  means: True when the signed per_line field of the way being visited is strictly greater than min_val.
+    False otherwise. Nothing is written.
+# used by 1 scored design(s); best 0.99843 (-0.16% against the seed)
+- name: safe_exceeds_victim
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    table: table
+  means: True when the entry of the table at the index is present, the field of the victim way chosen
+    by find_victim is greater than or equal to zero, and the table entry divided by div (integer division)
+    is strictly greater than that field of the victim way. False otherwise. Nothing is written.
+# used by 1 scored design(s); best 0.99702 (-0.30% against the seed)
+- name: predicted_exceeds_live_victim
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    table: table
+  means: True when the entry of the table at the index is present, the victim way chosen by find_victim
+    has its field greater than or equal to zero, and the table entry divided by div is strictly greater
+    than that victim way's field. False if the table entry is absent or if the victim way's field is strictly
+    less than zero. Nothing is written.
+# used by 1 scored design(s); best 0.99657 (-0.34% against the seed)
+- name: smart_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    table: table
+  means: True when the entry of the table at the index is present, and either the table entry is greater
+    than or equal to 95, or the victim way chosen by find_victim has its field greater than or equal to
+    0 and the table entry divided by div is strictly greater than that victim way's field. False if the
+    table entry is absent or if neither condition holds. Nothing is written.
+# used by 1 scored design(s); best 0.99506 (-0.49% against the seed)
+- name: strict_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    stream_thresh:
+      int: [0, 127]
+    table: table
+  means: 'True when the entry of the table at the index is present, and either the table entry is greater
+    than or equal to stream_thresh, or both the field of the victim way chosen by find_victim is greater
+    than or equal to zero and the table entry divided by div (integer division) is strictly greater than
+    that field of the victim way. False otherwise. Nothing is written.
+
+    '
+# used by 1 scored design(s); best 0.95113 (-4.89% against the seed)
+- name: tick_mockingjay
+  place: value
+  params: {state: state}
+  means: Reads the state field. If the value is between 1 and 15 inclusive, returns the value minus 1.
+    If the value is 0, returns 16. If the value is 16 or greater, returns the value plus 1, clamped to
+    31.
+Names also taken (declared by a design not scored yet, or not shown above): resident_aware_bypass
+
+Refused among the last 10 candidates, and why: words_refused 2 (signed_gt: already declared in this run with another definition; a word is never changed, so declare a new name)
+Refusal kinds seen more than once among the last 20 candidates, a pattern to stop: 2 times (words_refused): signed_gt: already declared in this run with another definition; a word is never changed, so declare a new name
+
+The best design is now d743d8dd1193, scoring 1.00084. Changes to victim.bypass_when, procedures.access, samplers, and new_words paid off the most, with successful new words like better_bypass and safe_exceeds_victim improving performance. Conversely, modifications to on_hit, victim.extremum, victim.key, and victim.tie_break caused severe score drops, so you should stop altering these parts. You must also stop redeclaring existing words like signed_gt; because a word is never changed, you must declare a new name if you want a different definition. On the traces with the most headroom, the largest remaining mistake is overwhelmingly wrong_bypass, seen heavily on 605.mcf_s-1644B, 619.lbm_s-2677B, 459.GemsFDTD-1491B, and 433.milc-127B. Meanwhile, 627.cam4_s-573B suffers from should_bypass, and 657.xz_s-2302B struggles with kept_dead. To address the dominant wrong_bypass errors without worsening should_bypass, you should adjust how the policy decides in victim.bypass_when and what it remembers in samplers to ensure lines are only bypassed when their predicted reuse is definitively worse than the resident lines. A new word could express a dynamic bypass condition that compares the incoming line's predicted reuse distance against the maximum or average predicted reuse distance of the resident lines in the set, which the fixed vocabulary cannot easily represent.

@@ -1,0 +1,2 @@
+Candidate b71e8095f652 FAILED at words_refused; it was not scored.
+Reason: confidence_ranked_etr: already declared in this run with another definition; a word is never changed, so declare a new name

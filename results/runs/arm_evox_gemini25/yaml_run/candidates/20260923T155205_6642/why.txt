@@ -1,0 +1,5 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 1 validation error for StructureDescription
+on_fill.1.when
+  Value error, 'way': not a word of the grammar here, nor a declared condition word [type=value_error, input_value={'way': {'cmp': 'eq', 'threshold': 'NUM_WAY'}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

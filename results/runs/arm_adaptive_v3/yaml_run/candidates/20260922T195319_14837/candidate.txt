@@ -1,0 +1,141 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_unified_confident_etr
+doc: >
+  Introduces a unified Estimated Time to Reuse (ETR) metric that incorporates
+  both reuse distance prediction (RDP) and confidence. A new 'confident_etr_value'
+  word calculates ETR for both incoming and resident lines, penalizing low-confidence
+  predictions. The bypass logic is simplified to a single condition comparing this
+  confident ETR against the victim's ETR, aiming to reduce both wrong_bypass and
+  should_bypass mistakes by providing a more robust ranking.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 4                   # GRANULARITY: age faster
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - incoming_etr_exceeds_victim_confident: {rdp_table: rdp, conf_table: bypass_confidence, index: pc_sig, div: 8, conf_penalty_scale: 1, max_etr: 11}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bypass_confidence
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      # Prefetch case: decrement confidence, train RDP with scale 2
+      - when: {type_in: [PREFETCH]}
+        train: {table: bypass_confidence, index: signature, op: decrement}
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 8}
+        free: true
+        stop: true
+      # Non-prefetch case: decrement confidence, train RDP
+      - train: {table: bypass_confidence, index: signature, op: decrement}
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 8}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: bypass_confidence, index: signature, op: increment}
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: bypass_confidence, index: signature, op: increment}
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 4}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 4}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    # Set ETR using the new confident_etr_value, which incorporates RDP and confidence
+    - set: {etr: {confident_etr_value: {rdp_table: rdp, conf_table: bypass_confidence, index: pc_sig, div: 8, conf_penalty_scale: 1, max_etr: 11}}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: confident_etr_value
+  place: value
+  params: {rdp_table: table, conf_table: table, index: signature, div: {int: [1, 128]}, conf_penalty_scale: {int: [0, 3]}, max_etr: {int: [0, 15]}}
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent 'rdp_val' is treated as 0.
+    'conf_val' is read from its table, with an absent entry read as its init value (0). The maximum value for confidence is 3.
+    Calculates an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val) * conf_penalty_scale).
+    If the result of the subtraction is negative, it is treated as 0.
+    Calculates a base_etr = adjusted_rdp / div using integer division.
+    The final returned value is min(max_etr, base_etr).
+- name: incoming_etr_exceeds_victim_confident
+  place: condition
+  params: {rdp_table: table, conf_table: table, index: signature, div: {int: [1, 128]}, conf_penalty_scale: {int: [0, 3]}, max_etr: {int: [0, 15]}}
+  means: >
+    Calculates the incoming line's estimated time to reuse (ETR) using the logic:
+    adjusted_rdp = rdp_table[index] - ((3 - conf_table[index]) * conf_penalty_scale).
+    If the result of the subtraction is negative, it is treated as 0.
+    incoming_etr = adjusted_rdp / div, clamped at max_etr.
+    Returns true if incoming_etr is greater than the absolute value of the victim way's key.

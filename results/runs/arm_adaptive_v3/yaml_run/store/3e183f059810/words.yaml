@@ -1,0 +1,65 @@
+- name: confidence_scaled_etr
+  place: value
+  params:
+    conf_table: table
+    div: {int: [1, 128]}
+    index: signature
+    max_etr: {int: [0, 15]}
+    rdp_table: table
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' or 'conf_val' is treated as 0.
+    The maximum value for confidence is 3.
+    Calculates a confidence-based inflation factor: inflation = (4 - conf_val).
+    Calculates a scaled reuse distance: scaled_rdp = rdp_val * inflation.
+    The final returned value is min(max_etr, scaled_rdp / div), using integer division.
+- name: scaled_etr_gt_threshold
+  place: condition
+  params:
+    conf_table: table
+    div: {int: [1, 128]}
+    index: signature
+    max_etr: {int: [0, 15]}
+    rdp_table: table
+    threshold: {int: [0, 15]}
+  means: >
+    Calculates an estimated time to reuse (ETR) for the incoming line using the
+    'confidence_scaled_etr' logic: Reads 'rdp_val' from rdp_table[index] and 'conf_val'
+    from conf_table[index]. An absent 'rdp_val' or 'conf_val' is treated as 0.
+    The maximum value for confidence is 3. A confidence-based inflation factor is
+    calculated: inflation = (4 - conf_val). A scaled reuse distance is calculated:
+    scaled_rdp = rdp_val * inflation. The incoming ETR is min(max_etr, scaled_rdp / div).
+    Returns true if this incoming ETR is greater than the threshold.
+- name: scaled_etr_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div: {int: [1, 128]}
+    index: signature
+    max_etr: {int: [0, 15]}
+    rdp_table: table
+  means: >
+    Calculates an estimated time to reuse (ETR) for the incoming line using the
+    'confidence_scaled_etr' logic: Reads 'rdp_val' from rdp_table[index] and 'conf_val'
+    from conf_table[index]. An absent 'rdp_val' or 'conf_val' is treated as 0.
+    The maximum value for confidence is 3. A confidence-based inflation factor is
+    calculated: inflation = (4 - conf_val). A scaled reuse distance is calculated:
+    scaled_rdp = rdp_val * inflation. The incoming ETR is min(max_etr, scaled_rdp / div).
+    Returns true if this incoming ETR is greater than the absolute value of the victim way's key.
+- name: train_sampler_match
+  place: step
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 127]
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    sample: state
+    scale:
+      int: [1, 2]
+  means: >
+    Performs training for a sampler match based on the reuse distance 'sample' (age).
+    First, it trains the rdp_table using the 'toward' operation. The target value is min(sample * scale, rdp_table.max). The entry moves one step toward the target if the difference from the target is at least min_diff.
+    Second, if the 'sample' value is less than conf_thresh, it increments the conf_table entry at the same index.

@@ -1,0 +1,94 @@
+Guidance version 2, written after 21 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 1.00055 (+0.05% against the seed)
+- name: high_rdp_and_confident_bypass
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: True when the entry for the index in rdp_table is present and its value is greater than rdp_thresh,
+    AND the entry for the same index in conf_table has a value greater than conf_thresh. An absent entry
+    in rdp_table makes the condition false. An absent entry in conf_table is read as its init value.
+# used by 1 scored design(s); best 0.99953 (-0.05% against the seed)
+- name: deconfident_rdp_gt
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+    threshold:
+      int: [0, 127]
+  means: 'Reads the value ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An
+    absent entry in rdp_table is treated as a value of 0. The conf_table is assumed to be fully initialized,
+    and its maximum value is 3. Calculates an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val)
+    * scale). If the result of the subtraction is negative, it is treated as 0. Returns true if this adjusted_rdp
+    is greater than the threshold.
+
+    '
+# used by 1 scored design(s); best 0.99953 (-0.05% against the seed)
+- name: deconfident_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+    scale:
+      int: [0, 16]
+  means: 'Reads ''rdp_val'' from rdp_table[index] and ''conf_val'' from conf_table[index]. An absent rdp_val
+    is treated as 0. The conf_table is assumed to be fully initialized, and its maximum value is 3. Calculates
+    an adjusted rdp value: adjusted_rdp = rdp_val - ((3 - conf_val) * scale). If the result of the subtraction
+    is negative, it is treated as 0. Calculates a predicted_etr value as adjusted_rdp divided by div,
+    using integer division. Returns true if predicted_etr is greater than the absolute value of the victim
+    way''s key.'
+# used by 2 scored design(s); best 0.99901 (-0.10% against the seed)
+- name: high_rdp_and_confident
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: 'True when the entry for the index in rdp_table is present and its value is greater than rdp_thresh,
+    AND the entry for the same index in conf_table has reached its maximum value. An absent entry in rdp_table
+    causes the condition to be false.
+
+    '
+# used by 3 scored design(s); best 0.99901 (-0.10% against the seed)
+- name: confident_victim_exceed
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+  means: A condition for use inside bypass_when. It is true when the entry for the index in conf_table
+    has reached its maximum value, AND the value of rdp_table[index] divided by div is greater than the
+    absolute value of the key of the victim way. An absent rdp_table entry is treated as 0.
+# used by 1 scored design(s); best 0.99802 (-0.20% against the seed)
+- name: is_confident
+  place: condition
+  params:
+    index: signature
+    table: table
+    threshold:
+      int: [0, 3]
+  means: True when the entry of the table at the index is greater than or equal to the threshold. The
+    table is expected to be fully initialized (not 'unset').
+Names also taken (declared by a design not scored yet, or not shown above): moving_average_train, train_rdp_and_rpc_on_match
+
+Refused among the last 10 candidates, and why: schema_rejected 3 (name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mockingjay_confidence_full_clock'); name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mockingjay_deconfident_bypass_v2'); name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mockingjay_confident_static_bypass')). words_refused 3 (high_rdp_and_confident_bypass: already declared in this run with another definition; a word is never changed, so declare a new name)
+Refusal kinds seen more than once among the last 21 candidates, a pattern to stop: 3 times (words_refused): high_rdp_and_confident_bypass: already declared in this run with another definition; a word is never changed, so declare a new name; 3 times (schema_rejected): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mockingjay_confidence_full_clock')
+
+Your most successful changes, as in the best design `7a1aaa41dd0f`, have come from adding `new_words` to refine `victim.bypass_when` decisions. Modifying `tables` and `state` has also been a reliable source of improvement, while changes to `samplers` have produced large gains but are risky. In contrast, altering `on_hit` or `procedures.access` led to a major performance loss and should be avoided. You must also stop submitting invalid proposals: do not try to redefine an existing word like `high_rdp_and_confident_bypass`, and ensure all new names are lowercase with underscores, as you have been rejected for these reasons repeatedly. Your main challenge is the conflicting bypass behavior: on traces like `605.mcf_s-1644B` and `619.lbm_s-2677B`, the dominant mistake is `wrong_bypass`, indicating your bypass is too aggressive. Yet on `627.cam4_s-573B`, the error is `should_bypass`, meaning it is not aggressive enough. This suggests the bypass condition needs more context. To resolve this, and also to address the `kept_dead` eviction mistakes on `657.xz_s-2302B`, consider creating a new word for a procedure that tracks a longer-term reuse history for a line, rather than just its last predicted reuse, to provide a more nuanced signal for both insertion and eviction.

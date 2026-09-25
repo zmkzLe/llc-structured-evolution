@@ -1,0 +1,11 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 3 validation errors for StructureDescription
+samplers.1.on_match.0.train
+  Value error, op: decrement moves by one; min_diff would be ignored [type=value_error, input_value={'table': 'rdp', 'index':...crement', 'min_diff': 1}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+samplers.1.on_replace.0.train
+  Value error, op: increment moves by one; min_diff would be ignored [type=value_error, input_value={'table': 'rdp', 'index':...crement', 'min_diff': 1}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+on_fill.1.when.words.way_is_bypassed
+  Input should be a valid dictionary [type=dict_type, input_value=1, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.12/v/dict_type

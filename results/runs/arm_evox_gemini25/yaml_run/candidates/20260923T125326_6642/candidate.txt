@@ -1,0 +1,142 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_bypass_learning
+doc: >
+  Mockingjay enhanced with a mechanism to learn from wrong_bypass errors.
+  A new table 'bypassed_sigs' records the pc_sig of lines that were bypassed.
+  If a line with a previously bypassed pc_sig is later filled into the cache,
+  it indicates a 'wrong_bypass' for that signature. In such cases, the 'rdp' table
+  is decremented for that pc_sig, making future bypass decisions for it less likely,
+  and the entry is cleared from 'bypassed_sigs'.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: bypassed_sigs
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 1                  # Flag: 1 if this signature was recently bypassed
+    max: 1
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - when: {way: {cmp: eq, threshold: 12}} # If this fill was bypassed (NUM_WAY for 12-way cache)
+    record_bypassed_signature: {table: bypassed_sigs, index: pc_sig}
+    stop: true # Stop processing this bypassed fill further, don't run access procedure
+  - when: {table: {table: bypassed_sigs, index: pc_sig, cmp: gt, threshold: 0}} # If this signature was previously bypassed
+    train_wrong_bypass: {bypass_table: bypassed_sigs, rdp_table: rdp, index: pc_sig}
+  - run: access # Regular fill logic for non-bypassed lines
+===== NEW_WORDS =====
+
+- name: record_bypassed_signature
+  place: step
+  params: {table: table, index: signature}
+  means: >
+    Sets the entry in the specified `table` at `index` to its maximum value (1 for a 1-bit counter).
+    This action is intended to mark that a line with this signature was just bypassed,
+    indicating a potential 'wrong_bypass' scenario if it's later filled.
+- name: train_wrong_bypass
+  place: step
+  params: {bypass_table: table, rdp_table: table, index: signature}
+  means: >
+    Checks if the `bypass_table` at `index` is set (i.e., its value is greater than 0).
+    If it is, it decrements the entry in `rdp_table` at `index` by one (clamped at 0),
+    and then decrements the entry in `bypass_table` at `index` by one (clamped at 0).
+    This action trains the RDP to be less likely to bypass lines with this signature
+    in the future, and clears the 'bypassed' flag for this signature.

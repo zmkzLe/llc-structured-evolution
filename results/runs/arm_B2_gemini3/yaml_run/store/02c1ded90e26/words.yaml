@@ -1,0 +1,6 @@
+- name: signed_gt
+  place: condition
+  params: {field: state, min_val: {int: [-16, 0]}}
+  means: >
+    True when the signed per_line field of the way being visited is strictly
+    greater than min_val. False otherwise. Nothing is written.

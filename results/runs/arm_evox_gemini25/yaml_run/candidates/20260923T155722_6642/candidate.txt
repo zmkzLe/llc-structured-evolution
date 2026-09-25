@@ -1,0 +1,156 @@
+===== STRUCTURE_DESCRIPTION =====
+# Reference: DPC4-ChampSim/replacement/mockingjay, single-core build. Sizes are for
+# the DPC4 LLC, 4096 x 12: INF_RD 95, INF_ETR 11, MAX_RD 73, 11-bit signatures,
+# 32 sampled sets. The multi-core build folds the core id instead of the hit bit,
+# inserts an unknown signature at INF_ETR, and scales prefetch samples by less.
+name: mockingjay_wrong_bypass_learning
+doc: >
+  Added a new sampler and table to learn from wrong_bypass events, using a custom step word.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+    # New: Don't bypass if the PC signature has been involved in recent wrong bypasses
+    - {table: {table: wrong_bypass_table, index: pc_sig, cmp: lt, threshold: 0}} # if value is negative, it indicates wrong bypass tendency
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: wrong_bypass_table # New table to track wrong bypass tendency
+    scope: global
+    kind: signed              # Use signed to allow both positive (good bypass) and negative (wrong bypass) feedback
+    entries: 1024             # Reduced size to fit metadata budget
+    width: 3                  # Small width, e.g., -4 to 3
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+  - name: bypassed_sampler # New sampler to track bypassed lines
+    scope: global
+    sets: {mirror: 4} # Smaller sampler to save metadata
+    extra_index_bits: 0 # No extra indexing for simplicity
+    ways: 2 # Very few ways per set
+    tag_bits: 10 # Same tag bits as main sampler
+    fields:
+      - {name: pc_signature, kind: counter, width: 11, init: ZERO}
+    victim: {key: pc_signature, extremum: max, tie_break: first, prefer_free: true} # Simple victim policy
+    install: {pc_signature: {signature: pc_sig}} # Store PC signature of bypassed line
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_access: # New section: this event runs at every tag check, hit or miss
+  - detect_and_train_wrong_bypass: {bypassed_sampler: bypassed_sampler, pc_signature: pc_sig, wrong_bypass_table: wrong_bypass_table}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - when: {way: {cmp: eq, threshold: NUM_WAY}} # This is a bypass
+    sample: bypassed_sampler # Track the bypassed line
+    train: {table: wrong_bypass_table, index: pc_sig, op: increment} # Assume good bypass initially
+    run: access # Still run common access logic to update clocks and main sampler
+    stop: true # Stop processing on_fill rules for bypassed lines
+  - run: access # For non-bypassed fills (i.e., actually inserted), run common access logic
+  # ETR setting for non-bypassed fills (these are the lines actually inserted)
+  - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+    set: {etr: {const: 0}}
+    stop: true
+  - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    set: {etr: {const: 11}}
+    stop: true
+  - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+===== NEW_WORDS =====
+
+- name: detect_and_train_wrong_bypass
+  place: step
+  params: {bypassed_sampler: sampler, pc_signature: signature, wrong_bypass_table: table}
+  means: >
+    Searches the 'bypassed_sampler' for an entry matching the 'pc_signature' of the current access.
+    If a match is found: (1) the sampler entry is invalidated (removed), and (2) the 'wrong_bypass_table'
+    is decremented at the 'pc_signature' index. This step is designed to learn from instances
+    where a previously bypassed line is later accessed (indicating a wrong_bypass).

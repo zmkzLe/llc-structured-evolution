@@ -1,0 +1,25 @@
+Guidance version 16, written after 162 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.99928 (-0.07% against the seed)
+- name: rdp_and_conf_check
+  place: condition
+  params:
+    conf_cmp: {symbol: Comparison}
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_cmp: {symbol: Comparison}
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: True only if both table conditions are met for the given index. It checks if the entry in rdp_table
+    at the index is present and satisfies rdp_cmp against rdp_thresh. It also checks if the entry in conf_table
+    at the same index satisfies conf_cmp against conf_thresh. Both checks must pass. An absent entry in
+    rdp_table makes the whole condition false.
+
+Refused among the last 10 candidates, and why: malformed 5 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; candidate is missing section(s): NEW_WORDS). schema_rejected 2 (duplicate key 'table' at line 38, column 68. yaml would silently keep the last one and the structure description would not mean what it appears to say.; Input should be a valid dictionary or instance of StructureDescription (written: '<your complete structure...ription, in valid YAML>'))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 10 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 9 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 3 times (malformed): candidate is missing section(s): NEW_WORDS; 2 times (schema_rejected): duplicate key 'train' at line 83, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+
+You are making no progress because you continue to submit a high volume of invalid proposals, a problem that has persisted despite previous advice. You must stop submitting malformed structures and ensure every proposal is complete and syntactically correct. So far, no change has improved upon the seed; the one complex attempt to modify `samplers`, `tables`, and `victim.bypass_when` with the `rdp_and_conf_check` word resulted in a lower score. The most significant opportunity remains fixing the unreliable bypass decision. The policy commits many `wrong_bypass` mistakes on traces like `605.mcf_s` and `619.lbm_s`, yet makes `should_bypass` errors on `627.cam4_s`. This indicates the bypass logic cannot adapt. To address this, the policy must learn from its mistakes by tracking the outcome of its bypass decisions. Consider adding state to remember recently bypassed lines; a subsequent miss to one of these lines is a clear `wrong_bypass` signal that should be used to make the policy less likely to bypass. A new procedure word would be an effective way to define this feedback mechanism. While the `kept_dead` errors on `657.xz_s` show the eviction logic is also imperfect, fixing the adaptive bypass is the most pressing issue.

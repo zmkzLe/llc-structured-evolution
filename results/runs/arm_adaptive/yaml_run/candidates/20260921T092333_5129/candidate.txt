@@ -1,0 +1,142 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_dead_conf_bypass
+doc: >
+  Modifies Mockingjay's bypass with a 'deadness confidence' mechanism to reduce
+  should_bypass and kept_dead mistakes. A new 2-bit confidence table (dead_conf)
+  is associated with the reuse distance predictor (rdp). This table tracks how
+  confident the policy is that a line associated with a signature is 'dead' (not
+  reused). Confidence is trained by the sampler: decremented on reuse (match),
+  incremented on eviction without reuse (replace/sweep). A line is now bypassed
+  only if the rdp predicts a long reuse distance AND the confidence that the
+  line is dead is high (i.e., dead_conf is at its maximum value).
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    # Use dead_conf: if dead_conf is MAX (confident it's dead) AND rdp predicts long reuse
+    - confident_rdp_greater_than: {conf_table: dead_conf, rdp_table: rdp, index: pc_sig, threshold: 73}
+    - confident_table_exceeds_victim: {conf_table: dead_conf, rdp_table: rdp, index: pc_sig, div: 8}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+  - name: dead_conf # Renamed from rdp_conf to reflect its new meaning and training
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 4
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - train: {table: dead_conf, index: signature, op: decrement} # Decrement dead_conf on match (it was not dead)
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: dead_conf, index: signature, op: increment} # Increment dead_conf if it dies in sampler (was dead)
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: dead_conf, index: signature, op: increment} # Increment dead_conf if replaced without match (was dead)
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: confident_rdp_greater_than
+  place: condition
+  params: {conf_table: table, rdp_table: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    True if the entry for the index in conf_table is present and at its maximum value, AND
+    the entry for the same index in rdp_table is present and has a value greater than the threshold.
+    False otherwise.
+- name: confident_table_exceeds_victim
+  place: condition
+  params: {conf_table: table, rdp_table: table, index: signature, div: {int: [1, 1024]}}
+  means: >
+    True if the entry for the index in conf_table is present and at its maximum value, AND
+    the value from rdp_table[index]/div (integer division) is greater than the absolute
+    value of the victim key of the way the victim search chose. An absent entry in rdp_table
+    is treated as a value of 0. False otherwise.

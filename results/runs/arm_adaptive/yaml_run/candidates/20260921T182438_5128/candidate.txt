@@ -1,0 +1,144 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_evict_confidently
+doc: >
+  Starts from the best bypass logic (using incoming_rdp_worse_than_victim) to minimize wrong_bypasses.
+  Re-introduces a confidence table (rdp_conf) used exclusively to inform the eviction policy,
+  making it more aggressive against lines confidently predicted as dead. This directly targets
+  kept_dead errors. The on_hit promotion is simplified to setting ETR to zero, a robust behavior
+  from the original Mockingjay, to better protect recently used lines.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    # Use the proven bypass logic from the best parent.
+    - incoming_rdp_worse_than_victim: {rdp_table: rdp, index: pc_sig, multiplier: 8}
+    - table: {table: rdp, index: pc_sig, cmp: gt, threshold: 85}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+  - name: rdp_conf # Tracks confidence in an RDP "dead" (long-reuse) prediction.
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match: # A reuse was detected -> the line was not dead.
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - train: {table: rdp_conf, index: signature, op: decrement} # Decrement confidence in "dead" prediction.
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep: # A line aged out without reuse -> likely dead.
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp_conf, index: signature, op: increment} # Increment confidence in "dead" prediction.
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace: # A line was evicted without reuse -> likely dead.
+      - train: {table: rdp_conf, index: signature, op: increment} # Increment confidence in "dead" prediction.
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  set_etr_on_fill: # On fill, set a positive ETR to mark eviction priority.
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    # New rule: if confidence in "dead" prediction is high, evict quickly.
+    - when: {table: {table: rdp_conf, index: pc_sig, cmp: is_max, threshold: MAX}}
+      set: {etr: {const: 11}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_access: # Run sampling and aging on every access.
+  - sample: sampled_cache
+  - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+    each_way:
+      except_touched: true
+      when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+  - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+    set: {etr_clock: {const: 0}}
+  - set: {etr_clock: {add: 1}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - set: {etr: {const: 0}} # Simple, robust promotion.
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: set_etr_on_fill
+
+===== NEW_WORDS =====
+- name: incoming_rdp_worse_than_victim
+  place: condition
+  params:
+    index: signature
+    multiplier:
+      int: [1, 16]
+    rdp_table: table
+  means: >
+    Reads the rdp_table entry at the given index; if absent, the value is 0. This is the incoming
+    line's predicted RDP value. Reads the victim key of the chosen victim way. This is the victim_etr.
+    Calculates a threshold as the absolute value of victim_etr multiplied by the multiplier, to approximate
+    the victim's original RDP value. True if the incoming line's predicted RDP value is greater than this
+    calculated threshold. False otherwise. This word can only be used in a 'bypass_when' clause.

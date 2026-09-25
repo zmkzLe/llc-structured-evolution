@@ -1,0 +1,21 @@
+===== STRUCTURE_DESCRIPTION =====
+name: my_design
+doc: My new design that does X and Y.
+state:
+  - name: my_counter
+    scope: per_line
+    kind: counter
+    width: 2
+    init: ZERO
+# ... rest of the YAML description ...
+victim:
+  key: my_counter
+# ... etc ...
+===== NEW_WORDS =====
+
+- name: my_condition
+  place: condition
+  params: {table: table, index: signature}
+  means: >
+    This is a very precise description of what my_condition does,
+    reading the specified table and returning true or false.

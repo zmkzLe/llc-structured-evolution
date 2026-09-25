@@ -1,0 +1,62 @@
+Guidance version 3, written after 30 candidates.
+
+New words accepted this run, with the declaration to repeat verbatim to reuse one (the same name with another definition is refused; for another meaning choose a name none of these use):
+- name: confident_bypass_victim
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    div:
+      int: [1, 1024]
+    index: signature
+    rdp_table: table
+  means: Reads the victim key of the chosen victim way. Reads the rdp_table entry at the given index;
+    if absent, the value is 0. True if this rdp value, divided by div (integer division), is greater than
+    the absolute value of the victim key, AND the entry in conf_table at the given index has a value greater
+    than or equal to conf_thresh. This word can only be used in bypass_when.
+- name: confident_bypass_rdp
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: 'True when the entry in rdp_table at the given index is present and its value is greater than
+    rdp_thresh, AND the entry in conf_table at the given index has a value greater than or equal to conf_thresh.
+    False if the rdp_table entry is absent. An entry in conf_table always exists and is initialized to
+    zero.
+
+    '
+- name: confident_table_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 1024]
+    index: signature
+    rdp_table: table
+  means: True if the entry for the index in conf_table is present and at its maximum value, AND the value
+    from rdp_table[index]/div (integer division) is greater than the absolute value of the victim key
+    of the way the victim search chose. An absent entry in rdp_table is treated as a value of 0. False
+    otherwise.
+- name: confident_rdp_greater_than
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    threshold:
+      int: [0, 127]
+  means: 'True if the entry for the index in conf_table is present and at its maximum value, AND the entry
+    for the same index in rdp_table is present and has a value greater than the threshold. False otherwise.
+
+    '
+
+Refused among the last 10 candidates, and why: schema_rejected 4 (duplicate key 'train' at line 78, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.; 1 validation error for StructureDescription name String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_dea; duplicate key 'train' at line 76, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.). words_refused 1 (confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name)
+Refusal kinds seen more than once this run, a pattern to stop: 6 times (schema_rejected): duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.; 2 times (words_refused): confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+
+Your most successful changes have been to `samplers`, `victim.bypass_when`, and `procedures.access`, so continue to focus your efforts there. However, you must stop submitting invalid designs; half of your recent proposals failed, most due to the recurring `duplicate key 'train'` syntax error or attempts to redefine existing words. Your best design's largest mistake on traces with the most headroom, like `605.mcf_s-1644B` and `619.lbm_s-2677B`, is `wrong_bypass`. This shows your bypass logic in `victim.bypass_when` is too aggressive and discards lines that are reused quickly. On other traces like `627.cam4_s-573B` and `654.roms_s-1390B`, the main error is `kept_dead`, indicating your victim selection in `procedures.access` fails to evict useless lines. To address `wrong_bypass`, your policy needs to better predict not just *if* a line will be reused, but *how soon*. The current vocabulary cannot express this concept of reuse immediacy. A new word that defines a state to track the recency of reuse for a signature could create a more accurate bypass condition. Avoid modifying `state` directly, as your only attempt caused a large performance loss.

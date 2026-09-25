@@ -1,0 +1,150 @@
+# doc: >
+#   Mockingjay with a new mechanism to track and learn from wrong_bypass errors.
+#   A small global sampler, `bypassed_address_tracker`, records the PC signature
+#   and address of lines that were bypassed. On a subsequent hit to such an address,
+#   the `rdp` table is trained to decrement the reuse prediction for that PC signature,
+#   thereby reducing the likelihood of future wrong bypasses for that instruction.
+name: mockingjay_bypassed_learning
+doc: >
+  Mockingjay enhanced with a bypassed address tracker. A small global sampler,
+  `bypassed_address_tracker`, stores the PC signature and line address of lines
+  that the policy chose to bypass. If a subsequent access hits a line that was
+  previously recorded as bypassed, it indicates a wrong_bypass. In this case,
+  the `rdp` table for that PC signature is decremented, encouraging future insertions
+  for that PC. The entry is then freed from the tracker. This directly addresses
+  the `wrong_bypass` errors identified in previous feedback by allowing the policy
+  to learn from its bypass mistakes and refine its insertion criteria.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+  - name: global_bypassed_clock # Clock for the bypassed_address_tracker
+    scope: global
+    kind: counter
+    width: 16
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+  - name: bypassed_address_tracker # Tracks recently bypassed lines for learning
+    scope: global
+    sets: {mirror: 1}            # A single global sampler set for all cache sets
+    extra_index_bits: 0           # No extra index bits, directly uses line address tag
+    ways: 4                       # Very small number of ways
+    tag_bits: 46                  # Full line address tag for unique identification
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}      # PC signature of the bypassed instruction
+      - {name: bypassed_timestamp, kind: counter, width: 16, init: ZERO} # Timestamp when it was bypassed
+    age: {clock: global_bypassed_clock, stamp: bypassed_timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match: # If we hit an address that was previously bypassed (wrong_bypass)
+      - train: {table: rdp, index: signature, op: decrement} # Adjust RDP to be less likely to bypass this signature
+      - free: true                                           # Remove from tracker, it's now in cache
+    install: {signature: {signature: pc_sig}, bypassed_timestamp: {tick: global_bypassed_clock}}
+    after:
+      - set: {global_bypassed_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+  - sample: bypassed_address_tracker # Check if this hit was a wrong_bypass
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+  - when: {is_bypassed_fill: {}} # If the fill was bypassed
+    sample: bypassed_address_tracker # Record the bypassed line
+===== NEW_WORDS =====
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the fill was bypassed.

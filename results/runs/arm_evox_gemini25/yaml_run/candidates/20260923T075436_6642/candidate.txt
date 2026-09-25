@@ -1,0 +1,20 @@
+===== STRUCTURE_DESCRIPTION =====
+name: my_policy_v2
+doc: >
+  This design makes the bypass condition stricter to address wrong_bypass errors.
+# ... the rest of your YAML design
+state:
+  - name: my_field
+    scope: per_line
+    kind: counter
+    width: 2
+    init: ZERO
+# ...
+victim:
+  # ...
+  bypass_when:
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 80}} # Increased from 73
+
+===== NEW_WORDS =====
+
+# This design uses no new words, so this section is empty.

@@ -1,0 +1,151 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_confident_bypass
+doc: >
+  Mockingjay with a confidence mechanism. This version corrects a previous attempt to
+  add a 2-bit confidence counter to each predictor entry. Confidence increases on a
+  sampled hit and decreases on a sampled miss. Bypasses are only performed for
+  high-confidence predictions. It bypasses if a high-confidence prediction indicates a
+  very long reuse distance, OR if a high-confidence prediction indicates the incoming line's
+  ETR is worse than the victim's ETR. This aims to reduce wrong_bypasses.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # Bypass only on high-confidence predictions
+    - confident_pred_gt_rdp_thresh: {rdp_table: rdp, conf_table: rdp_conf, index: pc_sig, rdp_thresh: 73, conf_thresh: 3}
+    - confident_pred_gt_victim_etr: {rdp_table: rdp, conf_table: rdp_conf, index: pc_sig, div: 8, conf_thresh: 3}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: rdp_conf
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train_rdp_hit: {rdp_table: rdp, conf_table: rdp_conf, index: signature, age: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train_rdp_hit: {rdp_table: rdp, conf_table: rdp_conf, index: signature, age: age, scale: 1, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train_rdp_miss: {rdp_table: rdp, conf_table: rdp_conf, index: signature}
+        free: true
+    on_replace:
+      - train_rdp_miss: {rdp_table: rdp, conf_table: rdp_conf, index: signature}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: train_rdp_hit
+  place: step
+  params: {rdp_table: table, conf_table: table, index: signature, age: state, scale: {int: [1,10]}, min_diff: {int: [0, 127]}}
+  means: >
+    Trains the rdp_table at the given index with the 'toward' op, using the provided age, scale, and min_diff.
+    The rdp_table must be 'unset'. Then, increments the conf_table entry at the same index.
+
+- name: train_rdp_miss
+  place: step
+  params: {rdp_table: table, conf_table: table, index: signature}
+  means: >
+    Increments the rdp_table entry at the given index. The rdp_table must be 'unset', so an absent entry
+    becomes rdp_table.max. Then, decrements the conf_table entry at the same index.
+
+- name: confident_pred_gt_rdp_thresh
+  place: condition
+  params: {rdp_table: table, conf_table: table, index: signature, rdp_thresh: {int: [0, 127]}, conf_thresh: {int: [0, 3]}}
+  means: >
+    True if the rdp_table entry at index is present and its value is greater than rdp_thresh,
+    AND the conf_table entry at the same index is present and its value is greater than or equal to conf_thresh.
+    False otherwise. The rdp_table must be 'unset'.
+
+- name: confident_pred_gt_victim_etr
+  place: condition
+  params: {rdp_table: table, conf_table: table, index: signature, div: {int: [1, 1024]}, conf_thresh: {int: [0, 3]}}
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(rdp_table[index] / div).
+    The condition is true if the predicted ETR is greater than the absolute value of the victim line's 'etr' field
+    AND the conf_table entry for 'index' is present and its value is greater than or equal to 'conf_thresh'.
+    If the rdp_table entry or conf_table entry is absent, the condition is false.
+    The 'etr' field must be a per_line state field. This can only be used in 'bypass_when'.

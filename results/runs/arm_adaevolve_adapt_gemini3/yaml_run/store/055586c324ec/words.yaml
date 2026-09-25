@@ -1,0 +1,15 @@
+- name: high_confidence_bypass
+  place: condition
+  params:
+    conf: table
+    div: {int: [1, 16]}
+    index: signature
+    min_conf: {int: [0, 3]}
+    rdp: table
+    rdp_thresh: {int: [0, 127]}
+  means: >
+    True when the rdp table entry at the index is present, the conf table entry
+    at the index is greater than or equal to min_conf, and either the rdp entry
+    is greater than rdp_thresh, or the chosen victim way key is greater than or
+    equal to 0 and the rdp entry divided by div is greater than the chosen victim
+    way key. False on absent entries or otherwise. Only inside victim.bypass_when.

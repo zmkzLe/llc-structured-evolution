@@ -1,0 +1,2 @@
+Candidate 96076f410fd3 FAILED at words_refused; it was not scored.
+Reason: confident_victim_exceed, high_rdp_and_confident: already declared in this run with another definition; a word is never changed, so declare a new name

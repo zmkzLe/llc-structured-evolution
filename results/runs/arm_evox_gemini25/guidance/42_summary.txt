@@ -1,0 +1,47 @@
+Run so far: 422 candidates, 26 scored, 396 refused or failed (malformed 132, schema_rejected 247, too_much_storage 3, words_refused 14).
+Refusal kinds seen more than once this run (a pattern, not a one-off): 192 times, schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 121 times, malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 10 times, schema_rejected: state Field required (written: {'name': 'your_new_design...d on the feedback...\n'}) victim Field required (written: {'name': 'your_new_design...d on the feedback...\n'}); 10 times, malformed: candidate is missing section(s): NEW_WORDS; 5 times, schema_rejected: on_fill.2.when Value error, 'way': not a word of the grammar here, nor a declared condition word (written: {'way': {'cmp': 'eq', 'threshold': 'NUM_WAY'}})
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 192 x schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+- 121 x malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+- 10 x schema_rejected: state Field required (written: {'name': 'your_new_design...d on the feedback...\n'}) victim Field required (written: {'name': 'your_new_design...d on the feedback...\n'})
+- 10 x malformed: candidate is missing section(s): NEW_WORDS
+- 5 x schema_rejected: on_fill.2.when Value error, 'way': not a word of the grammar here, nor a declared condition word (written: {'way': {'cmp': 'eq', 'threshold': 'NUM_WAY'}})
+- 4 x schema_rejected: name Field required (written: {"<The COMPLETE YAML of y...ng with 'name": "...'>"}) state Field required (written: {"<The COMPLETE YAML of y...ng with 'name": "...'>"}) victim Field required (written: {"<The COMPLETE YAML of y...ng with 'na
+- 4 x schema_rejected: duplicate key 'when' at line 121, column 7. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+- 3 x words_refused: name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'conditional_bypass_rdp_threshold')
+- 3 x too_much_storage: this design declares 384.0 KB of replacement metadata at this LLC; the budget is 48 KB (the seed declares 47.4 KB): pay for new state by narrowing or removing state elsewhere
+- 2 x words_refused: params Value error, parameter 'mode': 'BypassFeedbackMode' is not a symbol list (written: {'table': 'table', 'index...: {'symbol': 'TrainOp'}})
+- 2 x words_refused: params Value error, parameter 'flag_field': type 'sampler_field' is not one of state, table, signature, sampler, access_types, {int: [lo, hi]} or {symbol: <list>} (written: {'sampler': 'sampler', 'f...field': 'sampler_field'})
+- 2 x schema_rejected: victim Field required (written: {'name': 'mockingjay_v2',...'width': 5, 'init': 0}]})
+The seed scored 1.00000.
+Best so far: c41837327dd0 at 1.00000, +0.00% over Mockingjay.
+
+Parts of the design changed so far (candidates that changed it, how many beat their closest earlier design, best and mean change of the score):
+- new_words: 2 tried, 0 improved, best +0.00000, mean -0.00977
+- on_access: 1 tried, 0 improved, best -0.01954, mean -0.01954
+- on_fill: 1 tried, 0 improved, best -0.01954, mean -0.01954
+- samplers: 1 tried, 0 improved, best -0.01954, mean -0.01954
+- state: 1 tried, 0 improved, best -0.01954, mean -0.01954
+
+The last 10 candidates, oldest first:
+413. refused (schema_rejected): samplers.1.sets.str-enum[SampledSets] Input should be 'category_zero' (written: {'const': 64}) samplers.1.sets.function-after[_power_of_two(), MirrorSets].mirror Field required (written: {'const': 64}
+414. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+415. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+416. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+417. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+418. refused (words_refused), changed 73 canonical lines in on_access, on_fill, samplers, state, new_words, new words is_bypassed_fill, was_tracked_as_bypassed: is_bypassed_fill: already declared in this run with another definition; a word is never changed, so declare a new name
+419. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+420. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the complete structure description, in YAML>')
+421. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+422. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 52.4%, largest mistake should_bypass (53 of 550 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.4%, largest mistake wrong_bypass (213210 of 430741 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 137.6
+- 619.lbm_s-2677B: headroom 43.9%, largest mistake wrong_bypass (109263 of 258760 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 82.6
+- 459.GemsFDTD-1491B: headroom 33.3%, largest mistake wrong_bypass (28218 of 86909 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 27.6
+- 657.xz_s-2302B: headroom 32.2%, largest mistake kept_dead (991 of 3706 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 1.3
+- 433.milc-127B: headroom 28.4%, largest mistake wrong_bypass (14351 of 63506 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 20.2
+
+New words accepted this run, best-scoring first:
+- is_bypassed_fill (condition): True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the fill was bypassed. [used 2, better 0, worse 1, same 0, failed 1]

@@ -1,0 +1,2 @@
+Candidate 3907e096d23a FAILED at words_refused; it was not scored.
+Reason: confidence_penalized_etr: already declared in this run with another definition; a word is never changed, so declare a new name

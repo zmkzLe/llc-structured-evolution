@@ -1,0 +1,22 @@
+- name: better_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    limit:
+      int: [0, 127]
+    table: table
+  means: True when the entry of the table at the index is present and either its value is strictly greater
+    than the limit, or both the field of the victim way chosen by find_victim is greater than or equal
+    to zero and the table entry divided by div (integer division) is strictly greater than that field
+    of the victim way. False otherwise. Nothing is written.
+- name: signed_greater_than
+  place: condition
+  params:
+    field: state
+    min_val:
+      int: [-16, 0]
+  means: True when the signed per_line field of the way being visited is strictly greater than min_val.
+    False otherwise. Nothing is written.

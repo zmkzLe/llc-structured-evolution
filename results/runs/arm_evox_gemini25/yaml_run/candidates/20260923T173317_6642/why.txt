@@ -1,0 +1,17 @@
+Candidate ? FAILED at words_refused; it was not scored.
+Reason: 5 validation errors for NewWord
+params.current_clock.str
+  Input should be a valid string [type=string_type, input_value={'state': 'state'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.current_clock.IntRange.int
+  Field required [type=missing, input_value={'state': 'state'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.current_clock.IntRange.state
+  Extra inputs are not permitted [type=extra_forbidden, input_value='state', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.current_clock.SymbolOf.symbol
+  Field required [type=missing, input_value={'state': 'state'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.current_clock.SymbolOf.state
+  Extra inputs are not permitted [type=extra_forbidden, input_value='state', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden

@@ -1,0 +1,31 @@
+Candidate 5c75139d75c0: score 1.10641 (geometric mean of IPC over LRU, 17 traces, 20M warm-up + 50M measured).
+Over Mockingjay, the seed and the design to beat: 0.99892 (behind; above 1 beats it).
+Closest earlier design: 833cd6ab08ac (similarity 0.773, score 1.10651, change -0.00010). Parts changed: name, procedures.access, samplers, victim.bypass_when, new_words.
+New words: my_confident_rdp_gt_threshold (condition), my_confident_rdp_exceeds_victim (condition), train_rdp_toward_conf_dec (step), train_rdp_inc_conf_inc (step).
+
+Per trace. vs LRU: IPC over LRU's. vs MJ: IPC over Mockingjay's on that trace. change: minus
+the closest design's. MPKI: LLC misses per 1000 instructions. DRAM: share of all cycles stalled
+on DRAM. headroom: share of the sampled misses Belady's MIN avoids on this candidate's own
+stream. Then the sampled fills judged against MIN: kept a dead line, evicted a line reused
+sooner, should have bypassed, bypassed wrongly (change from the closest design in brackets).
+trace                     vs LRU   vs MJ   change   MPKI   DRAM headroom       kept_dead  evicted_sooner  should_bypass   wrong_bypass
+410.bwaves-1963B          1.0329  1.0014  +0.0000  17.92  59.9%     2.9%          0 (+0)          0 (+0)         0 (+0)      1557 (+0)
+429.mcf-192B              1.2587  0.9990  +0.0000  52.04  73.4%     0.6%       371 (+12)        89 (+11)       303 (+8)      129 (-53)
+433.milc-127B             0.9973  0.9991  -0.0009  20.28  77.2%    28.6%      3373 (+72)        286 (-1)      2060 (+6)    13570 (-21)
+434.zeusmp-10B            1.0017  1.0005  +0.0000   2.27  44.4%    10.1%        226 (+0)          0 (+0)       381 (+0)        89 (+0)
+437.leslie3d-149B         1.0027  1.0007  +0.0000   6.98  76.5%    12.1%        992 (+0)          0 (+0)      1354 (+0)       185 (+0)
+450.soplex-247B           1.2030  0.9855  -0.0004  21.00  77.0%    20.2%     6494 (-235)    12929 (+114)   28564 (+170)      235 (-19)
+459.GemsFDTD-1491B        1.1055  1.0000  -0.0004  27.62  86.3%    33.3%         86 (+6)          0 (+0)         0 (-1)     28150 (-9)
+470.lbm-1274B             1.2237  1.0032  +0.0039  25.94  86.8%    20.2%    8715 (-1941)   21518 (+1456)      563 (-82)      2921 (-7)
+483.xalancbmk-127B        1.2193  0.9881  -0.0017  19.41  78.5%    13.9%     7993 (-209)    15614 (+740)  21197 (+1529)    652 (-1357)
+603.bwaves_s-1740B        1.0205  1.0163  -0.0001  19.04  54.1%     5.1%       126 (-17)          0 (+0)       21 (+18)      2064 (+2)
+605.mcf_s-1644B           1.2889  1.0009  +0.0002 136.94  67.6%    44.1%     24746 (+80)     4608 (+122)        51 (+8)  200743 (-139)
+619.lbm_s-2677B           1.0261  1.0201  -0.0011  80.08  87.3%    42.2%    73729 (+123)        38 (-35)      182 (-50)   91377 (+285)
+623.xalancbmk_s-10B       1.5984  0.9700  +0.0000   5.02  50.0%    26.8%       1357 (+0)       2741 (+0)     10461 (+0)        40 (+0)
+625.x264_s-20B            1.0009  1.0000  +0.0000   1.41  25.3%     4.7%         36 (+0)          0 (+0)       162 (+0)         0 (+0)
+627.cam4_s-573B           0.9999  1.0000  +0.0000   0.16   0.8%    52.4%         32 (+0)          0 (+0)        53 (+0)         0 (+0)
+654.roms_s-1390B          1.0039  0.9985  -0.0006  33.36  88.2%    25.7%     21600 (-83)        303 (-8)     7871 (+28)   16454 (+254)
+657.xz_s-2302B            0.9961  0.9994  +0.0000   1.34  27.7%    32.3%       1060 (+0)         25 (+0)       396 (+0)         0 (+0)
+
+All traces, sampled fills: kept_dead 150936 (-2192), evicted_sooner 58151 (+2399), should_bypass 73619 (+1634), wrong_bypass 358166 (-1064). The largest kind of mistake is wrong_bypass. Mistakes of every kind are addressed by changing what the policy remembers or how it decides, not by moving one threshold.
+Metadata: 47.88 KB SRAM, 0.0394 mm2 at 22 nm (reported, not scored).

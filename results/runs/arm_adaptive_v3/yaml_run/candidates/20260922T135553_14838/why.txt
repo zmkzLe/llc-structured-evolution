@@ -1,0 +1,2 @@
+Candidate 41a1dfbf9d06 FAILED at words_refused; it was not scored.
+Reason: high_rdp_and_confident_bypass: already declared in this run with another definition; a word is never changed, so declare a new name

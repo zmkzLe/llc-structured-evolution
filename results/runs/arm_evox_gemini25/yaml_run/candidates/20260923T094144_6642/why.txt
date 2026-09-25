@@ -1,0 +1,11 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 3 validation errors for StructureDescription
+state
+  Field required [type=missing, input_value={'name': 'my_new_design',...'etr'}, 'on_fill': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+victim.extremum
+  Field required [type=missing, input_value={'key': 'etr'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+on_fill
+  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.12/v/list_type

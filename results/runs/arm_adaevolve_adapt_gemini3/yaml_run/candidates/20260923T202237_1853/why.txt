@@ -1,0 +1,2 @@
+Candidate db31922ce589 FAILED at words_refused; it was not scored.
+Reason: confident_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name

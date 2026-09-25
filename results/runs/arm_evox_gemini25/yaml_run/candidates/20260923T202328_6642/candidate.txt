@@ -1,0 +1,9 @@
+===== STRUCTURE_DESCRIPTION =====
+# doc: <A one-line doc string starting with what changed and why.>
+# <The complete YAML description of your policy.>
+# <Remember to adjust existing state sizes to stay within the 48 KB budget.>
+# <Add comments explaining your budget calculations.>
+===== NEW_WORDS =====
+
+# <The complete YAML list of your new word declarations.>
+# <Ensure the 'means' field is detailed and unambiguous for each new word.>

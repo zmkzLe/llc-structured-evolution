@@ -1,0 +1,32 @@
+- name: rdp_confidence_etr_rank
+  place: value
+  params:
+    conf_table: table
+    div: {int: [1, 128]}
+    index: signature
+    max_etr: {int: [0, 15]} # Max positive ETR, e.g., 11
+    rdp_table: table
+    min_etr: {int: [-15, 15]} # Min ETR, e.g., 0
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index].
+    An absent 'rdp_val' is treated as 0. 'conf_val' is read from its table, with an
+    absent entry read as its init value (0). The maximum value for confidence is 3.
+    If rdp_val is greater than 73, the function returns max_etr.
+    Otherwise, it calculates a base_etr = rdp_val / div using integer division.
+    It calculates an adjustment = conf_val.
+    The final returned value is min(max_etr, max(min_etr, base_etr + adjustment)).
+- name: incoming_etr_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div: {int: [1, 128]}
+    index: signature
+    max_etr: {int: [0, 15]}
+    rdp_table: table
+    min_etr: {int: [-15, 15]}
+  means: >
+    Calculates the incoming line's estimated ETR using the logic of
+    `rdp_confidence_etr_rank` with the provided parameters (rdp_table, conf_table,
+    index, div, max_etr, min_etr).
+    Returns true if this calculated ETR is greater than the absolute value of the victim
+    way's key (etr).

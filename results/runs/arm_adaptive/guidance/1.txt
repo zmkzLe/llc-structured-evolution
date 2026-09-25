@@ -1,0 +1,61 @@
+Guidance version 1, written after 10 candidates.
+
+New words accepted this run, with the declaration to repeat verbatim to reuse one (the same name with another definition is refused; for another meaning choose a name none of these use):
+- name: confident_bypass_victim
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    div:
+      int: [1, 1024]
+    index: signature
+    rdp_table: table
+  means: Reads the victim key of the chosen victim way. Reads the rdp_table entry at the given index;
+    if absent, the value is 0. True if this rdp value, divided by div (integer division), is greater than
+    the absolute value of the victim key, AND the entry in conf_table at the given index has a value greater
+    than or equal to conf_thresh. This word can only be used in bypass_when.
+- name: confident_bypass_rdp
+  place: condition
+  params:
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: 'True when the entry in rdp_table at the given index is present and its value is greater than
+    rdp_thresh, AND the entry in conf_table at the given index has a value greater than or equal to conf_thresh.
+    False if the rdp_table entry is absent. An entry in conf_table always exists and is initialized to
+    zero.
+
+    '
+- name: confident_table_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 1024]
+    index: signature
+    rdp_table: table
+  means: True if the entry for the index in conf_table is present and at its maximum value, AND the value
+    from rdp_table[index]/div (integer division) is greater than the absolute value of the victim key
+    of the way the victim search chose. An absent entry in rdp_table is treated as a value of 0. False
+    otherwise.
+- name: confident_rdp_greater_than
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    threshold:
+      int: [0, 127]
+  means: 'True if the entry for the index in conf_table is present and at its maximum value, AND the entry
+    for the same index in rdp_table is present and has a value greater than the threshold. False otherwise.
+
+    '
+
+Refused among the last 10 candidates, and why: schema_rejected 2 (1 validation error for StructureDescription Value error, procedure(s) train_on_miss, train_on_reuse, train_on_reuse_prefetch declared but never run by any event; duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.). words_refused 5 (4 validation errors for NewWord params.sample.str Input should be a valid string [type=string_type, input_value={'symbol': ['age']}, input_type=dict] For furthe; 1 validation error for NewWord params Value error, parameter 'sample': type 'symbol' is not one of state, table, signature, sampler, access_types, {int: [lo, hi; confident_bypass_rdp, confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name)
+
+Your proposals have made no progress, and most were refused for basic errors like redefining words or using invalid syntax for new word parameters; you must stop submitting invalid designs. The scored changes you did make, to `victim.bypass_when` and by adding new `samplers` and `tables`, only hurt performance. The most significant opportunity for improvement is on traces like `605.mcf_s-1644B` and `619.lbm_s-2677B`, which have high OPT headroom but suffer from many `wrong_bypass` mistakes. This indicates your policy is incorrectly discarding useful data that is reused before resident lines. To address this, the bypass decision needs to become more sophisticated, as your previous modifications to `victim.bypass_when` were ineffective. The policy must remember more about a line's access history to better predict its immediate reuse upon insertion. For instance, the policy could learn to distinguish lines that are reused quickly from transient ones by tracking past behavior associated with their signatures. The current vocabulary may not be able to express such a condition, so a new word could be defined to capture this specific aspect of a line's reuse history to create a more accurate bypass filter.

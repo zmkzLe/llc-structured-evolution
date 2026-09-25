@@ -1,0 +1,9 @@
+- name: pred_gt_victim_etr_margin
+  place: condition
+  params: {table: table, index: signature, div: {int: [1, 1024]}, margin: {int: [0, 127]}}
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(table[index] / div). If the table
+    entry is absent, the predicted ETR is 0. Reads the absolute value of the 'etr' field of
+    the victim way, which has already been selected. The condition is true if the predicted ETR
+    is greater than the victim's absolute ETR plus the margin. The 'etr' field must be a per_line
+    state field. This can only be used in 'bypass_when'.

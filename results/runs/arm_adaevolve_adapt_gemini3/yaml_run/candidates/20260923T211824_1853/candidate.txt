@@ -1,0 +1,6 @@
+===== STRUCTURE_DESCRIPTION =====
+# Write the COMPLETE, valid YAML dictionary for the structure description here.
+# DO NOT use placeholders like <the structure description, YAML>.
+===== NEW_WORDS =====
+
+# Write the YAML list of new words here, or leave empty if none.

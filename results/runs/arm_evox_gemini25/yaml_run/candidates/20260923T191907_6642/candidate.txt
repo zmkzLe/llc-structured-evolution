@@ -1,0 +1,22 @@
+===== STRUCTURE_DESCRIPTION =====
+# In your `doc`, explain what you changed and why.
+# For this iteration, explain your new bypass tracking mechanism.
+name: my_bypass_tracker_v1
+doc: >
+  Added a bypass filter to track recently bypassed addresses. On a miss, if the
+  address is in the filter, it's a sign of a wrong bypass, so we force
+  insertion with a high-priority ETR.
+
+<your complete and valid YAML description goes here>
+
+===== NEW_WORDS =====
+
+# If you add a new word for your bypass tracker, declare it here.
+# Example declaration (this is just a guide, create your own):
+- name: query_bypass_filter
+  place: condition
+  params: {filter: table, index: signature}
+  means: >
+    Checks if the given signature is present in the bypass filter. Returns true
+    if a match is found. The filter is a simple tag store that holds the N most
+    recently bypassed address signatures.

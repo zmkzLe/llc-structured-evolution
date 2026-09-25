@@ -1,0 +1,32 @@
+Candidate ? FAILED at words_refused; it was not scored.
+Reason: 26 validation errors for NewWord
+place
+  Input should be 'condition', 'value', 'step', 'Extremum', 'TieBreak', 'SearchSideEffect', 'SignatureSource', 'FoldBit' or 'SignatureHash' [type=enum, input_value='top_level', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/enum
+params.name.str
+  Input should be a valid string [type=string_type, input_value={'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.name.IntRange.int
+  Field required [type=missing, input_value={'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.name.IntRange.type
+  Extra inputs are not permitted [type=extra_forbidden, input_value='string', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.name.SymbolOf.symbol
+  Field required [type=missing, input_value={'type': 'string'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.name.SymbolOf.type
+  Extra inputs are not permitted [type=extra_forbidden, input_value='string', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.fields.str
+  Input should be a valid string [type=string_type, input_value={'type': 'list'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.fields.IntRange.int
+  Field required [type=missing, input_value={'type': 'list'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.fields.IntRange.type
+  Extra inputs are not permitted [type=extra_forbidden, input_value='list', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.fields.SymbolOf.symbol
+  Field required [type=missing, input_value={'type': 'list'}, input_type=dict]
+    For further inform

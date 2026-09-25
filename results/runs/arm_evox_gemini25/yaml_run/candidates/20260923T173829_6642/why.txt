@@ -1,0 +1,9 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: while parsing a block mapping
+  in "<unicode string>", line 148, column 5:
+      - when: {is_bypassed_fill: {}}
+        ^
+expected <block end>, but found '-'
+  in "<unicode string>", line 150, column 5:
+        - sample: bypass_feedback_sampler
+        ^

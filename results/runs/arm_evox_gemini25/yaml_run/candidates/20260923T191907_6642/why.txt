@@ -1,0 +1,9 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: while scanning a simple key
+  in "<unicode string>", line 9, column 1:
+    <your complete and valid YAML de ... 
+    ^
+could not find expected ':'
+  in "<unicode string>", line 10, column 1:
+    
+    ^

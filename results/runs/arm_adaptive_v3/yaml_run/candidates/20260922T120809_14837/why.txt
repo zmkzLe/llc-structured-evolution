@@ -1,0 +1,2 @@
+Candidate a5abdb32b0f6 FAILED at words_refused; it was not scored.
+Reason: confidence_adjusted_etr: already declared in this run with another definition; a word is never changed, so declare a new name

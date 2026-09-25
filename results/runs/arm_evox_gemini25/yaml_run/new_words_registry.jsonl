@@ -1,0 +1,1 @@
+{"means": "True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the fill was bypassed.", "name": "is_bypassed_fill", "params": {}, "place": "condition"}

@@ -1,0 +1,9 @@
+===== STRUCTURE_DESCRIPTION =====
+# Write the actual YAML structure description here. DO NOT use placeholder text.
+# For example:
+# name: my_policy
+# doc: ...
+# state: ...
+===== NEW_WORDS =====
+
+# Write the actual YAML list of new words here, or leave empty if none.

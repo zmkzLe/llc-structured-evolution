@@ -1,0 +1,145 @@
+===== STRUCTURE_DESCRIPTION =====
+# Reference: DPC4-ChampSim/replacement/mockingjay, single-core build. Sizes are for
+# the DPC4 LLC, 4096 x 12: INF_RD 95, INF_ETR 11, MAX_RD 73, 11-bit signatures,
+# 32 sampled sets. The multi-core build folds the core id instead of the hit bit,
+# inserts an unknown signature at INF_ETR, and scales prefetch samples by less.
+name: mockingjay_adaptive_bypass
+doc: >
+  Mockingjay with an adaptive bypass mechanism. A per-set bypass_confidence counter
+  is added, trained by sampler outcomes. This counter dynamically adjusts the RDP
+  bypass threshold to mitigate wrong_bypass and should_bypass errors observed
+  across different workloads. When bypass_confidence is low (indicating past
+  wrong_bypasses), the threshold is raised, making bypass less likely. When
+  bypass_confidence is high (indicating successful bypasses), the threshold is
+  lowered, making bypass more likely.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+  - name: bypass_confidence   # New state for adaptive bypass
+    scope: per_set
+    kind: saturating
+    width: 3                  # 0-7, MID is 4
+    init: MID
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {adaptive_bypass_condition: {confidence: bypass_confidence, rdp_table: rdp, rdp_index: pc_sig, base_threshold: 73, confidence_scale: 1}} # Use adaptive threshold
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      # New rules to train bypass_confidence:
+      # If rdp was pessimistic (predicted bypass) but line was reused quickly,
+      # it implies a wrong_bypass scenario for similar lines. Decrement confidence.
+      - when:
+          table: {table: rdp, index: signature, cmp: gt, threshold: 73} # rdp predicted bypass
+          counter: {counter: age, cmp: lte, threshold: 16} # but it was reused quickly
+        set: {bypass_confidence: {add: -1}} # reduce bypass confidence for this set
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      # New rule to train bypass_confidence:
+      # If rdp was optimistic (predicted insert) but line was not reused,
+      # it implies a should_bypass scenario was missed for similar lines. Increment confidence.
+      - when:
+          table: {table: rdp, index: signature, cmp: lte, threshold: 73} # rdp predicted insert
+        set: {bypass_confidence: {add: 1}} # increase bypass confidence for this set
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+
+- name: adaptive_bypass_condition
+  place: condition
+  params: {confidence: state, rdp_table: table, rdp_index: signature, base_threshold: {int: [0, 127]}, confidence_scale: {int: [1, 8]}}
+  means: >
+    Calculates an adjusted threshold for bypassing: adjusted_threshold = base_threshold - (confidence_value - 4) * confidence_scale.
+    confidence_value is the current value of the confidence state field for the access's set.
+    Returns true if the entry of rdp_table at rdp_index is present and its value is strictly greater than adjusted_threshold.
+    An absent entry in rdp_table counts as below adjusted_threshold.

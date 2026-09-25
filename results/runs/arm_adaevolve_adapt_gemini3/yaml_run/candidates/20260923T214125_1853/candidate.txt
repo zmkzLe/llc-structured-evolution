@@ -1,0 +1,10 @@
+===== STRUCTURE_DESCRIPTION =====
+# YOUR COMPLETE, CONCRETE YAML CODE GOES HERE.
+# DO NOT USE PLACEHOLDERS LIKE "<the structure description, YAML>".
+name: your_policy_name
+doc: >
+  Your architectural rationale.
+# ... (all required fields: state, victim, signatures, tables, samplers, procedures, on_hit, on_fill)
+===== NEW_WORDS =====
+
+# YOUR YAML LIST GOES HERE, OR LEAVE EMPTY

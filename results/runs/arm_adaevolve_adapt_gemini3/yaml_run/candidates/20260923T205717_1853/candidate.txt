@@ -1,0 +1,15 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Explanation of what changed and why...
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  ... (rest of your complete, concrete structure description here)
+===== NEW_WORDS =====
+
+- name: your_new_word
+  place: condition

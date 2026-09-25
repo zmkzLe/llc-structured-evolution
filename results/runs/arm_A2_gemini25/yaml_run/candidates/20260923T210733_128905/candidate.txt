@@ -1,0 +1,143 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_confident_bypass
+doc: >
+  Introduces a confidence mechanism to regulate bypass decisions. Previous approaches
+  suffered from either being too aggressive (wrong bypasses) or too conservative
+  (keeping dead lines). This design adds a confidence table, trained by the sampler,
+  to track the reliability of reuse predictions. A line is now bypassed only if its
+  predicted value is worse than the victim's AND the prediction has high confidence,
+  aiming for more precise bypasses that reduce both error types.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - confident_bypass_on_worse_pred: {rdp_tbl: rdp, conf_tbl: conf, index: pc_sig, div: 8, conf_thresh: 3}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+  - name: conf
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+    max: 3
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+      - when: {type_in: [PREFETCH]}
+        train: {table: conf, index: signature, op: increment}
+      - when: {type_in: [PREFETCH]}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+      - train: {table: conf, index: signature, op: increment}
+      - free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: conf, index: signature, op: decrement}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+      - train: {table: conf, index: signature, op: decrement}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+- name: confident_bypass_on_worse_pred
+  place: condition
+  params:
+    rdp_tbl: table
+    conf_tbl: table
+    index: signature
+    div: {int: [1, 1024]}
+    conf_thresh: {int: [0, 3]}
+  means: >
+    Calculates a predicted ETR for the incoming line as floor(rdp_tbl[index] / div).
+    Reads the confidence value from conf_tbl[index]. If the confidence entry is absent,
+    it is considered 0. The victim way has already been selected. The condition reads the
+    absolute value of the 'etr' field of the victim way. The condition is true if the
+    predicted ETR is strictly greater than the victim's absolute ETR AND the confidence
+    value is greater than or equal to the conf_thresh. If the rdp_tbl entry is absent,
+    the predicted ETR is 0, and the condition is false.

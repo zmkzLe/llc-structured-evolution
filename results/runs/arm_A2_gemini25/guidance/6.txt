@@ -1,0 +1,78 @@
+Guidance version 6, written after 63 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 1.00536 (+0.54% against the seed)
+- name: pred_exceeds_blended_etr
+  place: condition
+  params:
+    div:
+      int: [1, 1024]
+    index: signature
+    table: table
+  means: Calculates a predicted ETR for the incoming line as floor(table[index] / div). Calculates the
+    integer average of the absolute values of the 'etr' field across all valid resident lines in the set
+    ('avg_etr'). Finds the absolute value of the 'etr' field of the victim line ('victim_etr'). The condition
+    is true if the predicted ETR is greater than the integer average of 'avg_etr' and 'victim_etr'. If
+    the table entry is absent, the predicted ETR is 0, and the condition is false. The 'etr' field must
+    be a per_line state field. This can only be used in 'bypass_when'.
+# used by 3 scored design(s); best 1.00427 (+0.43% against the seed)
+- name: pred_exceeds_avg_resident_etr
+  place: condition
+  params:
+    div:
+      int: [1, 1024]
+    index: signature
+    table: table
+  means: Calculates a predicted ETR for the incoming line as floor(table[index] / div). Calculates the
+    integer average of the absolute values of the 'etr' field across all valid resident lines in the set.
+    The condition is true if the predicted ETR is greater than this average. If the table entry for the
+    index is absent, the predicted ETR is 0, and the condition is false. The 'etr' field must be a per_line
+    state field.
+# used by 5 scored design(s); best 1.00184 (+0.18% against the seed)
+- name: rdp_and_conf_gt
+  place: condition
+  params:
+    conf_tbl: table
+    conf_thresh:
+      int: [0, 3]
+    rdp_tbl: table
+    rdp_thresh:
+      int: [0, 127]
+    sig: signature
+  means: True if the entry for the signature 'sig' in table 'rdp_tbl' is present and its value is greater
+    than 'rdp_thresh', AND the entry for 'sig' in table 'conf_tbl' is present and its value is greater
+    than or equal to 'conf_thresh'. False otherwise.
+# used by 1 scored design(s); best 1.00000 (+0.00% against the seed)
+- name: pred_exceeds_avg_and_victim_etr
+  place: condition
+  params:
+    div:
+      int: [1, 1024]
+    index: signature
+    table: table
+  means: Calculates a predicted ETR for the incoming line as floor(table[index] / div). Calculates the
+    integer average of the absolute values of the 'etr' field across all valid resident lines in the set.
+    The victim way has already been selected by the hardware. The condition reads the absolute value of
+    the 'etr' field of the victim way. The condition is true if the predicted ETR is greater than this
+    victim ETR AND the predicted ETR is also greater than the average ETR. If the table entry for the
+    index is absent, the predicted ETR is 0, and the condition is false. The 'etr' field must be a per_line
+    state field.
+# used by 1 scored design(s); best 0.99918 (-0.08% against the seed)
+- name: pred_exceeds_max_resident_etr
+  place: condition
+  params:
+    div:
+      int: [1, 1024]
+    index: signature
+    table: table
+  means: Calculates a predicted ETR for the incoming line as floor(table[index] / div). Finds the maximum
+    absolute value of the 'etr' field across all valid resident lines in the set. The condition is true
+    if the predicted ETR is greater than this maximum absolute ETR. If the table entry for the index is
+    absent, the predicted ETR is 0, and the condition is false. The 'etr' field must be a per_line state
+    field.
+Names also taken (declared by a design not scored yet, or not shown above): pred_gt_avg_and_victim_etr, pred_worse_than_avg_and_victim, pred_is_long_and_exceeds_avg, train_rdp_hit, train_rdp_miss, confident_long_reuse, pred_gt_positive_victim_etr, pred_exceeds_victim_by_margin
+
+Refused among the last 10 candidates, and why: words_refused 3 (the new words must be a YAML list of words; pred_gt_positive_victim_etr: already declared in this run with another definition; a word is never changed, so declare a new name)
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 4 times (words_refused): the new words must be a YAML list of words; 4 times (words_refused): pred_exceeds_avg_resident_etr: already declared in this run with another definition; a word is never changed, so declare a new name; 2 times (schema_rejected): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mj_confidence_avg_resident_bypass')
+
+Your most successful changes have involved `victim.bypass_when`, leading to the best design `ea244a758864` by introducing the new condition `pred_exceeds_blended_etr`. This approach, which compares an incoming line's predicted value to an average of resident lines, has paid off. However, this design still makes numerous `wrong_bypass` mistakes on high-headroom traces like `605.mcf_s` and `459.GemsFDTD-1491B`, and `kept_dead` mistakes on `619.lbm_s`. These errors indicate that comparing to an average is not precise enough. The core problem remains making the correct choice between an incoming line and the specific line chosen for eviction. While your recent attempt with `pred_exceeds_victim_by_margin` failed, the concept of a direct victim comparison is sound; the failure likely lies in its specific logic. A new condition word is needed to perform a more nuanced, direct comparison between the incoming line's predicted ETR and the victim's actual ETR, which could address both `wrong_bypass` and `kept_dead` errors. You must stop altering `procedures.access` and `signatures`, as these changes have only worsened scores. Critically, you must eliminate repeated syntax errors like redeclaring words such as `rdp_and_conf_gt` and using invalid design names, which cause too many of your proposals to be refused.

@@ -1,0 +1,2 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: unhashable type: 'dict'

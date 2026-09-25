@@ -1,0 +1,38 @@
+- name: confident_high_rdp_gt
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+    conf_thresh:
+      int: [0, 3]
+  means: >
+    True when the entry for the index in rdp_table is present and its value is
+    greater than rdp_thresh, AND the entry for the same index in conf_table has a
+    value greater than conf_thresh. An absent entry in rdp_table makes the condition
+    false. An absent entry in conf_table is read as its init value.
+- name: confident_exceeds_victim
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+    conf_thresh:
+      int: [0, 3]
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent rdp_val
+    is treated as 0. An absent conf_val is read as its init value. Calculates a predicted_etr value as
+    rdp_val divided by div, using integer division. Returns true if predicted_etr is greater than the
+    absolute value of the victim way's key AND conf_val is greater than conf_thresh.
+- name: confidence_amplified_etr
+  place: value
+  params: {rdp_table: table, conf_table: table, index: signature, div: {int: [1, 128]}, scale: {int: [0, 16]}, max_etr: {int: [0, 15]}}
+  means: >
+    Reads 'rdp_val' from rdp_table[index] and 'conf_val' from conf_table[index]. An absent rdp_val is 0.
+    An absent conf_val is its init value (0). Max confidence is 3.
+    Calculates a base_etr = rdp_val / div, using integer division. Calculates an adjustment = (3 - conf_val) * scale.
+    The final value is min(max_etr, base_etr + adjustment).

@@ -1,0 +1,69 @@
+Guidance version 34, written after 343 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.99928 (-0.07% against the seed)
+- name: rdp_and_conf_check
+  place: condition
+  params:
+    conf_cmp: {symbol: Comparison}
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_cmp: {symbol: Comparison}
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: True only if both table conditions are met for the given index. It checks if the entry in rdp_table
+    at the index is present and satisfies rdp_cmp against rdp_thresh. It also checks if the entry in conf_table
+    at the same index satisfies conf_cmp against conf_thresh. Both checks must pass. An absent entry in
+    rdp_table makes the whole condition false.
+# used by 1 scored design(s); best 0.99784 (-0.22% against the seed)
+- name: predict_bypass_and_record
+  place: condition
+  params:
+    filter: table
+    index: signature
+    predictor: table
+    threshold:
+      int: [0, 127]
+  means: 'Checks the value in the predictor table at the given index. If the value is greater than the
+    threshold, this condition has a side effect: it trains the filter table at the same index by calling
+    increment. After the potential side effect, it returns true if the predictor''s value was greater
+    than the threshold, and false otherwise. An absent predictor entry is treated as 0 and returns false.
+
+    '
+# used by 1 scored design(s); best 0.99784 (-0.22% against the seed)
+- name: punish_wrong_bypass
+  place: step
+  params: {bypassed_table: table, index: signature, predictor_table: table}
+  means: Provides negative feedback for an incorrect bypass decision. It decrements the entry in the predictor_table
+    at the given index. It also consumes the trigger by decrementing the entry in the bypassed_table at
+    the same index, effectively resetting its flag.
+# used by 1 scored design(s); best 0.99784 (-0.22% against the seed)
+- name: record_bypass_on_predict
+  place: condition
+  params:
+    index: signature
+    predictor: table
+    threshold:
+      int: [0, 127]
+    tracker: table
+  means: 'Checks if the value in the predictor table at the given index is greater than the threshold.
+    If it is, this condition has a side effect: it trains the tracker table at the same index by calling
+    increment. After the side effect, it returns true if the predictor''s value was greater than the threshold,
+    and false otherwise. An absent predictor entry is treated as 0 and returns false.
+
+    '
+# used by 1 scored design(s); best 0.99784 (-0.22% against the seed)
+- name: penalize_and_clear_tracker
+  place: step
+  params: {index: signature, predictor: table, tracker: table}
+  means: This action provides negative feedback for a wrong bypass. It decrements the entry in the predictor
+    table at the given index. It then also decrements the entry in the tracker table at the same index,
+    to consume the feedback signal.
+
+Refused among the last 10 candidates, and why: malformed 1 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 6 (Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the complete structure description, in YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, in YAML>')). words_refused 1 (penalize_and_clear_tracker, predict_bypass_and_record: already declared in this run with another definition; a word is never changed, so declare a new name)
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 11 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 9 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 2 times (malformed): candidate is missing section(s): NEW_WORDS
+
+Your proposals are overwhelmingly being refused for basic formatting errors, such as missing `STRUCTURE_DESCRIPTION` and `NEW_WORDS` sections or providing invalid YAML. You must first produce syntactically valid candidates to make any progress. The only slight improvement came from a coordinated change to `victim.bypass_when`, `tables`, and `samplers` using the new word `rdp_and_conf_check`, while isolated changes to `on_fill` and `on_hit` consistently hurt performance. On traces with the most headroom, like `605.mcf_s` and `619.lbm_s`, the dominant mistake is `wrong_bypass`, where the policy bypasses lines that are reused. Conversely, on `627.cam4_s`, the main error is `should_bypass`, indicating the bypass logic is not sufficiently adaptive. Your attempts to fix this with feedback steps like `punish_wrong_bypass` have failed. To correct `wrong_bypass` errors, the policy must confirm that a miss was caused by a specific past bypass decision, but it cannot because it does not remember what it bypassed. You must stop trying to redefine words, as this is never allowed. Instead, propose a new word that defines a small table to log signatures of bypassed lines. This would allow the policy to check this log on a miss and apply precise negative feedback to its bypass predictor only when it finds the missing line's signature, something the current vocabulary cannot express.

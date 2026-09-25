@@ -1,0 +1,9 @@
+- name: moving_average_train
+  place: step
+  params: {table: table, index: signature, sample: state, scale: {int: [1, 1024]}}
+  means: >
+    Reads the sample value, s, which is an age or state field. The table's maximum value, max_val, is read from its declaration.
+    Computes the target value as T = min(s * scale, max_val).
+    If the table entry at the index is absent, its value is set to T.
+    Otherwise, its current value V is read, and the new value is set to (V * 7 + T) / 8, using integer division.
+    The entry is marked as present after the write.

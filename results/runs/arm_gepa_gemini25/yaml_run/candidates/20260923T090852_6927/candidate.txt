@@ -1,0 +1,4 @@
+===== STRUCTURE_DESCRIPTION =====
+<The complete YAML description of your policy. This must be valid and self-contained.>
+
+===== NEW_WORDS =====

@@ -1,0 +1,90 @@
+{
+ "bypass_exceeds_if_dead": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 2,
+  "worse": 1
+ },
+ "bypass_if_dead": {
+  "better": 1,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 2,
+  "worse": 1
+ },
+ "bypass_overdue_aware": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "confident_bypass": {
+  "better": 0,
+  "failed": 2,
+  "same": 0,
+  "unknown": 0,
+  "used": 3,
+  "worse": 1
+ },
+ "confident_exceeds_victim": {
+  "better": 1,
+  "failed": 2,
+  "same": 0,
+  "unknown": 0,
+  "used": 4,
+  "worse": 1
+ },
+ "high_confidence_bypass": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "overdue_or_furthest": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "overdue_then_max": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "table_exceeds_positive_victim": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "train_add": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "train_fast_adapt": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ }
+}

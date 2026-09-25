@@ -1,0 +1,8 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 2 validation errors for StructureDescription
+samplers.0.on_match.1
+  Value error, a rule needs exactly one of `set`, `use_duel`, `sample`, `train`, `run`, `each_way` or a declared step word, or only `stop` / `free` [type=value_error, input_value={'when': {'type_in': ['PR...ee': True, 'stop': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+samplers.0.on_match.2
+  Value error, a rule needs exactly one of `set`, `use_duel`, `sample`, `train`, `run`, `each_way` or a declared step word, or only `stop` / `free` [type=value_error, input_value={'train': {'table': 'rdp'...dd': -1}}, 'free': True}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

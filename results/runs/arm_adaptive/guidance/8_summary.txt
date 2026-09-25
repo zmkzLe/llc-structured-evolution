@@ -1,0 +1,64 @@
+Run so far: 80 candidates, 42 scored, 38 refused or failed (schema_rejected 18, words_refused 20).
+Refusal kinds seen more than once this run (a pattern, not a one-off): 7 times, schema_rejected: 1 validation error for StructureDescription name String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_dea; 6 times, words_refused: confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name; 6 times, schema_rejected: duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.; 5 times, words_refused: the new words must be a YAML list of words; 2 times, words_refused: confident_bypass_rdp, confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 7 x schema_rejected: 1 validation error for StructureDescription name String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_dea
+- 6 x words_refused: confident_table_exceeds_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+- 6 x schema_rejected: duplicate key 'train' at line 79, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+- 5 x words_refused: the new words must be a YAML list of words
+- 2 x words_refused: confident_bypass_rdp, confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+- 2 x words_refused: 4 validation errors for NewWord params.cmp.str Input should be a valid string [type=string_type, input_value={'symbol': ['Comparison']}, input_type=dict] For fu
+- 1 x words_refused: 4 validation errors for NewWord params.sample.str Input should be a valid string [type=string_type, input_value={'symbol': ['age']}, input_type=dict] For furthe
+- 1 x words_refused: 1 validation error for NewWord params Value error, parameter 'sample': type 'symbol' is not one of state, table, signature, sampler, access_types, {int: [lo, hi
+- 1 x schema_rejected: 3 validation errors for StructureDescription name String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mockingjay_fa
+- 1 x schema_rejected: 2 validation errors for StructureDescription victim.bypass_when.0 Value error, 'confident_bypass_rdp': not a word of the grammar here, nor a declared condition 
+- 1 x schema_rejected: 2 validation errors for StructureDescription name String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mj_conf_penal
+- 1 x schema_rejected: 1 validation error for StructureDescription victim.bypass_when.1 Value error, 'confident_bypass_rdp': not a word of the grammar here, nor a declared condition w
+The seed scored 1.10761.
+Best so far: 2e5680038f4e at 1.11204, +0.40% over the seed.
+
+Parts of the design changed so far (candidates that changed it, how many beat their closest earlier design, best and mean change of the score):
+- samplers: 17 tried, 9 improved, best +0.00274, mean -0.00121
+- victim.bypass_when: 21 tried, 8 improved, best +0.00534, mean -0.00069
+- procedures.access: 17 tried, 8 improved, best +0.00274, mean -0.00596
+- new_words: 11 tried, 6 improved, best +0.00534, mean -0.00531
+- tables: 6 tried, 2 improved, best +0.00274, mean -0.00326
+- state: 2 tried, 0 improved, best -0.00262, mean -0.01177
+- on_fill: 2 tried, 0 improved, best -0.00262, mean -0.03207
+- on_access: 1 tried, 0 improved, best -0.06153, mean -0.06153
+- on_hit: 1 tried, 0 improved, best -0.06153, mean -0.06153
+- procedures.insert_line: 1 tried, 0 improved, best -0.06153, mean -0.06153
+- procedures.promote_line: 1 tried, 0 improved, best -0.06153, mean -0.06153
+- signatures: 1 tried, 0 improved, best -0.06153, mean -0.06153
+- victim.tie_break: 1 tried, 0 improved, best -0.00061, mean -0.00061
+
+The last 10 candidates, oldest first:
+71. scored c8957d2b2855 at 1.10942, changed 13 canonical lines in procedures.access, samplers: a repeat of an earlier design
+72. refused (schema_rejected): 1 validation error for StructureDescription name String should match pattern '^[a-z][a-z0-9_]{0,30}$' [type=string_pattern_mismatch, input_value='mj_confident_bypass_and_penalty_v3', input_type=str] F
+73. scored 644ed6056a82 at 1.08824, changed 20 canonical lines in procedures.access, samplers, tables, victim.bypass_when, new words confident_rdp_greater_than, confident_table_exceeds_victim: -0.01565 against its closest earlier design
+74. scored 2e5680038f4e at 1.11204, changed 29 canonical lines in victim.bypass_when, new_words, new words incoming_rdp_worse_than_victim: +0.00534 against its closest earlier design
+75. refused (words_refused): confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+76. refused (schema_rejected): 1 validation error for StructureDescription Value error, sampler 'sampled_cache' on_match[1]: 'rdp_conf' is not a field of the sampler or a per_set, per_cpu or global state field [type=value_error, in
+77. refused (words_refused): incoming_rdp_worse_than_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+78. refused (words_refused): confident_bypass_rdp, confident_bypass_victim: already declared in this run with another definition; a word is never changed, so declare a new name
+79. scored 2e5680038f4e at 1.11204, changed 29 canonical lines in victim.bypass_when, new_words, new words incoming_rdp_worse_than_victim: a repeat of an earlier design
+80. scored 1e19ef79d6ef at 1.10862, changed 22 canonical lines in procedures.access, samplers, victim.bypass_when, new words confident_bypass_victim: +0.00248 against its closest earlier design
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 52.4%, largest mistake should_bypass (53 of 550 sampled fills), IPC over LRU 1.000, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.3%, largest mistake wrong_bypass (211843 of 430030 sampled fills), IPC over LRU 1.290, LLC MPKI 137.4
+- 619.lbm_s-2677B: headroom 43.9%, largest mistake wrong_bypass (109372 of 258936 sampled fills), IPC over LRU 1.005, LLC MPKI 82.6
+- 459.GemsFDTD-1491B: headroom 33.2%, largest mistake wrong_bypass (28241 of 86902 sampled fills), IPC over LRU 1.105, LLC MPKI 27.6
+- 657.xz_s-2302B: headroom 31.6%, largest mistake kept_dead (791 of 3669 sampled fills), IPC over LRU 1.004, LLC MPKI 1.3
+- 433.milc-127B: headroom 28.7%, largest mistake wrong_bypass (14822 of 63800 sampled fills), IPC over LRU 0.997, LLC MPKI 20.3
+
+New words accepted this run:
+- confident_rdp_greater_than (condition): True if the entry for the index in conf_table is present and at its maximum value, AND the entry for the same index in rdp_table is present and has a value greater than the threshold. False otherwise. [used 17, better 3, worse 14, same 0, failed 0]
+- confident_table_exceeds_victim (condition): True if the entry for the index in conf_table is present and at its maximum value, AND the value from rdp_table[index]/div (integer division) is greater than the absolute value of the victim key of th [used 18, better 3, worse 15, same 0, failed 0]
+- confident_bypass_rdp (condition): True when the entry in rdp_table at the given index is present and its value is greater than rdp_thresh, AND the entry in conf_table at the given index has a value greater than or equal to conf_thresh [used 6, better 5, worse 1, same 0, failed 0]
+- confident_bypass_victim (condition): Reads the victim key of the chosen victim way. Reads the rdp_table entry at the given index; if absent, the value is 0. True if this rdp value, divided by div (integer division), is greater than the a [used 6, better 5, worse 1, same 0, failed 0]
+- my_confident_rdp_gt_threshold (condition): True when the rdp_table entry at the index is present and its value is greater than rdp_thresh, AND the conf_table entry at the same index is present and its value is its maximum value (2^width - 1).  [used 1, better 0, worse 1, same 0, failed 0]
+- my_confident_rdp_exceeds_victim (condition): True when the rdp_table entry at the index is present, its value divided by div (integer division) is greater than the absolute value of the chosen victim's key, AND the conf_table entry at the index  [used 1, better 0, worse 1, same 0, failed 0]
+- train_rdp_toward_conf_dec (step): Trains the rdp_table toward the value 'age', scaled by scale, with a minimum difference of min_diff. Simultaneously, decrements the conf_table entry at the same index. The rdp_table training is identi [used 1, better 0, worse 1, same 0, failed 0]
+- train_rdp_inc_conf_inc (step): Increments the rdp_table entry at the given index. Simultaneously, increments the conf_table entry at the same index. The training for each table is identical to the 'increment' TrainOp. [used 1, better 0, worse 1, same 0, failed 0]
+- negate_table_value (value): Reads the entry from the table at the index, an unsigned value. Divides it by div (integer division). Returns the negation of the result, as a two's complement number with the same width as the target [used 1, better 0, worse 1, same 0, failed 0]
+- incoming_rdp_worse_than_victim (condition): Reads the rdp_table entry at the given index; if absent, the value is 0. This is the incoming line's predicted RDP value. Reads the victim key of the chosen victim way. This is the victim_etr. Calcula [used 3, better 3, worse 0, same 0, failed 0]

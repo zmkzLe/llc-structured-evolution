@@ -1,0 +1,139 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_bypass_tracker
+doc: >
+  Mockingjay with a bypass history tracker. The sampled_cache is reduced from 5 to 3 ways
+  to make space for a new bypass_history sampler. This new sampler tracks bypassed lines
+  and, upon a subsequent miss to such a line, it decrements the RDP entry for the original
+  PC signature, learning from wrong bypass decisions.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 3                   # REDUCED FROM 5 WAYS TO SAVE SPACE
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+  - name: bypass_history      # NEW SAMPLER TO TRACK WRONG BYPASSES
+    scope: global
+    sets: {mirror: 32}        # Tracks bypassed lines in sampled sets
+    extra_index_bits: 4
+    ways: 2                   # Small number of ways
+    tag_bits: 10              # Tracks line address tag
+    fields:
+      - {name: original_pc_sig, kind: counter, width: 11, init: ZERO} # PC sig of the bypassed line
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:                 # This means a line that was previously bypassed was now accessed (a miss)
+      - train: {table: rdp, index: original_pc_sig, op: decrement} # Penalize RDP for wrong bypass
+      - free: true            # Remove entry, as its fate is now known
+    install:
+      - {original_pc_sig: {signature: pc_sig}}
+      - {timestamp: {read: set_clock}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache   # Original sampled_cache sampling
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_access:
+  - when: {way: NUM_WAY} # If it's a cache miss (not a hit)
+    sample: bypass_history # Check if this miss corresponds to a wrong bypass
+  - run: access
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - when: {way: NUM_WAY} # If this fill was a bypassed fill (no way was evicted)
+    sample: bypass_history # Record the bypassed line
+  - run: access # Always run access procedure, it handles its own per_line writes
+===== NEW_WORDS =====
+
+
+[]

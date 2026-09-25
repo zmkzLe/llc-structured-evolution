@@ -1,0 +1,21 @@
+===== STRUCTURE_DESCRIPTION =====
+# In this block, describe your policy in YAML format.
+# Start by copying the Mockingjay seed design and modifying it as guided.
+# The 'name' and 'doc' fields are required.
+name: my_bypass_fix_v1
+doc: >
+  A one-line description of what you changed and why.
+  For example: Added a bypass penalty table to reduce wrong_bypass errors.
+
+# ... rest of your policy description (the modified Mockingjay) ...
+
+
+===== NEW_WORDS =====
+
+# In this block, declare any new words your policy uses.
+# If your design uses only the fixed vocabulary, leave this section empty.
+# If you declare new words as guided below, put their definitions here as a YAML list.
+# For example:
+# - name: was_bypassed_recently
+#   place: condition
+#   ... etc ...

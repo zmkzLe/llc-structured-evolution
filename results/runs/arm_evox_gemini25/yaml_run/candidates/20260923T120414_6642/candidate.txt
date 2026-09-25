@@ -1,0 +1,142 @@
+===== STRUCTURE_DESCRIPTION =====
+# Reference: DPC4-ChampSim/replacement/mockingjay, single-core build. Sizes are for
+# the DPC4 LLC, 4096 x 12: INF_RD 95, INF_ETR 11, MAX_RD 73, 11-bit signatures,
+# 32 sampled sets. The multi-core build folds the core id instead of the hit bit,
+# inserts an unknown signature at INF_ETR, and scales prefetch samples by less.
+name: mockingjay_bhb
+doc: >
+  Mockingjay with Bypass History Buffer (BHB): Adds a small, set-associative BHB to
+  track PC signatures of recently bypassed lines. When a subsequent cache miss
+  matches a PC signature in the BHB, it indicates a 'wrong_bypass'. In response,
+  the RDP table entry for that PC signature is decremented, discouraging future
+  bypasses for that signature and mitigating wrong_bypass errors.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_access:
+  - when: {counter: {counter: way, cmp: eq, threshold: NUM_WAY}} # This is a miss
+    bypass_history_tracker: {pc_signature: pc_sig, rdp_table: rdp, action: check_and_train_on_miss}
+  - run: access
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {counter: {counter: way, cmp: eq, threshold: NUM_WAY}} # This fill was bypassed
+    bypass_history_tracker: {pc_signature: pc_sig, rdp_table: rdp, action: record_bypass}
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: access
+===== NEW_WORDS =====
+
+- name: bypass_history_tracker
+  place: step
+  params:
+    pc_signature: signature  # The PC signature of the current access
+    rdp_table: table         # The RDP table to train
+    action: {symbol: [record_bypass, check_and_train_on_miss]}
+  means: >
+    This word implements a 64-entry, 4-way set-associative Bypass History Buffer (BHB)
+    that stores `pc_signature` (11 bits) for recently bypassed lines. The BHB uses LRU
+    replacement within each set.
+    When `action` is `record_bypass`: The current `pc_signature` is inserted into the BHB.
+    If a set is full, the LRU entry is evicted. This action is called when a line is bypassed
+    (i.e., on_fill with way == NUM_WAY).
+    When `action` is `check_and_train_on_miss`: The BHB is queried for an entry matching
+    the current `pc_signature`. If a match is found, it indicates a 'wrong_bypass' (a
+    bypassed line, identified by PC signature, was later accessed again as a cache miss).
+    In this case, the `rdp_table` entry at `pc_signature` is decremented by 1 (clamped at 0).
+    The matching entry in the BHB is then moved to MRU position. This action is called on a cache miss.

@@ -1,0 +1,11 @@
+===== STRUCTURE_DESCRIPTION =====
+    name: my_policy_v2
+    doc: >
+      Log bypassed signatures to a new table to correct for wrong bypasses.
+    state:
+      - name: etr
+    ...
+    ===== NEW_WORDS =====
+
+    - name: log_bypass
+      place: step

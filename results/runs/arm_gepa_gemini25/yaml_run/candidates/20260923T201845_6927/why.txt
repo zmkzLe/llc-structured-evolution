@@ -1,0 +1,2 @@
+Candidate e23c264b23ce FAILED at words_refused; it was not scored.
+Reason: penalize_and_clear_tracker, predict_bypass_and_record: already declared in this run with another definition; a word is never changed, so declare a new name

@@ -1,0 +1,158 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_bypass_tracker
+doc: >
+  Mockingjay with a bypass tracker: Adds a small shadow cache, bypass_tracker,
+  to remember recently bypassed lines. If a line is later filled that was
+  previously bypassed, the RDP table is decremented for its PC signature to
+  reduce future bypass predictions (addressing wrong_bypass errors).
+  The bypass tracker reuses the existing set_clock for aging.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+  # New bypass tracker sampler to detect wrong_bypass errors
+  - name: bypass_tracker
+    scope: global
+    sets: {mirror: 32}        # Track bypasses for the same sampled sets
+    extra_index_bits: 0       # Minimal indexing to save state
+    ways: 1                   # Only one entry per set in the tracker
+    tag_bits: 10              # Match on the same tag bits as sampled_cache
+    fields:
+      - {name: bypassed_sig, kind: counter, width: 11, init: ZERO}        # PC signature of the bypassed instruction
+      - {name: bypassed_timestamp, kind: counter, width: 8, init: ZERO}   # Timestamp when it was bypassed
+    age: {clock: set_clock, stamp: bypassed_timestamp} # Reuse existing set_clock for aging
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match: # This means a line that was previously bypassed is now being filled (wrong_bypass)
+      - train: {table: rdp, index: bypassed_sig, op: decrement} # Make RDP predict less bypass for this signature
+      - free: true # Remove from tracker, as it's no longer bypassed
+    on_replace: # A bypassed line was evicted from the tracker without being re-filled.
+      stop: true # No training for this case, as the focus is on wrong_bypass
+    install: # When a line is bypassed, record its info
+      bypassed_sig: {signature: pc_sig}
+      bypassed_timestamp: {read: set_clock} # Timestamp when this line was bypassed
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache   # This call (and its 'after' rule) increments set_clock for sampled sets
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: access
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+
+  # Step 1: Check if the line being filled (either regularly or bypassed) was previously a wrong_bypass.
+  # This `sample` will trigger `bypass_tracker.on_match` if the current line's tag
+  # is found in the `bypass_tracker`. If a match occurs, RDP is decremented and the entry is freed.
+  - sample: bypass_tracker
+
+  # Step 2: If the fill is a bypass (way == NUM_WAY), record its information in the `bypass_tracker` and stop.
+  # The `install` rule in `bypass_tracker` uses the current value of `set_clock`.
+  # Since `run: access` (which increments `set_clock` via `sampled_cache.after`) is skipped for bypassed fills,
+  # the `bypassed_timestamp` will reflect the `set_clock` value from the last event that updated it on this set.
+  # This is a compromise to stay within the metadata budget.
+  - when: {way_is_bypassed: true}
+    stop: true # No ETR changes for bypassed lines. The bypass_tracker has already been sampled.
+
+  # Step 3: Handle regular fills (way != NUM_WAY).
+  # This runs the original access logic, which includes sampling `sampled_cache`
+  # and incrementing `set_clock` for sampled sets via `sampled_cache`'s `after` rule.
+  - run: access
+
+===== NEW_WORDS =====
+
+  - name: way_is_bypassed
+    place: condition
+    params: {}
+    means: >
+      True when the current access's way is equal to NUM_WAY, indicating that the cache fill
+      was bypassed by the replacement policy and no line was installed in the main cache.

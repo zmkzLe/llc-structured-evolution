@@ -1,0 +1,165 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_bypass_feedback
+doc: >
+  Mockingjay with bypass feedback: introduces a new sampler, bypass_feedback_sampler,
+  to learn from bypass decisions. When a line is bypassed, its PC signature is
+  recorded in this sampler. If that line is later accessed (hit) or filled
+  (not bypassed), it indicates a wrong bypass decision, and the RDP table is
+  trained to reduce the reuse distance prediction for that PC signature. If
+  a recorded bypassed line ages out of the bypass_feedback_sampler without
+  being accessed or filled, it indicates a good bypass decision, and the RDP
+  table is trained to increase the reuse distance prediction. Bypassed fills
+  now stop processing earlier, preventing them from updating the main cache's
+  state or its sampler.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5                  # holds -11..11
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8                   # GRANULARITY: the first access to a set ages it
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8                  # TIMESTAMP_BITS; wraps by design
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:                # the incoming line is predicted to be reused after every resident
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95                   # INF_RD
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4       # 16 sampler sets per sampled set
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true            # too old to be a reuse distance; the sweep detrains it
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+  # New sampler to track bypassed lines and provide feedback to RDP
+  - name: bypass_feedback_sampler
+    scope: global
+    sets: {mirror: 32} # Mirror the main sampled sets
+    ways: 4
+    tag_bits: 11      # To store pc_sig
+    fields:
+      - {name: stored_pc_sig, kind: counter, width: 11, init: ZERO}
+      - {name: bypass_timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: bypass_timestamp} # Reuse existing per_set clock for age
+    victim: {key: age, extremum: max, tie_break: first}
+    install: {stored_pc_sig: {signature: pc_sig}, bypass_timestamp: {read: set_clock}}
+    on_match:
+      # If a line that was previously bypassed (and its pc_sig was in this sampler)
+      # has now been accessed (hit or filled). This was a WRONG bypass decision.
+      # Train RDP to predict a shorter reuse distance (closer to 0).
+      - train: {table: rdp, index: stored_pc_sig, op: toward, sample: 0, min_diff: 1}
+      - free: true # Remove it from the tracker, as its bypass decision has been evaluated.
+    on_replace:
+      # If an entry is replaced here, it means a line was bypassed, and then
+      # neither hit nor filled (not bypassed) before this entry aged out.
+      # This indicates a GOOD bypass decision.
+      # Train RDP to predict a longer reuse distance (closer to 95).
+      - train: {table: rdp, index: stored_pc_sig, op: toward, sample: 95, min_diff: 1}
+
+procedures:
+  access:                     # mockingjay.cc access(): the update body shared by hits and fills
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_access:
+  # Check bypass_feedback_sampler first to capture wrong_bypass on cache hits/accesses
+  - sample: bypass_feedback_sampler # This will trigger on_match if a hit/access matches a tracked pc_sig
+  # Then run Mockingjay's original access procedure
+  - run: access
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  # on_access already calls 'run: access' which samples main_cache and bypass_feedback_sampler.
+  # No further action needed here for bypass feedback.
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  # Handle bypass feedback for *this* fill event
+  - when: {is_bypassed_fill: {}}
+    # This fill was bypassed. Track its PC_sig for future feedback.
+    - sample: bypass_feedback_sampler
+    - stop: true # Stop processing for bypassed fills, no ETR update or main sampled_cache sampling needed.
+  # If not bypassed, this is a normal fill.
+  # Check if this non-bypassed fill is for a line whose PC was previously marked for bypass.
+  # The on_match of bypass_feedback_sampler will handle the training if found.
+  - sample: bypass_feedback_sampler # This will trigger on_match if the pc_sig is found
+  - run: access # Original Mockingjay logic for non-bypassed fills
+
+===== NEW_WORDS =====
+
+- name: is_bypassed_fill
+  place: condition
+  params: {}
+  means: True when the current on_fill event has the way parameter equal to NUM_WAY, indicating that the
+    fill was bypassed.

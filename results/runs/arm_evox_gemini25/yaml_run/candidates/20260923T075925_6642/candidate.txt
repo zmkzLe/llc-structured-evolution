@@ -1,0 +1,9 @@
+===== STRUCTURE_DESCRIPTION =====
+# In this section, write the complete policy description in YAML format.
+# Start the 'doc' field with a one-line summary of your change and your reasoning.
+# Example: "doc: >\n  Addresses wrong_bypass by adding a bypass confidence counter."
+<your YAML description here>
+===== NEW_WORDS =====
+
+# If you introduce new logic, declare it here in YAML list format.
+# If you do not, leave this section empty, but the marker line MUST be present.

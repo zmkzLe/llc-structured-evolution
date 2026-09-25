@@ -1,0 +1,2 @@
+Candidate c34e32587b17 FAILED at words_refused; it was not scored.
+Reason: train_rdp_miss: already declared in this run with another definition; a word is never changed, so declare a new name

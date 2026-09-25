@@ -1,0 +1,19 @@
+- name: bypass_if_dead
+  place: condition
+  params:
+    rdp: table
+    conf: table
+    index: signature
+    threshold: {int: [0, 127]}
+  means: >
+    True when the entry of the rdp table at the index is present and its value is strictly greater than the threshold, and the entry of the conf table at the index is equal to 0. False otherwise.
+
+- name: bypass_exceeds_if_dead
+  place: condition
+  params:
+    rdp: table
+    conf: table
+    index: signature
+    div: {int: [1, 16]}
+  means: >
+    True when the entry of the rdp table at the index is present, its value divided by div (integer division) is strictly greater than the absolute value of the chosen victim way's key, and the entry of the conf table at the index is equal to 0. False on an absent entry. Only inside victim.bypass_when.

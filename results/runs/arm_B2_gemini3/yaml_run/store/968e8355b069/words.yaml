@@ -1,0 +1,12 @@
+- name: resident_average_bypass
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    field: state
+    index: signature
+    margin:
+      int: [0, 127]
+    table: table
+  means: >
+    True when the entry of the table at the index is present, and the table entry divided by div (integer division) is strictly greater than the sum of margin and the average of the absolute values of the field across all ways in the access set (using integer division for the average). False otherwise. Nothing is written.

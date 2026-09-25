@@ -1,0 +1,10 @@
+===== STRUCTURE_DESCRIPTION =====
+name: <policy_name>
+doc: >
+  <One line describing what changed and why, followed by policy explanation>
+state:
+  ... (complete state field definitions)
+victim:
+  ... (complete victim selection and bypass rules)
+... (all other sections: signatures, tables, samplers, procedures, on_hit, on_fill)
+===== NEW_WORDS =====

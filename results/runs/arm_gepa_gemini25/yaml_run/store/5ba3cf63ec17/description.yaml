@@ -1,0 +1,14 @@
+name: my_design_v1
+doc: >
+  My hypothesis and a description of the change.
+state:
+  - name: my_counter
+    scope: per_line
+    kind: counter
+    width: 2
+    init: ZERO
+# ... rest of the valid YAML description
+victim:
+  key: my_counter
+  extremum: max
+# ... etc.

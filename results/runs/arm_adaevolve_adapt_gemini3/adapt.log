@@ -1,0 +1,14 @@
+guidance writer: /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/yaml_run -> /home/khoile0315/oe_out/arm_adaevolve_adapt_gemini3/guidance.txt, every 10 candidates, model gemini-3.1-pro-preview, search pid 1842, stub None
+[2026-09-23T16:36:12Z] version 1 after 10 candidates: 2313 chars, 4335 tokens in 23.4 s
+[2026-09-23T16:53:36Z] version 2 after 20 candidates: 2394 chars, 4648 tokens in 22.4 s
+[2026-09-23T17:57:04Z] version 3 after 30 candidates: 3840 chars, 5767 tokens in 24.6 s
+[2026-09-23T18:25:29Z] version 4 after 40 candidates: 4846 chars, 5665 tokens in 23.1 s
+[2026-09-23T18:59:58Z] version 5 after 50 candidates: 5596 chars, 6610 tokens in 27.4 s
+[2026-09-23T19:58:24Z] version 6 after 60 candidates: 5813 chars, 6036 tokens in 22.1 s
+[2026-09-23T20:12:50Z] version 7 after 71 candidates: 6142 chars, 6369 tokens in 24.7 s
+[2026-09-23T20:26:31Z] version 8 after 81 candidates: 6589 chars, 8814 tokens in 40.7 s
+[2026-09-23T20:46:00Z] version 9 after 92 candidates: 6548 chars, 7172 tokens in 27.3 s
+[2026-09-23T21:03:25Z] version 10 after 103 candidates: 6790 chars, 6864 tokens in 23.8 s
+[2026-09-23T21:24:54Z] version 11 after 113 candidates: 6619 chars, 7284 tokens in 27.9 s
+[2026-09-23T21:45:19Z] version 12 after 123 candidates: 6596 chars, 6758 tokens in 23.6 s
+[2026-09-23T22:38:43Z] version 13 after 133 candidates: 6475 chars, 6524 tokens in 20.5 s

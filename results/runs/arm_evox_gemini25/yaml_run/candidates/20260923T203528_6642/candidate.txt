@@ -1,0 +1,18 @@
+===== STRUCTURE_DESCRIPTION =====
+name: my_new_policy
+doc: >
+  A brief description of my policy.
+state:
+  - name: rrpv
+    scope: per_line
+    kind: counter
+    width: 2
+    init: MAX
+... (the rest of the complete YAML description)
+===== NEW_WORDS =====
+
+- name: my_new_condition
+  place: condition
+  params: {field: state}
+  means: >
+    A clear, 8+ word description of what this new word does.

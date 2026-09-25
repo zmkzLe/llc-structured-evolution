@@ -1,0 +1,2 @@
+Candidate 9800554e39dd FAILED at words_refused; it was not scored.
+Reason: train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name

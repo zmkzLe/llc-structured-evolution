@@ -1,0 +1,2 @@
+Candidate b7cfb624f39b FAILED at words_refused; it was not scored.
+Reason: incoming_etr_exceeds_victim, train_sampler_match: already declared in this run with another definition; a word is never changed, so declare a new name

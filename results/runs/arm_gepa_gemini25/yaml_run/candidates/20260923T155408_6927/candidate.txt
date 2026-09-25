@@ -1,0 +1,13 @@
+===== STRUCTURE_DESCRIPTION =====
+name: my_new_policy
+doc: A short explanation of my policy.
+state:
+  # ... your state fields ...
+# ... rest of your description ...
+===== NEW_WORDS =====
+
+- name: my_new_word
+  place: step
+  params: {table: table}
+  means: >
+    This word does something new. It reads from the provided table.

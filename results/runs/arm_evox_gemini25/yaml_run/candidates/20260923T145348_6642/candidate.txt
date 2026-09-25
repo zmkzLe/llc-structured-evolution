@@ -1,0 +1,13 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_design_name
+doc: >
+  A one-line summary of your change and why you made it.
+  Example: "Adds a bypass tracker to penalize signatures that cause wrong bypasses."
+
+# Your complete YAML policy description goes here.
+# It must be a valid, self-contained design.
+
+===== NEW_WORDS =====
+
+# Your new word declarations go here.
+# If you have no new words, use an empty list: []

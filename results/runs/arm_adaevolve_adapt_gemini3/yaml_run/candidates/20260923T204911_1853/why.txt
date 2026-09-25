@@ -1,0 +1,8 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 2 validation errors for StructureDescription
+duel.follower_uses_b_when.threshold.str-enum[Threshold]
+  Input should be 'ZERO', 'MAX' or 'MAX_OVER_2' [type=enum, input_value='MID', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/enum
+duel.follower_uses_b_when.threshold.int
+  Input should be a valid integer, unable to parse string as an integer [type=int_parsing, input_value='MID', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/int_parsing

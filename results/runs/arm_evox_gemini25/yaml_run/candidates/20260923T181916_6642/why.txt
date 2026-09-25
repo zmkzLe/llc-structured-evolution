@@ -1,0 +1,5 @@
+Candidate ? FAILED at words_refused; it was not scored.
+Reason: 1 validation error for NewWord
+params
+  Value error, parameter 'event_type': 'BHTEventType' is not a symbol list [type=value_error, input_value={'bht_signature': 'signat...ymbol': 'BHTEventType'}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

@@ -1,0 +1,7 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Summary of what changed and the architectural rationale, including how budget was reallocated.
+state:
+... (your complete, concrete YAML structure description here) ...
+===== NEW_WORDS =====

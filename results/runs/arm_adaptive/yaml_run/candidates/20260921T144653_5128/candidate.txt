@@ -1,0 +1,163 @@
+yaml
+===== STRUCTURE_DESCRIPTION =====
+name: mj_proper_promotion
+doc: >
+  Implements proper Mockingjay promotion on cache hits, setting ETR to a negative
+  value based on RDP, instead of just zero. This required a new 'negate_table_value'
+  word. This change should reduce kept_dead and evicted_sooner mistakes by better
+  protecting useful lines. The signature no longer folds the 'hit' bit to allow
+  using the same RDP entry for promotion and insertion.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when: # Keep the balanced bypass from the best parent
+    - confident_rdp_greater_than: {conf_table: rdp_conf, rdp_table: rdp, index: pc_sig, threshold: 73}
+    - confident_table_exceeds_victim: {conf_table: rdp_conf, rdp_table: rdp, index: pc_sig, div: 8}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [prefetch] # Remove 'hit' to use the same signature for hit and fill
+    hash: crc3
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+  - name: rdp_conf
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 2
+    init: ZERO
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match: # A reuse was detected -> the line was not dead.
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - train: {table: rdp_conf, index: signature, op: decrement}
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep: # A line aged out without reuse -> likely dead.
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp_conf, index: signature, op: increment}
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace: # A line was evicted without reuse -> likely dead.
+      - train: {table: rdp_conf, index: signature, op: increment}
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  promote_line: # On hit, set a negative ETR to protect the line.
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: -1}} # Not in RDP, give a weak promotion.
+      stop: true
+    - when: {table: {table: rdp_conf, index: pc_sig, cmp: is_max, threshold: MAX}}
+      set: {etr: {const: -1}} # Confidently a scan, but it was hit. Contradiction -> weak promotion.
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: -1}} # Predicted long reuse, but it was hit. Contradiction -> weak promotion.
+      stop: true
+    - set: {etr: {negate_table_value: {table: rdp, index: pc_sig, div: 8}}}
+  insert_line: # On fill, set a positive ETR to mark eviction priority.
+    - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+      set: {etr: {const: 0}}
+      stop: true
+    - when: {table: {table: rdp_conf, index: pc_sig, cmp: is_max, threshold: MAX}}
+      set: {etr: {const: 11}}
+      stop: true
+    - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+      set: {etr: {const: 11}}
+      stop: true
+    - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_access: # Run sampling and aging on every access.
+  - sample: sampled_cache
+  - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+    each_way:
+      except_touched: true
+      when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+      set: {etr: {add: -1}}
+  - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+    set: {etr_clock: {const: 0}}
+  - set: {etr_clock: {add: 1}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: promote_line
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: insert_line
+
+===== NEW_WORDS =====
+- name: negate_table_value
+  place: value
+  params: {table: table, index: signature, div: {int: [1, 1024]}}
+  means: >
+    Reads the entry from the table at the index, an unsigned value. Divides it by div
+    (integer division). Returns the negation of the result, as a two's complement
+    number with the same width as the target field. An absent entry is treated as 0,
+    so the result is 0.
+- name: confident_rdp_greater_than
+  place: condition
+  params: {conf_table: table, rdp_table: table, index: signature, threshold: {int: [0, 127]}}
+  means: >
+    True if the entry for the index in conf_table is present and at its maximum value, AND
+    the entry for the same index in rdp_table is present and has a value greater than the threshold.
+    False otherwise.
+- name: confident_table_exceeds_victim
+  place: condition
+  params: {conf_table: table, rdp_table: table, index: signature, div: {int: [1, 1024]}}
+  means: >
+    True if the entry for the index in conf_table is present and at its maximum value, AND
+    the value from rdp_table[index]/div (integer division) is greater than the absolute
+    value of the victim key of the way the victim search chose. An absent entry in rdp_table
+    is treated as a value of 0. False otherwise.

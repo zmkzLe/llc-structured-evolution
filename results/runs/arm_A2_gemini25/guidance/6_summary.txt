@@ -1,0 +1,54 @@
+Run so far: 63 candidates, 37 scored, 26 refused or failed (schema_rejected 9, words_refused 17).
+Refusal kinds seen more than once this run (a pattern, not a one-off): 8 times, words_refused: rdp_and_conf_gt: already declared in this run with another definition; a word is never changed, so declare a new name; 6 times, words_refused: the new words must be a YAML list of words; 6 times, schema_rejected: name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mj_revert_size_keep_rel_bypass_v2'); 3 times, schema_rejected: duplicate key 'train' at line 86, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.; 2 times, schema_rejected: victim.bypass_when.1 Value error, 'when': not a word of the grammar here, nor a declared condition word (written: {'when': {'table_exceeds_...', 'threshold': 'MAX'}}})
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 8 x words_refused: rdp_and_conf_gt: already declared in this run with another definition; a word is never changed, so declare a new name
+- 6 x words_refused: the new words must be a YAML list of words
+- 6 x schema_rejected: name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: 'mj_revert_size_keep_rel_bypass_v2')
+- 3 x schema_rejected: duplicate key 'train' at line 86, column 9. yaml would silently keep the last one and the structure description would not mean what it appears to say.
+- 2 x schema_rejected: victim.bypass_when.1 Value error, 'when': not a word of the grammar here, nor a declared condition word (written: {'when': {'table_exceeds_...', 'threshold': 'MAX'}}})
+- 1 x schema_rejected: procedures.access.6.set.etr.ConstValue.const Field required (written: {'table': {'table': 'rdp'...x': 'pc_sig', 'div': 8}}) procedures.access.6.set.etr.ConstValue.table Extra inputs are not permitted (written: {'table': 'rdp', 'index': 'pc_
+The seed scored 1.00000.
+Best so far: ea244a758864 at 1.00536, +0.54% over Mockingjay.
+
+Parts of the design changed so far (candidates that changed it, how many beat their closest earlier design, best and mean change of the score):
+- victim.bypass_when: 22 tried, 6 improved, best +0.00510, mean -0.00207
+- new_words: 13 tried, 4 improved, best +0.00510, mean -0.00267
+- samplers: 9 tried, 3 improved, best +0.00315, mean -0.00124
+- tables: 7 tried, 2 improved, best +0.00315, mean -0.00127
+- procedures.access: 3 tried, 0 improved, best -0.00035, mean -0.00645
+- signatures: 2 tried, 0 improved, best -0.00006, mean -0.00277
+
+The last 10 candidates, oldest first:
+54. scored 61fa9623c48e at 1.00427, changed 4 canonical lines in victim.bypass_when, new words pred_exceeds_avg_resident_etr: a repeat of an earlier design
+55. scored ea244a758864 at 1.00536, changed 13 canonical lines in victim.bypass_when, new_words, new words pred_exceeds_blended_etr: +0.00109 against its closest earlier design
+56. scored 4dcb2e2b4469 at 0.99918, changed 4 canonical lines in samplers: a repeat of an earlier design
+57. refused (words_refused): the new words must be a YAML list of words
+58. scored e8116003a5fa at 0.99834, changed 22 canonical lines in victim.bypass_when, new_words, new words pred_is_long_and_exceeds_avg: -0.00593 against its closest earlier design
+59. scored 94958da04c31 at 0.99674, changed 20 canonical lines in victim.bypass_when, new_words, new words pred_exceeds_victim_by_margin: -0.00753 against its closest earlier design
+60. refused (words_refused), changed 12 canonical lines in new_words, new words pred_gt_positive_victim_etr: pred_gt_positive_victim_etr: already declared in this run with another definition; a word is never changed, so declare a new name
+61. scored e3926bb33f62 at 1.00393, changed 5 canonical lines in victim.bypass_when, new words pred_exceeds_avg_resident_etr: -0.00034 against its closest earlier design
+62. refused (words_refused): the new words must be a YAML list of words
+63. scored ea244a758864 at 1.00536, changed 13 canonical lines in victim.bypass_when, new_words, new words pred_exceeds_blended_etr: a repeat of an earlier design
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 52.4%, largest mistake should_bypass (53 of 550 sampled fills), IPC over Mockingjay's 1.0000, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.4%, largest mistake wrong_bypass (213572 of 430969 sampled fills), IPC over Mockingjay's 0.9997, LLC MPKI 137.5
+- 619.lbm_s-2677B: headroom 42.9%, largest mistake kept_dead (126059 of 254172 sampled fills), IPC over Mockingjay's 1.0085, LLC MPKI 81.1
+- 459.GemsFDTD-1491B: headroom 33.2%, largest mistake wrong_bypass (27918 of 86816 sampled fills), IPC over Mockingjay's 0.9999, LLC MPKI 27.6
+- 657.xz_s-2302B: headroom 33.0%, largest mistake kept_dead (738 of 3755 sampled fills), IPC over Mockingjay's 1.0099, LLC MPKI 1.4
+- 433.milc-127B: headroom 28.5%, largest mistake wrong_bypass (8822 of 63661 sampled fills), IPC over Mockingjay's 0.9991, LLC MPKI 20.2
+
+New words accepted this run, best-scoring first:
+- pred_exceeds_blended_etr (condition): Calculates a predicted ETR for the incoming line as floor(table[index] / div). Calculates the integer average of the absolute values of the 'etr' field across all valid resident lines in the set ('avg [used 2, better 2, worse 0, same 0, failed 0]
+- pred_exceeds_avg_resident_etr (condition): Calculates a predicted ETR for the incoming line as floor(table[index] / div). Calculates the integer average of the absolute values of the 'etr' field across all valid resident lines in the set. The  [used 8, better 3, worse 1, same 2, failed 2]
+- rdp_and_conf_gt (condition): True if the entry for the signature 'sig' in table 'rdp_tbl' is present and its value is greater than 'rdp_thresh', AND the entry for 'sig' in table 'conf_tbl' is present and its value is greater than [used 10, better 3, worse 2, same 0, failed 5]
+- pred_exceeds_avg_and_victim_etr (condition): Calculates a predicted ETR for the incoming line as floor(table[index] / div). Calculates the integer average of the absolute values of the 'etr' field across all valid resident lines in the set. The  [used 1, better 0, worse 1, same 0, failed 0]
+- pred_exceeds_max_resident_etr (condition): Calculates a predicted ETR for the incoming line as floor(table[index] / div). Finds the maximum absolute value of the 'etr' field across all valid resident lines in the set. The condition is true if  [used 1, better 0, worse 1, same 0, failed 0]
+- pred_gt_avg_and_victim_etr (condition): Calculates a predicted ETR for the incoming line as floor(table[index] / div). Calculates the integer average of the absolute values of the 'etr' field across all valid resident lines in the set. The  [used 2, better 0, worse 1, same 0, failed 1]
+- pred_worse_than_avg_and_victim (condition): Calculates a predicted ETR for the incoming line as floor(table[index] / div). Calculates the integer average of the absolute values of the 'etr' field across all valid resident lines in the set. Find [used 1, better 0, worse 1, same 0, failed 0]
+- pred_is_long_and_exceeds_avg (condition): Calculates the raw predicted reuse distance from table[index]. Calculates a predicted ETR for the incoming line as floor(table[index] / div). Calculates the integer average of the absolute values of t [used 1, better 0, worse 1, same 0, failed 0]
+- train_rdp_hit (step): Trains the rdp_table at the given index with the 'toward' op, using the provided age, scale, and min_diff. The rdp_table must be 'unset'. Then, increments the conf_table entry at the same index. [used 2, better 0, worse 2, same 0, failed 0]
+- train_rdp_miss (step): Increments the rdp_table entry at the given index. The rdp_table must be 'unset', so an absent entry becomes rdp_table.max. Then, decrements the conf_table entry at the same index. [used 2, better 0, worse 2, same 0, failed 0]
+- confident_long_reuse (condition): True if the rdp_table entry at index is present and its value is greater than the threshold, AND the conf_table entry at the same index is at its maximum value. False otherwise. The rdp_table must be  [used 4, better 1, worse 2, same 0, failed 1]
+- pred_gt_positive_victim_etr (condition): Calculates a predicted ETR for the incoming line as floor(table[index] / div). This condition is evaluated after a victim has been selected. It reads the 'etr' field of that victim line, let's call it [used 2, better 0, worse 1, same 0, failed 1]
+- pred_exceeds_victim_by_margin (condition): Calculates a predicted ETR for the incoming line as floor(table[index] / div). The victim way must have been selected. Reads the absolute value of the 'etr' field of the victim way. The condition is t [used 1, better 0, worse 1, same 0, failed 0]

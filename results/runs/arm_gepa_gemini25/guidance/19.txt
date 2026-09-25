@@ -1,0 +1,25 @@
+Guidance version 19, written after 192 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.99928 (-0.07% against the seed)
+- name: rdp_and_conf_check
+  place: condition
+  params:
+    conf_cmp: {symbol: Comparison}
+    conf_table: table
+    conf_thresh:
+      int: [0, 3]
+    index: signature
+    rdp_cmp: {symbol: Comparison}
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: True only if both table conditions are met for the given index. It checks if the entry in rdp_table
+    at the index is present and satisfies rdp_cmp against rdp_thresh. It also checks if the entry in conf_table
+    at the same index satisfies conf_cmp against conf_thresh. Both checks must pass. An absent entry in
+    rdp_table makes the whole condition false.
+
+Refused among the last 10 candidates, and why: malformed 5 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; candidate is missing section(s): NEW_WORDS). schema_rejected 4 (Input should be a valid dictionary or instance of StructureDescription (written: '<the complete structure ...ription, in valid YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); procedures.access.6.set.etr.ConstValue.const Field required (written: {'table': {'table': 'rdp'...x': 'pc_sig', 'div': 8}}) procedures.access.6.set.etr.ConstValue.table Extra inputs are not permitted (written: {'table': 'rdp', 'index': 'pc_)
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 15 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: "<the structure descripti... with 'name' and 'doc'>"); 10 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+Your progress is stalled because nearly all your proposals are being refused for basic formatting errors like missing sections or invalid YAML; you must stop submitting invalid designs. The only changes that have shown any improvement involved refining the bypass decision in `victim.bypass_when` using `tables` and the new word `rdp_and_conf_check`, while modifications to `procedures.access` and `state` have consistently reduced performance and should be avoided. The largest opportunity for improvement is addressing the contradictory bypass behavior seen on traces with high headroom. On `605.mcf_s` and `619.lbm_s`, the policy makes a vast number of `wrong_bypass` mistakes, yet on `627.cam4_s` it makes `should_bypass` errors. To fix the dominant `wrong_bypass` problem, the policy must learn to be less aggressive. It needs a way to remember the lines it chooses to bypass, so that a subsequent miss to one of those lines can serve as a negative feedback signal to adjust its bypass strategy. The current vocabulary cannot express this "check if recently bypassed" logic, so you should declare a new procedure word to create this feedback loop and make the bypass decision more adaptive.

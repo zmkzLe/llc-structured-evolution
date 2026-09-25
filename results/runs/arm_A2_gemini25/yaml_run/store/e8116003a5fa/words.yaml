@@ -1,0 +1,11 @@
+- name: pred_is_long_and_exceeds_avg
+  place: condition
+  params: {table: table, index: signature, div: {int: [1, 1024]}, threshold: {int: [0, 127]}}
+  means: >
+    Calculates the raw predicted reuse distance from table[index]. Calculates a
+    predicted ETR for the incoming line as floor(table[index] / div). Calculates
+    the integer average of the absolute values of the 'etr' field across all valid
+    resident lines in the set. The condition is true if the raw predicted reuse
+    distance is greater than 'threshold' AND the predicted ETR is greater than the
+    average ETR. If the table entry for the index is absent, both predicted values
+    are 0, and the condition is false. The 'etr' field must be a per_line state field.

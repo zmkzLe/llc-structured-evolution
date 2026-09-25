@@ -1,0 +1,4 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 1 validation error for StructureDescription
+  Value error, procedure(s) train_on_dead_line, train_on_match_normal, train_on_match_prefetch declared but never run by any event [type=value_error, input_value={'name': 'mj_confident_by...ue}, {'run': 'access'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

@@ -1,0 +1,14 @@
+Candidate ? FAILED at words_refused; it was not scored.
+Reason: 4 validation errors for NewWord
+params.sample.str
+  Input should be a valid string [type=string_type, input_value={'symbol': ['age']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+params.sample.IntRange.int
+  Field required [type=missing, input_value={'symbol': ['age']}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing
+params.sample.IntRange.symbol
+  Extra inputs are not permitted [type=extra_forbidden, input_value=['age'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden
+params.sample.SymbolOf.symbol
+  Input should be a valid string [type=string_type, input_value=['age'], input_type=list]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type

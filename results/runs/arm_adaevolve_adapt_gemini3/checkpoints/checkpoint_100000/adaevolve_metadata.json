@@ -1,0 +1,427 @@
+{
+  "num_islands": 2,
+  "current_island": 1,
+  "iteration_count": 53,
+  "global_best_score": 1.0,
+  "decay": 0.9,
+  "intensity_min": 0.15,
+  "intensity_max": 0.5,
+  "migration_interval": 50,
+  "diversity_strategy_type": "code",
+  "use_unified_archive": true,
+  "use_adaptive_search": true,
+  "use_ucb_selection": true,
+  "fixed_intensity": 0.4,
+  "adapter": {
+    "states": [
+      {
+        "accumulated_signal": 0.09999999999999998,
+        "best_score": 1.0,
+        "improvement_count": 1,
+        "total_evaluations": 14,
+        "decay": 0.9,
+        "epsilon": 1e-08,
+        "intensity_min": 0.15,
+        "intensity_max": 0.5
+      },
+      {
+        "accumulated_signal": 0.09999999999999998,
+        "best_score": 1.0,
+        "improvement_count": 0,
+        "total_evaluations": 12,
+        "decay": 0.9,
+        "epsilon": 1e-08,
+        "intensity_min": 0.15,
+        "intensity_max": 0.5
+      }
+    ],
+    "dimension_visits": [
+      14,
+      12
+    ],
+    "dimension_rewards": [
+      0.25418658283290013,
+      0.0
+    ],
+    "decayed_visits": [
+      7.7123207545039,
+      7.175704635190001
+    ],
+    "global_best_score": 1.0,
+    "ucb_exploration": 1.41,
+    "min_visits": 3,
+    "decay": 0.9,
+    "epsilon": 1e-08
+  },
+  "island_config_names": [
+    "balanced",
+    "balanced"
+  ],
+  "islands": [
+    [
+      "b3a43e6b-e00d-4115-9106-c99c49ee1199",
+      "c4bdd303-3b19-4a86-baf9-72ac90a99ca8",
+      "98cb6fd9-e283-4c96-a84b-4d44d7cce186",
+      "71c2a117-3dd7-4dc4-b681-c31345092b05",
+      "c1f3259a-457b-4a8d-9d66-2e1c79a02d9f",
+      "688a3e7f-c9e9-4a9a-9a63-5ba2e794f7ce",
+      "4be024fc-fbec-47bd-9d82-38990e232b3b",
+      "b3316a25-52bb-4c0b-9041-f7d37e7537d6",
+      "bb04c13a-bf4c-45af-8389-fba29dc85396",
+      "14c77fdb-986e-4d38-ad4c-0bcdf6a9f031",
+      "44a76ed6-4f5a-4df9-9b94-7e353482b6f2",
+      "810de667-fcda-49bf-a487-ab6e90ca2581",
+      "0f8d96b1-9dff-47f5-b12b-8cceee6c3bee",
+      "1ba25b06-097f-4aa2-b003-54750a98e3ff"
+    ],
+    [
+      "2b385e1d-8c50-4307-b700-e63a470824f5",
+      "86023e0f-c985-4f2b-a7ed-f8a47de12667",
+      "ad9bde2d-a2ac-4a03-9d63-f6b3fcacc227",
+      "b11df2b3-4d63-45e1-b9be-205ced54ec7b",
+      "3b09a267-d84d-4552-b678-457fbce0e4df",
+      "12089985-b659-4096-8472-6fb92c476068",
+      "45b9b03c-1bc0-41a1-86da-2d63a2a2c79d",
+      "d9d3a2fd-0bf0-4c6d-866e-bd006f60fe0a",
+      "a7722b6c-6bcc-4daf-973c-8a05e32f34bf",
+      "b02bb859-a2f8-42b1-819d-45f3f3b1b8d4",
+      "5a558b09-0f06-4ccf-92ea-7ed55abd3d54",
+      "f2527c4e-4c78-4836-88ce-2afa230d9117",
+      "85d4b2c1-d338-4fd5-b930-340297e0cd60",
+      "9d1642c4-fa47-4c38-8bac-c05ef1a5c3a3",
+      "d3edd37d-7b07-48e4-88c8-fef7b0d65a56",
+      "8cdfd003-1e3b-49f7-8e11-f5acbdfb08e2",
+      "67aa7a9b-3443-43b3-8b70-f35e822bbce4"
+    ]
+  ],
+  "archive_genealogies": [
+    {
+      "parents": {
+        "b3a43e6b-e00d-4115-9106-c99c49ee1199": [],
+        "c4bdd303-3b19-4a86-baf9-72ac90a99ca8": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "98cb6fd9-e283-4c96-a84b-4d44d7cce186": [
+          "2b385e1d-8c50-4307-b700-e63a470824f5"
+        ],
+        "71c2a117-3dd7-4dc4-b681-c31345092b05": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "c1f3259a-457b-4a8d-9d66-2e1c79a02d9f": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "688a3e7f-c9e9-4a9a-9a63-5ba2e794f7ce": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "4be024fc-fbec-47bd-9d82-38990e232b3b": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "b3316a25-52bb-4c0b-9041-f7d37e7537d6": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "bb04c13a-bf4c-45af-8389-fba29dc85396": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "14c77fdb-986e-4d38-ad4c-0bcdf6a9f031": [
+          "12089985-b659-4096-8472-6fb92c476068"
+        ],
+        "44a76ed6-4f5a-4df9-9b94-7e353482b6f2": [
+          "2b385e1d-8c50-4307-b700-e63a470824f5"
+        ],
+        "810de667-fcda-49bf-a487-ab6e90ca2581": [
+          "b11df2b3-4d63-45e1-b9be-205ced54ec7b"
+        ],
+        "0f8d96b1-9dff-47f5-b12b-8cceee6c3bee": [
+          "12089985-b659-4096-8472-6fb92c476068"
+        ],
+        "1ba25b06-097f-4aa2-b003-54750a98e3ff": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ]
+      },
+      "children": {
+        "b3a43e6b-e00d-4115-9106-c99c49ee1199": [
+          "c4bdd303-3b19-4a86-baf9-72ac90a99ca8",
+          "71c2a117-3dd7-4dc4-b681-c31345092b05",
+          "c1f3259a-457b-4a8d-9d66-2e1c79a02d9f",
+          "688a3e7f-c9e9-4a9a-9a63-5ba2e794f7ce",
+          "4be024fc-fbec-47bd-9d82-38990e232b3b",
+          "b3316a25-52bb-4c0b-9041-f7d37e7537d6",
+          "bb04c13a-bf4c-45af-8389-fba29dc85396",
+          "1ba25b06-097f-4aa2-b003-54750a98e3ff"
+        ],
+        "2b385e1d-8c50-4307-b700-e63a470824f5": [
+          "98cb6fd9-e283-4c96-a84b-4d44d7cce186",
+          "44a76ed6-4f5a-4df9-9b94-7e353482b6f2"
+        ],
+        "12089985-b659-4096-8472-6fb92c476068": [
+          "14c77fdb-986e-4d38-ad4c-0bcdf6a9f031",
+          "0f8d96b1-9dff-47f5-b12b-8cceee6c3bee"
+        ],
+        "b11df2b3-4d63-45e1-b9be-205ced54ec7b": [
+          "810de667-fcda-49bf-a487-ab6e90ca2581"
+        ]
+      }
+    },
+    {
+      "parents": {
+        "2b385e1d-8c50-4307-b700-e63a470824f5": [],
+        "86023e0f-c985-4f2b-a7ed-f8a47de12667": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "ad9bde2d-a2ac-4a03-9d63-f6b3fcacc227": [
+          "2b385e1d-8c50-4307-b700-e63a470824f5"
+        ],
+        "b11df2b3-4d63-45e1-b9be-205ced54ec7b": [
+          "ad9bde2d-a2ac-4a03-9d63-f6b3fcacc227"
+        ],
+        "3b09a267-d84d-4552-b678-457fbce0e4df": [
+          "2b385e1d-8c50-4307-b700-e63a470824f5"
+        ],
+        "12089985-b659-4096-8472-6fb92c476068": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "45b9b03c-1bc0-41a1-86da-2d63a2a2c79d": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "d9d3a2fd-0bf0-4c6d-866e-bd006f60fe0a": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "a7722b6c-6bcc-4daf-973c-8a05e32f34bf": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "b02bb859-a2f8-42b1-819d-45f3f3b1b8d4": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "5a558b09-0f06-4ccf-92ea-7ed55abd3d54": [
+          "ad9bde2d-a2ac-4a03-9d63-f6b3fcacc227"
+        ],
+        "f2527c4e-4c78-4836-88ce-2afa230d9117": [
+          "4be024fc-fbec-47bd-9d82-38990e232b3b"
+        ],
+        "85d4b2c1-d338-4fd5-b930-340297e0cd60": [
+          "b3316a25-52bb-4c0b-9041-f7d37e7537d6"
+        ],
+        "9d1642c4-fa47-4c38-8bac-c05ef1a5c3a3": [
+          "bb04c13a-bf4c-45af-8389-fba29dc85396"
+        ],
+        "d3edd37d-7b07-48e4-88c8-fef7b0d65a56": [
+          "44a76ed6-4f5a-4df9-9b94-7e353482b6f2"
+        ],
+        "8cdfd003-1e3b-49f7-8e11-f5acbdfb08e2": [
+          "b3a43e6b-e00d-4115-9106-c99c49ee1199"
+        ],
+        "67aa7a9b-3443-43b3-8b70-f35e822bbce4": [
+          "2b385e1d-8c50-4307-b700-e63a470824f5"
+        ]
+      },
+      "children": {
+        "b3a43e6b-e00d-4115-9106-c99c49ee1199": [
+          "86023e0f-c985-4f2b-a7ed-f8a47de12667",
+          "12089985-b659-4096-8472-6fb92c476068",
+          "45b9b03c-1bc0-41a1-86da-2d63a2a2c79d",
+          "d9d3a2fd-0bf0-4c6d-866e-bd006f60fe0a",
+          "a7722b6c-6bcc-4daf-973c-8a05e32f34bf",
+          "b02bb859-a2f8-42b1-819d-45f3f3b1b8d4",
+          "8cdfd003-1e3b-49f7-8e11-f5acbdfb08e2"
+        ],
+        "2b385e1d-8c50-4307-b700-e63a470824f5": [
+          "ad9bde2d-a2ac-4a03-9d63-f6b3fcacc227",
+          "3b09a267-d84d-4552-b678-457fbce0e4df",
+          "67aa7a9b-3443-43b3-8b70-f35e822bbce4"
+        ],
+        "ad9bde2d-a2ac-4a03-9d63-f6b3fcacc227": [
+          "b11df2b3-4d63-45e1-b9be-205ced54ec7b",
+          "5a558b09-0f06-4ccf-92ea-7ed55abd3d54"
+        ],
+        "4be024fc-fbec-47bd-9d82-38990e232b3b": [
+          "f2527c4e-4c78-4836-88ce-2afa230d9117"
+        ],
+        "b3316a25-52bb-4c0b-9041-f7d37e7537d6": [
+          "85d4b2c1-d338-4fd5-b930-340297e0cd60"
+        ],
+        "bb04c13a-bf4c-45af-8389-fba29dc85396": [
+          "9d1642c4-fa47-4c38-8bac-c05ef1a5c3a3"
+        ],
+        "44a76ed6-4f5a-4df9-9b94-7e353482b6f2": [
+          "d3edd37d-7b07-48e4-88c8-fef7b0d65a56"
+        ]
+      }
+    }
+  ],
+  "use_dynamic_islands": true,
+  "max_islands": 5,
+  "last_spawn_iteration": -30,
+  "use_paradigm_breakthrough": true,
+  "paradigm_tracker": {
+    "window_size": 10,
+    "improvement_threshold": 0.12,
+    "max_paradigm_uses": 2,
+    "max_tried_paradigms": 10,
+    "num_paradigms_to_generate": 3,
+    "improvement_history": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "active_paradigms": [
+      {
+        "idea": "Multi-Factor Bypass Gating via Custom Condition Word",
+        "description": "Prompt the LLM to reduce the high 'wrong_bypass' rate by introducing a new condition word in the NEW_WORDS section. The instruction should ask the LLM to define a word (e.g., 'high_confidence_bypass') that checks either a secondary saturating counter table or specific access types. The LLM must then add this custom condition to the `bypass_when` list in the victim selector, ensuring that bypasses only occur when both the primary RDP prediction is high and the new confidence condition is satisfied.",
+        "what_to_optimize": "Reduction of wrong_bypass mistakes by enforcing stricter, multi-dimensional bypass criteria.",
+        "cautions": "Ensure the LLM declares any new tables used by the condition word and keeps the total metadata under the 48 KB budget. The condition word's parameters and logic must be explicitly defined.",
+        "approach_type": "conditional-gating"
+      },
+      {
+        "idea": "Access-Aware ETR Scaling via Custom Value Word",
+        "description": "Instruct the LLM to mitigate 'evicted_sooner' and 'kept_dead' errors by creating a new value word that computes the insertion ETR dynamically based on the access type. The prompt should guide the LLM to define a word that takes the RDP prediction as a parameter and scales it down for speculative accesses like PREFETCHes. The LLM will then replace the static RDP table lookup in the `on_fill` event with this new value word, differentiating the lifespan of cache lines based on their access semantics.",
+        "what_to_optimize": "Cache efficiency and reduction of early evictions by assigning distinct lifespans to different access types.",
+        "cautions": "The LLM must define simple, hardware-realizable arithmetic in the word's `means` field and correctly pass the required parameters in the YAML structure.",
+        "approach_type": "dynamic-insertion"
+      },
+      {
+        "idea": "Spatial Context Enrichment via Custom FoldBit Word",
+        "description": "Direct the LLM to address predictor aliasing (a root cause of 'wrong_bypass') by defining a new word that joins the `FoldBit` symbol list. The prompt should instruct the LLM to create a word with `place: FoldBit` that extracts bits from the access's set index or line address. The LLM must then update the `fold` list of the `pc_sig` signature to include this new word. This strategy enriches the PC signature with spatial context, helping the RDP table distinguish between identical instructions accessing different memory regions.",
+        "what_to_optimize": "Predictor accuracy and reduction of aliasing in the reuse distance predictor table.",
+        "cautions": "Folding too many bits can lead to state sparsity. The LLM must clearly explain the bit extraction logic in the `means` field, noting that symbol-list members take no parameters.",
+        "approach_type": "signature-enrichment"
+      }
+    ],
+    "paradigm_usage_counts": {
+      "0": 2,
+      "1": 2,
+      "2": 2
+    },
+    "current_paradigm_index": 2,
+    "tried_paradigms": [
+      {
+        "idea": "Bottleneck-First Trace Overfitting Strategy",
+        "description": "Shift the LLM's optimization objective from improving the global geometric mean to exclusively fixing the single worst-performing trace in the feedback. Instruct the LLM to scan the provided metrics, identify the trace with the lowest 'vs MJ' score and highest specific mistake count (e.g., massive `kept_dead` on 433.milc), and design a specialized mechanism tailored solely to that trace's access pattern. By aggressively over-optimizing the worst bottlenecks one iteration at a time, the global mean will naturally rise as major regressions are eliminated.",
+        "what_to_optimize": "worst-case trace performance and targeted bottleneck resolution",
+        "cautions": "The LLM might introduce changes that catastrophically degrade other traces. Instruct the LLM to implement these specialized mechanisms as conditional rules (e.g., using `bypass_when` with specific signature thresholds or set dueling) so they safely bypass general workloads.",
+        "approach_type": "target-recalibration",
+        "uses": 2,
+        "starting_score": 1.0,
+        "ending_score": 1.0,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Pre-Generation Analytical Scratchpad (Chain-of-Thought)",
+        "description": "Instruct the LLM to perform its reasoning in plain text *before* generating the YAML code block. The prompt should ask the LLM to explicitly write out a 4-step analysis: 1) Identify the worst performing trace and its dominant mistake (e.g., wrong_bypass). 2) Formulate a single architectural hypothesis to fix it. 3) Plan the exact YAML changes needed. 4) Calculate the metadata budget impact. Crucially, instruct the LLM to NEVER use markdown code blocks (```) for this scratchpad, ensuring the actual structure description remains the first and only code block parsed by the evaluator.",
+        "what_to_optimize": "Reasoning depth, logical consistency of modifications, and preventing arbitrary guessing.",
+        "cautions": "Must strictly enforce that the plain-text scratchpad does not use triple backticks. If the LLM uses a code block for its reasoning, the parser will read it as the candidate and discard it.",
+        "approach_type": "chain-of-thought",
+        "uses": 2,
+        "starting_score": 1.0,
+        "ending_score": 1.0,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Feedback-to-Component Decision Tree Mapping",
+        "description": "Embed a diagnostic decision tree in the prompt that maps specific feedback metrics directly to the YAML components that control them. For example: 'If wrong_bypass is high -> focus on bypass_when conditions and table thresholds. If kept_dead is high -> focus on victim extremum or on_search aging. If evicted_sooner is high -> focus on insertion policy (on_fill set values)'. Instruct the LLM to explicitly trace this mapping based on the provided feedback to select a single, highly targeted component to modify.",
+        "what_to_optimize": "Search space reduction and targeted architectural mutation.",
+        "cautions": "The decision tree must be accurate to the ChampSim architecture. If the mapping is too rigid, it might artificially constrain the LLM from discovering novel cross-component optimizations.",
+        "approach_type": "rule-based-guidance",
+        "uses": 2,
+        "starting_score": 1.0,
+        "ending_score": 1.0,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Anti-Pattern Pre-Flight Checklist Verification",
+        "description": "Enhance the 'WHAT COSTS YOU THE CANDIDATE' section by turning it into an explicit 'ANTI-PATTERNS' list (e.g., duplicate keys in YAML mappings, inventing keys in 'when' clauses, changing multiple distinct mechanisms at once). Instruct the LLM to write a plain-text 'pre-flight checklist' where it explicitly verifies its proposed design against each anti-pattern (e.g., 'Check 1: No duplicate keys? Yes. Check 2: No invented condition keys? Yes.') before it is allowed to output the final YAML block.",
+        "what_to_optimize": "Syntax validity, grammar adherence, and constraint satisfaction (reducing unscored discards).",
+        "cautions": "The checklist generation consumes output tokens and context window. Keep the anti-patterns concise and focused strictly on the most common fatal errors that cause immediate rejection.",
+        "approach_type": "error-prevention",
+        "uses": 2,
+        "starting_score": 1.0,
+        "ending_score": 1.0,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Multi-Feature Signature Contextualization via New Words",
+        "description": "Instruct the LLM to declare a new word for a SignatureSource or FoldBit (e.g., folding the set index or a global access history) to enrich the 'pc_sig' signature. The strategy is to increase the feature resolution of the reuse distance predictor to reduce aliasing. This directly addresses the high 'wrong_bypass' mistakes by ensuring the predictor can distinguish between different access patterns that share the same PC.",
+        "what_to_optimize": "Predictor aliasing and wrong_bypass reduction",
+        "cautions": "Ensure the LLM understands that defining a new FoldBit or SignatureSource requires a valid entry in the NEW_WORDS section with 'place: FoldBit' or 'place: SignatureSource'.",
+        "approach_type": "feature-engineering",
+        "uses": 2,
+        "starting_score": 1.0,
+        "ending_score": 1.0,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Adaptive Bypassing via Set Dueling",
+        "description": "Direct the LLM to utilize the built-in 'duel' grammar to arbitrate between Mockingjay's aggressive bypass policy and a conservative fallback policy (like SRRIP). Instruct the LLM to define a 'psel' counter and configure 'arm_a' and 'arm_b' for insertion, triggering it via 'use_duel: true' on fills. This provides trace-level adaptability to disable bypassing when it causes 'evicted_sooner' errors.",
+        "what_to_optimize": "Trace-level adaptability and bypass safety",
+        "cautions": "The duel grammar requires strict adherence to its schema (leader_a_category, leader_b_category, etc.). The LLM must correctly wire the selector counter without breaking existing state.",
+        "approach_type": "dynamic-arbitration",
+        "uses": 2,
+        "starting_score": 1.0,
+        "ending_score": 1.0,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Confidence-Gated Victim Selection with Custom Condition",
+        "description": "Prompt the LLM to introduce a confidence metric for predictions. Instruct it to shrink the existing 'rdp' table to free up budget, and add a new 'confidence' table. Crucially, guide the LLM to declare a new condition word in the NEW_WORDS section that reads both tables simultaneously, because a standard 'when' mapping cannot hold two 'table' keys. Use this new word to require both high ETR and high confidence before bypassing.",
+        "what_to_optimize": "Prediction reliability and evicted_sooner mitigation",
+        "cautions": "The LLM must explicitly calculate and balance the SRAM metadata budget (target < 48 KB). Failure to reduce the original table size before adding a new one will result in immediate rejection.",
+        "approach_type": "confidence-gating",
+        "uses": 2,
+        "starting_score": 1.0,
+        "ending_score": 1.0,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Feature Engineering: Custom Access-Type FoldBit for Signatures",
+        "description": "Address the massive 'wrong_bypass' errors (e.g., 14351 on 433.milc) by enriching the bypass predictor's input. The current design only folds 'hit' and 'prefetch' into the PC signature. Instruct the LLM to use the NEW_WORDS section to declare a new `FoldBit` (e.g., `is_rfo` or `is_write`) that evaluates to 1 for specific access types (like RFO). Fold this new bit into the `pc_sig` to disambiguate accesses that share a PC but have fundamentally different reuse patterns. To maintain the 48KB budget, reduce the `rdp` table entries from 2048 to 1024.",
+        "what_to_optimize": "Bypass prediction accuracy (minimizing wrong_bypass mistakes)",
+        "cautions": "The new word must explicitly specify `place: FoldBit` and take no parameters. Ensure the `rdp` table size is reduced to offset any potential metadata increase, keeping the total declared state under the strict 48KB limit.",
+        "approach_type": "architectural-feature-engineering",
+        "uses": 2,
+        "starting_score": 1.0,
+        "ending_score": 1.0,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Ensemble Policy: Set Dueling for Dynamic Insertion Arbitration",
+        "description": "Mitigate both 'wrong_bypass' and 'evicted_sooner' mistakes by introducing a Set Dueling mechanism to arbitrate between Mockingjay's dynamic ETR prediction and a conservative static insertion policy. Instruct the LLM to add a `duel` section where `arm_a` uses the RDP table to set `etr`, and `arm_b` sets `etr` to a safe constant (e.g., 0). Add a `psel` per-cpu counter to track the winner, and trigger it via a `use_duel: true` rule on fills. Halve the `rdp` entries to 1024 to pay for the `psel` state.",
+        "what_to_optimize": "Robustness across diverse workloads via dynamic policy fallback",
+        "cautions": "Follow the `Duel` grammar carefully (requires `selector`, `arm_a`, `arm_b`, leader categories, etc.). Ensure `use_duel: true` replaces the direct `etr` assignment in the `access` procedure for fills.",
+        "approach_type": "set-dueling-ensemble",
+        "uses": 2,
+        "starting_score": 1.0,
+        "ending_score": 1.0,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Cache Pressure Heuristic: Fill-Driven Accelerated Aging",
+        "description": "Target the high 'kept_dead' counts (e.g., 3552 on 450.soplex) by accelerating the eviction of resident lines when cache pressure is high. The current Mockingjay design ages lines (decrements ETR) every 8 accesses to the set. Instruct the LLM to add an additional aging mechanism: in the `on_fill` event, use `each_way` to decrement the `etr` of all ways in the set. This clears out dead lines faster during bursts of misses without requiring any new metadata.",
+        "what_to_optimize": "Reduction of kept_dead lines via dynamic aging",
+        "cautions": "Ensure the `each_way` rule correctly checks that `etr` is within bounds (e.g., greater than -11) before decrementing to avoid underflow. Do not add any new state fields, keeping the metadata footprint identical to the seed.",
+        "approach_type": "dynamic-aging-heuristic",
+        "uses": 2,
+        "starting_score": 1.0,
+        "ending_score": 1.0,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      }
+    ],
+    "best_score_at_paradigm_gen": 1.0,
+    "best_score_during_paradigm": 1.0
+  }
+}

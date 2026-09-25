@@ -1,0 +1,20 @@
+===== STRUCTURE_DESCRIPTION =====
+name: my_new_design
+doc: >
+  This is a complete, valid design that modifies Mockingjay.
+  I am adding a new table to track wrong bypasses.
+# ... the rest of the complete Mockingjay description, with your changes ...
+victim:
+  key: etr
+# ... (rest of victim section)
+on_fill:
+# ... (rest of on_fill section, possibly with new rules)
+# ...
+===== NEW_WORDS =====
+
+- name: my_new_word
+  place: condition
+  params: {table: table}
+  means: >
+    This is the detailed meaning of my new word. It is at least 8 words long
+    and explains exactly what the C++ code should do.

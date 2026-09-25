@@ -1,0 +1,57 @@
+Guidance version 1, written after 10 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 1.00184 (+0.18% against the seed)
+- name: rdp_and_conf_gt
+  place: condition
+  params:
+    conf_tbl: table
+    conf_thresh:
+      int: [0, 3]
+    rdp_tbl: table
+    rdp_thresh:
+      int: [0, 127]
+    sig: signature
+  means: True if the entry for the signature 'sig' in table 'rdp_tbl' is present and its value is greater
+    than 'rdp_thresh', AND the entry for 'sig' in table 'conf_tbl' is present and its value is greater
+    than or equal to 'conf_thresh'. False otherwise.
+# used by 2 scored design(s); best 0.99802 (-0.20% against the seed)
+- name: train_rdp_hit
+  place: step
+  params:
+    age: state
+    conf_table: table
+    index: signature
+    min_diff:
+      int: [0, 127]
+    rdp_table: table
+    scale:
+      int: [1, 10]
+  means: 'Trains the rdp_table at the given index with the ''toward'' op, using the provided age, scale,
+    and min_diff. The rdp_table must be ''unset''. Then, increments the conf_table entry at the same index.
+
+    '
+# used by 2 scored design(s); best 0.99802 (-0.20% against the seed)
+- name: train_rdp_miss
+  place: step
+  params: {conf_table: table, index: signature, rdp_table: table}
+  means: 'Increments the rdp_table entry at the given index. The rdp_table must be ''unset'', so an absent
+    entry becomes rdp_table.max. Then, decrements the conf_table entry at the same index.
+
+    '
+# used by 2 scored design(s); best 0.99802 (-0.20% against the seed)
+- name: confident_long_reuse
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    threshold:
+      int: [0, 127]
+  means: True if the rdp_table entry at index is present and its value is greater than the threshold,
+    AND the conf_table entry at the same index is at its maximum value. False otherwise. The rdp_table
+    must be 'unset'.
+
+Refused among the last 10 candidates, and why: schema_rejected 2 (victim.bypass_when.1 Value error, 'when': not a word of the grammar here, nor a declared condition word (written: {'when': {'table_exceeds_...', 'threshold': 'MAX'}}}); procedures.access.6.set.etr.ConstValue.const Field required (written: {'table': {'table': 'rdp'...x': 'pc_sig', 'div': 8}}) procedures.access.6.set.etr.ConstValue.table Extra inputs are not permitted (written: {'table': 'rdp', 'index': 'pc_)
+
+The most successful design, 3714da345231, gained its advantage by changing `samplers`, `tables`, and `victim.bypass_when` in concert with the new condition word `rdp_and_conf_gt`. This suggests that combining table-based state with new conditional logic is a fruitful path. However, your largest remaining mistakes on traces with high headroom, such as `605.mcf_s-1644B` and `619.lbm_s-2677B`, are `wrong_bypass` errors, where you discard useful data. This shows your current bypass logic is too aggressive. Conversely, on `627.cam4_s-573B`, you make `should_bypass` mistakes, inserting dead lines. To address this, focus on refining the `victim.bypass_when` condition to be more selective. Stop modifying `signatures` and `procedures.access`, as these changes have consistently hurt performance. The failed training-related words like `train_rdp_hit` also suggest avoiding complex state updates for now. The vocabulary may lack a way to decide whether to bypass by comparing a new line's predicted reuse against that of the lines already in the set; a new word could express this comparison to better decide which lines are truly worth keeping.

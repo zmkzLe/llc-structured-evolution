@@ -1,0 +1,299 @@
+```cpp
+===== HEADER =====
+#ifndef REPLACEMENT_@MODULE@_H
+#define REPLACEMENT_@MODULE@_H
+
+#include "cache.h"
+#include "modules.h"
+#include <vector>
+#include <cstdint>
+
+class @MODULE@ : public champsim::modules::replacement {
+    long NUM_SET;
+    long NUM_WAY;
+
+    struct rdp_entry {
+        bool valid = false;
+        uint8_t value = 0;
+    };
+    std::vector<rdp_entry> rdp;
+
+    struct sampler_entry {
+        bool valid = false;
+        uint16_t tag = 0;
+        uint16_t signature = 0;
+        uint8_t timestamp = 0;
+    };
+    std::vector<std::vector<sampler_entry>> sampled_cache;
+    std::vector<int> sampled_set_to_group;
+
+    std::vector<int32_t> etr;
+    std::vector<uint8_t> etr_clock;
+    std::vector<uint8_t> set_clock;
+
+    int32_t wrap_signed_5(int32_t v);
+    uint64_t get_pc_sig(champsim::address ip, bool hit, bool prefetch);
+    void train_rdp_toward(uint64_t index, uint32_t sample, uint32_t scale, uint32_t min_diff);
+    void train_rdp_increment(uint64_t index);
+    void run_sampler(uint32_t triggering_cpu, long set, champsim::address full_addr, champsim::address ip, access_type type, bool hit);
+    void run_access(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, access_type type, bool hit);
+
+public:
+    explicit @MODULE@(CACHE* cache);
+    long find_victim(uint32_t triggering_cpu, uint64_t instr_id, long set, const champsim::cache_block* current_set, champsim::address ip, champsim::address full_addr, access_type type);
+    void update_replacement_state(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, champsim::address victim_addr, access_type type, uint8_t hit);
+    void replacement_cache_fill(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, champsim::address victim_addr, access_type type);
+};
+
+#endif
+===== SOURCE =====
+#include "@MODULE@.h"
+#include "champsim.h"
+#include "msl/bits.h"
+#include <cmath>
+#include <cstdlib>
+#include <algorithm>
+
+@MODULE@::@MODULE@(CACHE* cache) : replacement(cache), NUM_SET(cache->NUM_SET), NUM_WAY(cache->NUM_WAY) {
+    rdp.assign(2048, rdp_entry{});
+    sampled_cache.assign(512, std::vector<sampler_entry>(5, sampler_entry{}));
+    
+    sampled_set_to_group.assign(NUM_SET, -1);
+    int group_idx = 0;
+    long m = champsim::lg2(NUM_SET) - 5;
+    uint64_t mod_mask = (m >= 0) ? ((1ull << m) - 1) : 0;
+    for (long s = 0; s < NUM_SET; ++s) {
+        if (m < 0) {
+            sampled_set_to_group[s] = group_idx++;
+        } else {
+            if ((s & mod_mask) == ((s >> 5) & mod_mask)) {
+                sampled_set_to_group[s] = group_idx++;
+            }
+        }
+    }
+
+    etr.assign(NUM_SET * NUM_WAY, 0);
+    etr_clock.assign(NUM_SET, 8);
+    set_clock.assign(NUM_SET, 0);
+}
+
+int32_t @MODULE@::wrap_signed_5(int32_t v) {
+    uint32_t uv = v & 0x1F;
+    if (uv & 0x10) {
+        return (int32_t)(uv | ~0x1Fu);
+    }
+    return (int32_t)uv;
+}
+
+uint64_t @MODULE@::get_pc_sig(champsim::address ip, bool hit, bool prefetch) {
+    uint64_t x = ip.to<uint64_t>();
+    x = (x << 1) | (hit ? 1 : 0);
+    x = (x << 1) | (prefetch ? 1 : 0);
+    for (int i = 0; i < 3; ++i) {
+        if (x & 1) {
+            x = (x >> 1) ^ 0xEDB88320ull;
+        } else {
+            x = x >> 1;
+        }
+    }
+    return x & 0x7FFull;
+}
+
+void @MODULE@::train_rdp_toward(uint64_t index, uint32_t sample, uint32_t scale, uint32_t min_diff) {
+    uint32_t s = std::min(sample * scale, 95u);
+    if (!rdp[index].valid) {
+        rdp[index].value = s;
+        rdp[index].valid = true;
+    } else {
+        uint32_t current = rdp[index].value;
+        uint32_t diff = (current > s) ? (current - s) : (s - current);
+        if (diff >= min_diff) {
+            if (current < s) rdp[index].value = std::min(current + 1, 95u);
+            else rdp[index].value = current - 1;
+        }
+    }
+}
+
+void @MODULE@::train_rdp_increment(uint64_t index) {
+    if (!rdp[index].valid) {
+        rdp[index].value = 95;
+        rdp[index].valid = true;
+    } else {
+        rdp[index].value = std::min(rdp[index].value + 1u, 95u);
+    }
+}
+
+void @MODULE@::run_sampler(uint32_t triggering_cpu, long set, champsim::address full_addr, champsim::address ip, access_type type, bool hit) {
+    int group = sampled_set_to_group[set];
+    if (group == -1) return;
+
+    uint64_t line_addr = full_addr.to<uint64_t>() >> LOG2_BLOCK_SIZE;
+    uint32_t sampler_set_idx = group * 16 + ((line_addr >> champsim::lg2(NUM_SET)) % 16);
+    uint32_t tag = (line_addr >> (champsim::lg2(NUM_SET) + 4)) % 1024;
+
+    auto& sampler_set = sampled_cache[sampler_set_idx];
+    uint64_t pc_sig = get_pc_sig(ip, hit, type == access_type::PREFETCH);
+
+    bool matched = false;
+    for (int w = 0; w < 5; ++w) {
+        if (sampler_set[w].valid && sampler_set[w].tag == tag) {
+            matched = true;
+            uint32_t age = (set_clock[set] - sampler_set[w].timestamp) & 0xFF;
+            bool stopped = false;
+            
+            if (age > 95) {
+                stopped = true;
+            }
+            if (!stopped && type == access_type::PREFETCH) {
+                train_rdp_toward(sampler_set[w].signature, age, 2, 16);
+                sampler_set[w].valid = false;
+                stopped = true;
+            }
+            if (!stopped) {
+                train_rdp_toward(sampler_set[w].signature, age, 1, 16);
+                sampler_set[w].valid = false;
+            }
+            break;
+        }
+    }
+
+    for (int w = 0; w < 5; ++w) {
+        if (sampler_set[w].valid) {
+            uint32_t age = (set_clock[set] - sampler_set[w].timestamp) & 0xFF;
+            if (age > 95) {
+                train_rdp_increment(sampler_set[w].signature);
+                sampler_set[w].valid = false;
+            }
+        }
+    }
+
+    bool has_tag = false;
+    for (int w = 0; w < 5; ++w) {
+        if (sampler_set[w].valid && sampler_set[w].tag == tag) {
+            has_tag = true;
+            break;
+        }
+    }
+
+    if (!has_tag) {
+        int victim_way = -1;
+        for (int w = 0; w < 5; ++w) {
+            if (!sampler_set[w].valid) {
+                victim_way = w;
+                break;
+            }
+        }
+        if (victim_way == -1) {
+            uint32_t max_age = 0;
+            for (int w = 0; w < 5; ++w) {
+                uint32_t age = (set_clock[set] - sampler_set[w].timestamp) & 0xFF;
+                if (w == 0 || age > max_age) {
+                    max_age = age;
+                    victim_way = w;
+                }
+            }
+            train_rdp_increment(sampler_set[victim_way].signature);
+        }
+        
+        sampler_set[victim_way].valid = true;
+        sampler_set[victim_way].tag = tag;
+        sampler_set[victim_way].signature = pc_sig;
+        sampler_set[victim_way].timestamp = set_clock[set];
+    }
+
+    set_clock[set] = (set_clock[set] + 1) & 0xFF;
+}
+
+void @MODULE@::run_access(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, access_type type, bool hit) {
+    run_sampler(triggering_cpu, set, full_addr, ip, type, hit);
+
+    uint64_t pc_sig = get_pc_sig(ip, hit, type == access_type::PREFETCH);
+
+    if (etr_clock[set] == 8) {
+        for (long w = 0; w < NUM_WAY; ++w) {
+            if (w == way) continue;
+            int32_t current_etr = etr[set * NUM_WAY + w];
+            if (std::abs(current_etr) < 11) {
+                etr[set * NUM_WAY + w] = wrap_signed_5(current_etr - 1);
+            }
+        }
+    }
+
+    if (etr_clock[set] == 8) {
+        etr_clock[set] = 0;
+    }
+
+    etr_clock[set] = (etr_clock[set] + 1) & 0xF;
+
+    if (!rdp[pc_sig].valid) {
+        if (way != NUM_WAY) etr[set * NUM_WAY + way] = 0;
+        return;
+    }
+
+    if (rdp[pc_sig].valid && rdp[pc_sig].value > 73) {
+        if (way != NUM_WAY) etr[set * NUM_WAY + way] = 11;
+        return;
+    }
+
+    if (way != NUM_WAY) {
+        etr[set * NUM_WAY + way] = wrap_signed_5(rdp[pc_sig].value / 8);
+    }
+}
+
+long @MODULE@::find_victim(uint32_t triggering_cpu, uint64_t instr_id, long set, const champsim::cache_block* current_set, champsim::address ip, champsim::address full_addr, access_type type) {
+    long best_way = 0;
+    int32_t best_mag = 0;
+    
+    for (long w = 0; w < NUM_WAY; ++w) {
+        int32_t val = etr[set * NUM_WAY + w];
+        int32_t mag = std::abs(val);
+        bool is_negative = (val < 0);
+        
+        if (mag > best_mag || (mag == best_mag && is_negative)) {
+            best_way = w;
+            best_mag = mag;
+        }
+    }
+
+    if (type != access_type::WRITE) {
+        uint64_t pc_sig = get_pc_sig(ip, false, type == access_type::PREFETCH);
+        
+        bool bypass = false;
+        
+        if (rdp[pc_sig].valid && rdp[pc_sig].value > 73) {
+            bypass = true;
+        }
+        
+        if (!bypass) {
+            if (rdp[pc_sig].valid) {
+                int32_t victim_val = etr[set * NUM_WAY + best_way];
+                int32_t victim_mag = std::abs(victim_val);
+                if ((rdp[pc_sig].value / 8) > (uint32_t)victim_mag) {
+                    bypass = true;
+                }
+            }
+        }
+        
+        if (bypass) {
+            return NUM_WAY;
+        }
+    }
+
+    return best_way;
+}
+
+void @MODULE@::update_replacement_state(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, champsim::address victim_addr, access_type type, uint8_t hit) {
+    if (hit) {
+        if (type == access_type::WRITE) return;
+        run_access(triggering_cpu, set, way, full_addr, ip, type, true);
+    }
+}
+
+void @MODULE@::replacement_cache_fill(uint32_t triggering_cpu, long set, long way, champsim::address full_addr, champsim::address ip, champsim::address victim_addr, access_type type) {
+    if (type == access_type::WRITE) {
+        if (way != NUM_WAY) etr[set * NUM_WAY + way] = wrap_signed_5(-11);
+        return;
+    }
+    run_access(triggering_cpu, set, way, full_addr, ip, type, false);
+}
+```

@@ -1,0 +1,57 @@
+Guidance version 1, written after 10 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.99901 (-0.10% against the seed)
+- name: high_rdp_and_confident
+  place: condition
+  params:
+    conf_table: table
+    index: signature
+    rdp_table: table
+    rdp_thresh:
+      int: [0, 127]
+  means: 'True when the entry for the index in rdp_table is present and its value is greater than rdp_thresh,
+    AND the entry for the same index in conf_table has reached its maximum value. An absent entry in rdp_table
+    causes the condition to be false.
+
+    '
+# used by 2 scored design(s); best 0.99901 (-0.10% against the seed)
+- name: confident_victim_exceed
+  place: condition
+  params:
+    conf_table: table
+    div:
+      int: [1, 128]
+    index: signature
+    rdp_table: table
+  means: A condition for use inside bypass_when. It is true when the entry for the index in conf_table
+    has reached its maximum value, AND the value of rdp_table[index] divided by div is greater than the
+    absolute value of the key of the victim way. An absent rdp_table entry is treated as 0.
+# used by 1 scored design(s); best 0.99802 (-0.20% against the seed)
+- name: is_confident
+  place: condition
+  params:
+    index: signature
+    table: table
+    threshold:
+      int: [0, 3]
+  means: True when the entry of the table at the index is greater than or equal to the threshold. The
+    table is expected to be fully initialized (not 'unset').
+# used by 1 scored design(s); best 0.99211 (-0.79% against the seed)
+- name: moving_average_train
+  place: step
+  params:
+    index: signature
+    sample: state
+    scale:
+      int: [1, 1024]
+    table: table
+  means: Reads the sample value, s, which is an age or state field. The table's maximum value, max_val,
+    is read from its declaration. Computes the target value as T = min(s * scale, max_val). If the table
+    entry at the index is absent, its value is set to T. Otherwise, its current value V is read, and the
+    new value is set to (V * 7 + T) / 8, using integer division. The entry is marked as present after
+    the write.
+
+Refused among the last 10 candidates, and why: schema_rejected 1 (Value error, on_hit[1] -> procedures.access[5]: 'etr' is signed; write the literal, MAX has no meaning for it (written: {'name': 'mockingjay_inse...ue}, {'run': 'access'}]})). words_refused 1 (confident_victim_exceed, high_rdp_and_confident: already declared in this run with another definition; a word is never changed, so declare a new name)
+
+Your most successful changes have involved creating new `tables` and `state`, and then using that information in `victim.bypass_when` through new condition words like `is_confident`. Continue this strategy, as modifications to `samplers`, `tables`, and `victim.bypass_when` are the only ones that have improved performance. However, avoid repeating the large, unsuccessful changes to `on_hit` and `procedures.access` from candidate `4f5689376c20`. The largest remaining mistake on high-headroom traces like `605.mcf_s-1644B` and `619.lbm_s-2677B` is `wrong_bypass`, meaning your bypass decisions are too aggressive for those workloads. Yet on `627.cam4_s-573B`, the main error is `should_bypass`, suggesting the bypass is not aggressive enough. This indicates your bypass logic needs to be more nuanced, not just uniformly stronger or weaker. To address the `kept_dead` mistake on `657.xz_s-2302B`, which is an eviction problem, the policy must get better at identifying lines that will not be reused. The current vocabulary may not capture a line's full reuse history. Consider declaring a new word for a procedure that tracks reuse frequency or consistency over a line's lifetime, rather than just its last predicted reuse, to better inform eviction choices. Finally, do not attempt to redefine existing words; always declare a new name to avoid rejection.
