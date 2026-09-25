@@ -1,0 +1,6 @@
+===== STRUCTURE_DESCRIPTION =====
+name: <policy_name>
+doc: >
+  <ALL explanations, reasoning, and design intent MUST go here. Do not write text outside the code block. Focus on how this hybrid policy reduces wrong_bypass and kept_dead errors.>
+<the rest of the structure description, YAML>
+===== NEW_WORDS =====

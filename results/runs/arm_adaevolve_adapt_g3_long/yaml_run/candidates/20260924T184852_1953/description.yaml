@@ -1,0 +1,16 @@
+name: your_policy_name
+doc: >
+  Explanation of your diagnostic reasoning and changes.
+state:
+  - name: example_field
+    scope: per_line
+    kind: counter
+    width: 4
+    init: ZERO
+victim:
+  key: example_field
+  extremum: max
+  tie_break: first
+  on_search: none
+# Include ALL other required sections (e.g., on_hit, on_fill, signatures, tables) explicitly.
+# Do NOT skip sections with placeholders!

@@ -1,0 +1,55 @@
+===== STRUCTURE_DESCRIPTION =====
+name: drrip_iter_demo
+doc: >
+  Mutated from SRRIP: adds set dueling between standard SRRIP insertion (MAX-1)
+  and BRRIP-style distant insertion (MAX) to curb kept_dead lines.
+
+state:
+  - name: rrpv
+    scope: per_line
+    kind: counter
+    width: 2
+    init: MAX
+  - name: psel
+    scope: per_cpu
+    kind: saturating
+    width: 10
+    init: MID
+  - name: brrip_ctr
+    scope: global
+    kind: counter
+    width: 5
+    init: ZERO
+
+victim:
+  key: rrpv
+  extremum: max
+  tie_break: first
+  on_search: age_to_max
+
+duel:
+  selector: psel
+  arm_a:
+    set: {rrpv: {const: MAX_MINUS_1}}
+  arm_b:
+    set:
+      rrpv:
+        default: {const: MAX}
+        counter: brrip_ctr
+        every_n: 32
+        then: {const: MAX_MINUS_1}
+  leader_a_category: 1
+  leader_b_category: 0
+  leader_a_delta: 1
+  leader_b_delta: -1
+  follower_uses_b_when: {counter: psel, cmp: gt, threshold: MAX_OVER_2}
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {rrpv: {const: MAX_MINUS_1}}
+    stop: true
+  - use_duel: true
+
+on_hit:
+  - set: {rrpv: {const: ZERO}}
+===== NEW_WORDS =====

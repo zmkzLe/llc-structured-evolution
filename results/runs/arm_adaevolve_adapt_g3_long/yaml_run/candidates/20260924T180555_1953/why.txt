@@ -1,0 +1,32 @@
+Candidate 0fb567f390c7: score 1.00247, the geometric mean over 17 traces of its IPC over Mockingjay's on the same trace (20M warm-up + 50M measured); Mockingjay, the seed and the design to beat, scores 1.0: ahead.
+Closest earlier design: 7c88b747cc70 (similarity 0.984, score 1.00279, change -0.00032). Parts changed: name, on_fill, on_hit, victim.bypass_when.
+New words: murmur_hash (SignatureHash).
+
+Per trace. vs MJ: IPC over Mockingjay's on that trace. change: minus the closest design's.
+MPKI: LLC misses per 1000 instructions. memory: share of all cycles stalled on the memory
+hierarchy at any level; LLC: the part of it stalled on LLC hits; DRAM: the part stalled on
+DRAM. retire: share of all cycles spent retiring instructions, which no replacement policy
+changes. headroom: share of the sampled misses Belady's MIN avoids on this candidate's own
+stream. Then the sampled fills judged against MIN: kept a dead line, evicted a line reused
+sooner, should have bypassed, bypassed wrongly (change from the closest design in brackets).
+trace                      vs MJ   change   MPKI  memory   LLC   DRAM  retire headroom       kept_dead  evicted_sooner  should_bypass   wrong_bypass
+410.bwaves-1963B          0.9991  +0.0000  17.93   76.8%  1.1%  60.1%   20.7%     2.9%          9 (+0)          0 (+0)         0 (+0)      1554 (+0)
+429.mcf-192B              1.0004  +0.0003  51.97   90.3%  6.7%  73.3%    6.4%     0.4%       318 (+13)         92 (+4)      123 (+11)      169 (-69)
+433.milc-127B             1.0026  -0.0060  20.98   82.9%  0.1%  77.1%   12.6%    31.1%     3922 (-318)    1433 (+1126)    1934 (+204)     14382 (+0)
+434.zeusmp-10B            1.0013  +0.0000   2.46   63.3%  0.0%  44.3%   33.3%    17.7%        284 (+0)          0 (+0)       382 (+0)       608 (+0)
+437.leslie3d-149B         1.0212  +0.0000   7.47   83.9%  0.4%  75.7%   14.3%    17.8%       1577 (+0)          0 (+0)      1780 (+0)       806 (+0)
+450.soplex-247B           1.0286  -0.0028  19.93   83.6%  4.6%  75.8%   12.4%    15.8%     1230 (+146)   12868 (+1023)   9023 (+3481)   4909 (-2272)
+459.GemsFDTD-1491B        1.0001  -0.0005  27.63   89.8%  0.8%  86.3%    9.0%    33.3%         52 (+5)          0 (+0)         0 (+0)     28213 (+6)
+470.lbm-1274B             1.0023  -0.0000  25.81   86.8%  0.0%  86.8%   12.7%    19.8%      7325 (+83)     22746 (-25)      357 (+34)     2804 (-40)
+483.xalancbmk-127B        0.9838  +0.0019  19.51   85.2%  4.8%  77.9%   10.7%    14.2%     3617 (+174)   14931 (+1455)  20320 (+4395)   4322 (-4977)
+603.bwaves_s-1740B        0.9971  +0.0000  19.50   78.5%  0.0%  55.4%   19.6%     7.3%          2 (+0)          0 (+0)         0 (+0)      3450 (+0)
+605.mcf_s-1644B           1.0011  +0.0012 137.40   87.8%  1.3%  67.8%    8.1%    44.3%    16871 (-732)     3136 (+310)        35 (-3)   211735 (-26)
+619.lbm_s-2677B           0.9997  -0.0001  82.65   91.5%  0.0%  87.4%    8.0%    43.9%     62655 (-62)          0 (+0)       111 (-8)   109350 (-76)
+623.xalancbmk_s-10B       0.9817  +0.0007   4.95   72.1% 15.3%  50.3%   22.9%    25.9%        848 (+9)      2336 (+17)    10984 (-23)       191 (-2)
+625.x264_s-20B            1.0016  +0.0000   1.58   42.0%  0.0%  25.2%   54.1%    15.3%        256 (+0)          0 (+0)       438 (+0)         0 (+0)
+627.cam4_s-573B           0.9986  +0.0000   0.24   23.7%  0.0%   1.0%   60.4%    67.1%         49 (+0)          0 (+0)        43 (+0)         0 (+0)
+654.roms_s-1390B          1.0135  -0.0001  36.33   90.7%  0.0%  88.0%    8.5%    31.8%     29447 (-17)        448 (-9)     5993 (+97)   19477 (-165)
+657.xz_s-2302B            1.0101  +0.0000   1.32   47.9%  2.0%  26.7%   33.9%    31.2%       1019 (+0)         21 (+0)       355 (+0)         0 (+0)
+
+All traces, sampled fills: kept_dead 129481 (-699), evicted_sooner 58011 (+3901), should_bypass 51878 (+8188), wrong_bypass 401970 (-7621). The largest kind of mistake is wrong_bypass. Mistakes of every kind are addressed by changing what the policy remembers or how it decides, not by moving one threshold.
+Metadata: 47.38 KB SRAM, 0.0379 mm2 at 22 nm (reported, not scored).

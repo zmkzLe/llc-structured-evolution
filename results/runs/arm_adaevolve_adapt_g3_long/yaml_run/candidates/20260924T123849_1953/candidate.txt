@@ -1,0 +1,9 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_design_name
+doc: >
+  Explanation of your design...
+state:
+  ... (write the complete YAML dictionary here, DO NOT output placeholder text like '<the structure description, YAML>')
+===== NEW_WORDS =====
+
+- name: ... (write the complete YAML list here, or leave empty if none. DO NOT output placeholder text)

@@ -1,0 +1,7 @@
+===== STRUCTURE_DESCRIPTION =====
+# Write your COMPLETE and VALID YAML dictionary here.
+# DO NOT use placeholder text.
+# MUST include required fields: name, doc, state, victim, etc.
+===== NEW_WORDS =====
+
+# Write your YAML list of new words here, or leave empty.

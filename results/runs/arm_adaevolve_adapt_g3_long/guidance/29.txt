@@ -1,0 +1,75 @@
+Guidance version 29, written after 293 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 16 scored design(s); best 1.00279 (+0.28% against the seed)
+- name: murmur_hash
+  place: SignatureHash
+  params: {}
+  means: Takes the 64-bit unsigned input x. First, x = x XOR (x >> 33). Second, x = x * 0xff51afd7ed558ccd.
+    Third, x = x XOR (x >> 33). Fourth, x = x * 0xc4ceb9fe1a85ec53. Finally, x = x XOR (x >> 33). All
+    multiplications and shifts are 64-bit unsigned. Returns x.
+# used by 1 scored design(s); best 1.00065 (+0.06% against the seed)
+- name: hit_rate_low
+  place: condition
+  params:
+    index: signature
+    table: table
+    threshold:
+      int: [0, 7]
+  means: 'True when the entry of the table at the index is absent, or when it is present and its value
+    is strictly less than the threshold. False otherwise. Nothing is written.
+
+    '
+# used by 1 scored design(s); best 0.99916 (-0.08% against the seed)
+- name: train_ema
+  place: step
+  params:
+    index: signature
+    scale:
+      int: [1, 4]
+    shift:
+      int: [1, 4]
+    table: table
+    val: state
+  means: 'Reads the entry of the table at the index. Computes s as val multiplied by scale, clamped to
+    the table''s maximum. If the entry is absent, it is set to s. If present, it computes a weight w as
+    (1 left-shifted by shift) minus 1, and a new value as (entry * w + s) right-shifted by shift. If the
+    new value equals the entry, it sets the entry to entry + 1 if entry < s, or to entry - 1 if entry
+    > s. Otherwise, it sets the entry to the new value.
+
+    '
+# used by 1 scored design(s); best 0.99916 (-0.08% against the seed)
+- name: train_up_ema
+  place: step
+  params:
+    index: signature
+    scale:
+      int: [1, 4]
+    shift:
+      int: [1, 4]
+    table: table
+    val: state
+  means: Reads the entry of the table at the index. Computes s as val multiplied by scale, clamped to
+    the table's maximum. If the entry is absent, it is set to s. If present and entry is less than s,
+    it computes a weight w as (1 left-shifted by shift) minus 1, and a new value as (entry * w + s) right-shifted
+    by shift; if the new value equals the entry, it sets the entry to entry + 1; otherwise it sets the
+    entry to the new value. If present and entry is greater than or equal to s, it adds 1 to the entry,
+    clamped to the table's maximum.
+# used by 1 scored design(s); best 0.99738 (-0.26% against the seed)
+- name: table_exceeds_victim_margin
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    index: signature
+    margin:
+      int: [0, 15]
+    table: table
+  means: True when the entry of the table at the index is present and its value divided by div (integer
+    division) is strictly greater than the sum of the absolute value of the victim key of the way the
+    victim search chose and the margin. False on an absent entry. Only inside victim.bypass_when.
+
+Refused among the last 10 candidates, and why: malformed 2 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; candidate is missing section(s): NEW_WORDS). schema_rejected 5 (Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: '<valid YAML structure de... state:, victim:, etc.>'); state.0.width Field required (written: {'name': 'example_field'}) state.0.scope Field required (written: {'name': 'example_field'}) victim Field required (written: {'name': 'your_policy_nam...ame': 'example_field'}]})). words_refused 2 (name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: '...') place Input should be 'condition', 'value', 'step', 'Extremum', 'TieBreak', 'SearchSideEffect', 'SignatureSource', 'FoldBit' or 'SignatureHash' (written: '...') para; murmur_hash: already declared in this run with another definition; a word is never changed, so declare a new name)
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 16 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 2 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+Stop submitting placeholder text like '<the structure description, YAML>' instead of the actual dictionary, and stop omitting the STRUCTURE_DESCRIPTION and NEW_WORDS sections. You must also stop omitting the state and victim fields, ensure state is a valid list, and stop trying to redefine already declared words like murmur_hash; declare a new name instead. Changes to on_fill, victim.bypass_when, on_hit, new_words, procedures.age_set, procedures.access, state, signatures, and duel paid off. Conversely, modifications to samplers, tables, procedures, victim.extremum, victim.key, victim.on_search, victim.tie_break, duel.arm_a, and duel.arm_b strictly lost. The trace with the most headroom is 627.cam4_s-573B at 67.1 percent, where the largest mistake is kept_dead, a flaw also dominating 654.roms_s-1390B and 657.xz_s-2302B. To address kept_dead, the policy should remember which signatures historically see no reuse and decide to demote them faster in procedures.age_set. Meanwhile, wrong_bypass is the largest mistake on 605.mcf_s-1644B, 619.lbm_s-2677B, and 459.GemsFDTD-1491B. To fix wrong_bypass, the policy must remember past reuse of bypassed lines and decide to insert them rather than bypassing them in victim.bypass_when. A new word could be declared as a condition to check if a signature's historical reuse rate exceeds a dynamic threshold, expressing a bypass filter the current vocabulary cannot.

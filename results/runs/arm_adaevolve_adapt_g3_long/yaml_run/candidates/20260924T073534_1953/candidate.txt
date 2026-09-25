@@ -1,0 +1,25 @@
+===== STRUCTURE_DESCRIPTION =====
+# DO NOT output placeholder text like "<the structure description, YAML>".
+# You MUST output the full, valid YAML dictionary here, including required fields like name, doc, state, and victim.
+name: your_design_name
+doc: >
+  Your explanation goes here.
+state:
+  - name: example_state
+    scope: per_line
+    kind: counter
+    width: 2
+    init: ZERO
+victim:
+  key: example_state
+  extremum: max
+# ... rest of the policy ...
+===== NEW_WORDS =====
+
+# DO NOT output placeholders. Output the actual YAML list of new words here.
+# As per the breakthrough strategy below, you MUST define 1-2 new words here.
+- name: your_new_word
+  place: condition
+  params: {table: table, index: signature, limit: {int: [0, 127]}}
+  means: >
+    Your exact C++ logic goes here.

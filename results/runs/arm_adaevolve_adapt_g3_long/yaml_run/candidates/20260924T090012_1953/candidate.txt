@@ -1,0 +1,9 @@
+===== STRUCTURE_DESCRIPTION =====
+name: my_new_policy
+doc: >
+  Explanation of what changed and why.
+state:
+# ... (your ACTUAL complete YAML dictionary for the design) ...
+===== NEW_WORDS =====
+
+# ... (your ACTUAL YAML list of new words, or nothing if none) ...

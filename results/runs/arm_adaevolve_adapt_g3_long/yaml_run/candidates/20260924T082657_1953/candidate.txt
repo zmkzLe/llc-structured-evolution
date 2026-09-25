@@ -1,0 +1,10 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Your explanation here...
+state:
+  - name: ...
+# [The rest of your actual YAML structure description goes here. DO NOT output placeholders.]
+===== NEW_WORDS =====
+
+# [A YAML list of the new words the description uses, or nothing if no new words]

@@ -1,0 +1,50 @@
+Run so far: 51 candidates, 11 scored, 40 refused or failed (malformed 16, schema_rejected 20, words_refused 4).
+Refusal kinds seen more than once this run (a pattern, not a one-off): 17 times, schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 16 times, malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 2 times, words_refused: name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: '...') place Input should be 'condition', 'value', 'step', 'Extremum', 'TieBreak', 'SearchSideEffect', 'SignatureSource', 'FoldBit' or 'SignatureHash' (written: '...') para
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 17 x schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+- 16 x malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+- 2 x words_refused: name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: '...') place Input should be 'condition', 'value', 'step', 'Extremum', 'TieBreak', 'SearchSideEffect', 'SignatureSource', 'FoldBit' or 'SignatureHash' (written: '...') para
+- 1 x words_refused: name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: '...') place Field required (written: {'name': '...'}) means Field required (written: {'name': '...'})
+- 1 x words_refused: murmur_hash: already declared in this run with another definition; a word is never changed, so declare a new name
+- 1 x schema_rejected: victim Field required (written: {'name': 'improved_policy...'width': 5, 'init': 0}]})
+- 1 x schema_rejected: state Input should be a valid list (written: '... [REST OF VALID YAML] ...') victim Field required (written: {'name': 'your_policy_nam...EST OF VALID YAML] ...'})
+- 1 x schema_rejected: state Field required (written: {'name': 'your_policy_nam...itectural rationale.\n'}) victim Field required (written: {'name': 'your_policy_nam...itectural rationale.\n'})
+The seed scored 1.00000.
+Best so far: 20504905b3fa at 1.00192, +0.19% over Mockingjay.
+
+Parts of the design changed so far (candidates that changed it, how many beat their closest earlier design, best and mean change of the score):
+- procedures.access: 3 tried, 1 improved, best +0.00146, mean -0.00125
+- victim.bypass_when: 3 tried, 1 improved, best +0.00146, mean -0.00125
+- new_words: 3 tried, 1 improved, best +0.00046, mean -0.00149
+- on_fill: 1 tried, 1 improved, best +0.00146, mean +0.00146
+- on_hit: 1 tried, 1 improved, best +0.00146, mean +0.00146
+- procedures.age_set: 1 tried, 1 improved, best +0.00146, mean +0.00146
+- signatures: 1 tried, 1 improved, best +0.00046, mean +0.00046
+- state: 1 tried, 0 improved, best -0.00259, mean -0.00259
+- samplers: 1 tried, 0 improved, best -0.00230, mean -0.00230
+
+The last 10 candidates, oldest first:
+42. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+43. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+44. scored 9111374c1fbc at 0.99916, changed 88 canonical lines in samplers, new_words, new words train_ema, train_up_ema: -0.00230 against its closest earlier design
+45. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<complete valid YAML StructureDescription>')
+46. refused (words_refused): name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: '...') place Field required (written: {'name': '...'}) means Field required (written: {'name': '...'})
+47. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+48. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+49. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+50. refused (words_refused), changed 21 canonical lines in on_fill, procedures.age_set, new_words, new words murmur_hash, age_etr: murmur_hash: already declared in this run with another definition; a word is never changed, so declare a new name
+51. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<your complete valid YAM... here, no placeholders>')
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 67.1%, largest mistake kept_dead (49 of 797 sampled fills), IPC over Mockingjay's 0.9986, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.3%, largest mistake wrong_bypass (212712 of 430624 sampled fills), IPC over Mockingjay's 1.0003, LLC MPKI 137.5
+- 619.lbm_s-2677B: headroom 43.9%, largest mistake wrong_bypass (109405 of 259061 sampled fills), IPC over Mockingjay's 0.9995, LLC MPKI 82.6
+- 459.GemsFDTD-1491B: headroom 33.2%, largest mistake wrong_bypass (28198 of 86882 sampled fills), IPC over Mockingjay's 1.0003, LLC MPKI 27.6
+- 654.roms_s-1390B: headroom 31.8%, largest mistake kept_dead (29272 of 113892 sampled fills), IPC over Mockingjay's 1.0152, LLC MPKI 36.3
+- 657.xz_s-2302B: headroom 31.2%, largest mistake kept_dead (1013 of 3640 sampled fills), IPC over Mockingjay's 1.0071, LLC MPKI 1.3
+
+New words accepted this run, best-scoring first:
+- murmur_hash (SignatureHash): Takes the 64-bit unsigned input x. First, x = x XOR (x >> 33). Second, x = x * 0xff51afd7ed558ccd. Third, x = x XOR (x >> 33). Fourth, x = x * 0xc4ceb9fe1a85ec53. Finally, x = x XOR (x >> 33). All mul [used 2, better 1, worse 0, same 0, failed 1]
+- train_ema (step): Reads the entry of the table at the index. Computes s as val multiplied by scale, clamped to the table's maximum. If the entry is absent, it is set to s. If present, it computes a weight w as (1 left- [used 1, better 0, worse 1, same 0, failed 0]
+- train_up_ema (step): Reads the entry of the table at the index. Computes s as val multiplied by scale, clamped to the table's maximum. If the entry is absent, it is set to s. If present and entry is less than s, it comput [used 1, better 0, worse 1, same 0, failed 0]
+- table_exceeds_victim_margin (condition): True when the entry of the table at the index is present and its value divided by div (integer division) is strictly greater than the sum of the absolute value of the victim key of the way the victim  [used 1, better 0, worse 1, same 0, failed 0]

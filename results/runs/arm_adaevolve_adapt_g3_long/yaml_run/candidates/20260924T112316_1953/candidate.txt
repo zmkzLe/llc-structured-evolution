@@ -1,0 +1,17 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  INVARIANT VERIFICATION:
+  1. Bypass legality: WRITE accesses are never bypassed (e.g. type_not_in: [WRITE] or explicit protections).
+  2. Index alignment: signature low_bits matches log2(table entries) (e.g. 11 bits for 2048 entries).
+  3. Diff constraint: edits modify fewer than 600 canonical lines against baseline.
+  4. Word parity: all declared custom words have parameters and types exactly matching usage.
+  POLICY DESCRIPTION:
+  Summary of policy changes and architectural rationale.
+state:
+  ...
+victim:
+  ...
+===== NEW_WORDS =====
+
+- name: ...

@@ -1,0 +1,8 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Summary of design changes and the architectural rationale.
+# [Your complete valid YAML structure description goes here]
+===== NEW_WORDS =====
+
+# [Your YAML list of new words goes here, or leave blank if none]

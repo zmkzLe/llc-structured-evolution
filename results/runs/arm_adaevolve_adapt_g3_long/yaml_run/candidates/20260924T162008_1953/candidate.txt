@@ -1,0 +1,21 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Your explanation here.
+state:
+  - name: your_state
+    scope: per_line
+    kind: counter
+    width: 1
+    init: ZERO
+victim:
+  key: your_state
+  extremum: max
+  tie_break: first
+on_fill:
+  - set: {your_state: {const: ZERO}}
+on_hit:
+  - set: {your_state: {const: ZERO}}
+===== NEW_WORDS =====
+
+# A YAML list of the new words the description uses, or nothing

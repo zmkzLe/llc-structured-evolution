@@ -1,0 +1,9 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Observation: [Cite the exact delta and IPC change from the closest parent design]
+  Falsifiable Hypothesis: [Altering mechanism X will decrease mistake Y on benchmark Z because...]
+  Targeted Delta: [Specify the exact minimum YAML changes needed to validate the hypothesis]
+state:
+  ... [COMPLETE YAML DICTIONARY GOES HERE, NO PLACEHOLDERS] ...
+===== NEW_WORDS =====

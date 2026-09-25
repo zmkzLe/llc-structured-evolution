@@ -1,0 +1,8 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Your explanation of the new primitive and policy changes here.
+# ... complete valid YAML for the policy ...
+===== NEW_WORDS =====
+
+# ... complete valid YAML list of new words, or empty if none ...

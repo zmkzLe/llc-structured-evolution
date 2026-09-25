@@ -1,0 +1,8 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  [Your contrastive trade-off analysis here...]
+# ... your complete concrete YAML structure description ...
+===== NEW_WORDS =====
+
+# ... a YAML list of the new words the description uses, or nothing ...

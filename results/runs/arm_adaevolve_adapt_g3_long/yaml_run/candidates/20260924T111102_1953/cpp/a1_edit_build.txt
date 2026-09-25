@@ -1,0 +1,14 @@
+replacement/evolved_policy/evolved_policy.cc:143:2: error: expected identifier before ‘[’ token
+replacement/evolved_policy/evolved_policy.cc:143:15: error: ‘static’ invalid in lambda
+replacement/evolved_policy/evolved_policy.cc:143:22: error: type-specifier invalid in lambda
+replacement/evolved_policy/evolved_policy.cc:143:28: error: type-specifier invalid in lambda
+replacement/evolved_policy/evolved_policy.cc:143:33: error: expected ‘{’ before ‘chia_source_id_0’
+replacement/evolved_policy/evolved_policy.cc:142:20: error: no match for ‘operator>>’ (operand types are ‘uint64_t’ {aka ‘long unsigned int’} and ‘evolved_policy::murmur_hash(uint64_t) const::<lambda()>’)
+/home/user/champsim/inc/extent.h:211:16: note: candidate: ‘template<class EXT> constexpr auto operator>>(EXT, champsim::data::bits)’
+/home/user/champsim/inc/extent.h:211:16: note:   template argument deduction/substitution failed:
+replacement/evolved_policy/evolved_policy.cc:143:33: note:   cannot convert ‘<lambda closure object>evolved_policy::murmur_hash(uint64_t) const::<lambda()>{}’ (type ‘evolved_policy::murmur_hash(uint64_t) const::<lambda()>’) to type ‘champsim::data::bits’
+replacement/evolved_policy/evolved_policy.cc:143:32: error: expected ‘)’ before ‘chia_source_id_0’
+replacement/evolved_policy/evolved_policy.cc:142:15: note: to match this ‘(’
+replacement/evolved_policy/evolved_policy.cc:143:88: error: expected ‘}’ at end of input
+replacement/evolved_policy/evolved_policy.cc:139:1: note: to match this ‘{’
+make: *** [Makefile:258: .csconfig/modules/replacement/evolved_policy/evolved_policy.o] Error 1

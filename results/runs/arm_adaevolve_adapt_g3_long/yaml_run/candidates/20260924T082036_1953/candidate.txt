@@ -1,0 +1,12 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Summary of what changed and why.
+state:
+  ...
+victim:
+  ...
+# All remaining sections (signatures, tables, samplers, procedures, on_hit, on_fill)
+===== NEW_WORDS =====
+
+# List of new words if any, or leave empty

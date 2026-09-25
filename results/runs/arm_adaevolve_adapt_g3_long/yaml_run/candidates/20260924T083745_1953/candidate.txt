@@ -1,0 +1,10 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  What changed and why (include your analogical reasoning here).
+state:
+  - name: example_field
+# ... rest of the actual YAML dictionary ...
+===== NEW_WORDS =====
+
+# A YAML list of the new words the description uses, or nothing.

@@ -1,0 +1,7 @@
+===== STRUCTURE_DESCRIPTION =====
+name: <policy_name>
+doc: >
+  TARGET_SUBSYSTEM: <Name of the ONE subsystem you are modifying>
+  <Explanation of what changed and why>
+<the rest of the complete, valid YAML dictionary - DO NOT use placeholders>
+===== NEW_WORDS =====

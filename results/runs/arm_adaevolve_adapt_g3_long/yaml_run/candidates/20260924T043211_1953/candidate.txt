@@ -1,0 +1,138 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_fast_demote
+doc: >
+  Mockingjay with fast demotion of overdue lines to address kept_dead on
+  cam4, roms, and xz. In procedures.age_set, lines that miss their predicted
+  reuse window (val < 0) are demoted immediately to -11 via age_etr so dead lines
+  become prime eviction candidates rather than lingering behind fresh lines.
+  Fills with rdp > 73 are inserted at -11 rather than +11 to prevent dead scan
+  lines from polluting the cache. Retains MurmurHash3 to reduce signature aliasing
+  and conservative bypass threshold (56) to prevent wrong_bypass.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 56}, table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: murmur_hash
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  age_set:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: gt, threshold: -11}}
+        set: {etr: {age_etr: {val: etr}}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: age_set
+  - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+    set: {etr: {const: 0}}
+    stop: true
+  - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    set: {etr: {const: 11}}
+    stop: true
+  - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: age_set
+  - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+    set: {etr: {const: 8}}
+    stop: true
+  - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    set: {etr: {const: -11}}
+    stop: true
+  - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+===== NEW_WORDS =====
+
+- name: murmur_hash
+  place: SignatureHash
+  params: {}
+  means: >
+    Takes the 64-bit unsigned input x. First, x = x XOR (x >> 33). Second, x = x * 0xff51afd7ed558ccd.
+    Third, x = x XOR (x >> 33). Fourth, x = x * 0xc4ceb9fe1a85ec53. Finally, x = x XOR (x >> 33). All
+    multiplications and shifts are 64-bit unsigned. Returns x.
+- name: age_etr
+  place: value
+  params: {val: state}
+  means: >
+    Takes a 5-bit signed state field val.
+    If val is strictly greater than 0, returns val minus 1.
+    If val is equal to 0, returns -1.
+    If val is strictly less than 0, returns -11.
+    The returned value is a 5-bit signed integer.

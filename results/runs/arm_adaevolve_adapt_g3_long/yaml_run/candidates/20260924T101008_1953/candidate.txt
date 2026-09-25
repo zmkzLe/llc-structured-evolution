@@ -1,0 +1,82 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Summary of architectural rationale and specific changes made.
+
+state:
+  - name: field_name
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+
+victim:
+  key: field_name
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - {type_not_in: [WRITE, TRANSLATION], table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: murmur_hash
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  age_set:
+    - sample: sampled_cache
+
+on_hit:
+  - run: age_set
+
+on_fill:
+  - run: age_set
+===== NEW_WORDS =====
+
+- name: murmur_hash
+  place: SignatureHash
+  params: {}
+  means: >
+    Takes the 64-bit unsigned input x. First, x = x XOR (x >> 33).
+    Second, x = x * 0xff51afd7ed558ccd. Third, x = x XOR (x >> 33).
+    Fourth, x = x * 0xc4ceb9fe1a85ec53. Finally, x = x XOR (x >> 33).
+    All multiplications and shifts are 64-bit unsigned. Returns x.

@@ -1,0 +1,14 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Your explanation of changes...
+state:
+  - name: example_field
+    scope: per_line
+    kind: counter
+    width: 5
+    init: 0
+# ... (rest of your valid YAML dictionary, NO PLACEHOLDERS) ...
+===== NEW_WORDS =====
+
+# ... (a YAML list of the new words the description uses, or nothing) ...

@@ -1,0 +1,8 @@
+- name: murmur_hash
+  place: SignatureHash
+  params: {}
+  means: >
+    Takes the 64-bit unsigned input x. First, x = x XOR (x >> 33).
+    Second, x = x * 0xff51afd7ed558ccd. Third, x = x XOR (x >> 33).
+    Fourth, x = x * 0xc4ceb9fe1a85ec53. Finally, x = x XOR (x >> 33).
+    All multiplications and shifts are 64-bit unsigned. Returns x.

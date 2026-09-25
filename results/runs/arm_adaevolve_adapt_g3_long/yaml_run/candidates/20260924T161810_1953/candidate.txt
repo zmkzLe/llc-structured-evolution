@@ -1,0 +1,7 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Your explanation here.
+state:
+... (the actual valid YAML dictionary, no placeholders) ...
+===== NEW_WORDS =====

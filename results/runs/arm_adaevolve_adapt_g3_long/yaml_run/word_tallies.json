@@ -1,0 +1,74 @@
+{
+ "age_etr": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "demote_overdue": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "hit_rate_low": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "murmur_hash": {
+  "better": 26,
+  "failed": 5,
+  "same": 1,
+  "unknown": 0,
+  "used": 53,
+  "worse": 21
+ },
+ "smart_decay": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "table_exceeds_valuable_victim": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 0
+ },
+ "table_exceeds_victim_margin": {
+  "better": 0,
+  "failed": 1,
+  "same": 0,
+  "unknown": 0,
+  "used": 2,
+  "worse": 1
+ },
+ "train_ema": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ },
+ "train_up_ema": {
+  "better": 0,
+  "failed": 0,
+  "same": 0,
+  "unknown": 0,
+  "used": 1,
+  "worse": 1
+ }
+}

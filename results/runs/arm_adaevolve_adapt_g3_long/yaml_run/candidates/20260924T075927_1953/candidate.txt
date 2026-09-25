@@ -1,0 +1,11 @@
+===== STRUCTURE_DESCRIPTION =====
+# Write your actual valid YAML dictionary here. DO NOT output the literal string "<the structure description, YAML>".
+name: your_policy_name
+doc: >
+  Explanation of what changed and why.
+state:
+  # ... your state fields ...
+# ... rest of the policy ...
+===== NEW_WORDS =====
+
+# Write a YAML list of new words here, or leave empty if none.

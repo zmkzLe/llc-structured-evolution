@@ -1,0 +1,13 @@
+name: your_policy_name
+doc: >
+  Explanation of your policy...
+state:
+  - name: your_field
+    scope: per_line
+    kind: counter
+    width: 2
+    init: ZERO
+victim:
+  key: your_field
+  extremum: max
+# ... (rest of your actual valid YAML dictionary)

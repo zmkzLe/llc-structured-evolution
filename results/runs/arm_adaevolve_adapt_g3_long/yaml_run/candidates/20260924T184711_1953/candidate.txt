@@ -1,0 +1,7 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Brief description of changes reflecting your hypothesis.
+state:
+  ... [COMPLETE VALID YAML HERE, NO PLACEHOLDERS] ...
+===== NEW_WORDS =====

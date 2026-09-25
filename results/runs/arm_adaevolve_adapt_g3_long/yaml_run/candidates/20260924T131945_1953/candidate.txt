@@ -1,0 +1,11 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Your detailed explanation of changes...
+# Write the COMPLETE valid YAML dictionary here. DO NOT output placeholder text like "<the structure description, YAML>".
+state:
+  - name: example_field
+# ... (rest of the complete configuration) ...
+===== NEW_WORDS =====
+
+# Write the complete valid YAML list of new words here, or leave empty if none. DO NOT output placeholder text.

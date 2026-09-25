@@ -1,0 +1,2 @@
+Candidate 57f46e4e9d54 FAILED at words_refused; it was not scored.
+Reason: murmur_hash: already declared in this run with another definition; a word is never changed, so declare a new name

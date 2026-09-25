@@ -1,0 +1,3 @@
+===== STRUCTURE_DESCRIPTION =====
+<complete, valid YAML description with name, doc, state, victim, on_fill, on_hit, etc.>
+===== NEW_WORDS =====

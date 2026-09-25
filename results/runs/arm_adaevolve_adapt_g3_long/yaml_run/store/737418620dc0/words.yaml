@@ -1,0 +1,8 @@
+- name: table_exceeds_victim_margin
+  place: condition
+  params: {table: table, index: signature, div: {int: [1, 16]}, margin: {int: [0, 15]}}
+  means: >
+    True when the entry of the table at the index is present and its value divided
+    by div (integer division) is strictly greater than the sum of the absolute value
+    of the victim key of the way the victim search chose and the margin. False on
+    an absent entry. Only inside victim.bypass_when.

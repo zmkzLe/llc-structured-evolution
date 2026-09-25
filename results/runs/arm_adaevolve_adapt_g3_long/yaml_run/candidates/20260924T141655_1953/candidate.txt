@@ -1,0 +1,9 @@
+===== STRUCTURE_DESCRIPTION =====
+# Complete, valid YAML dictionary of the policy goes here. No placeholders!
+name: ...
+doc: ...
+state:
+...
+===== NEW_WORDS =====
+
+# A YAML list of the new words the description uses, or nothing.

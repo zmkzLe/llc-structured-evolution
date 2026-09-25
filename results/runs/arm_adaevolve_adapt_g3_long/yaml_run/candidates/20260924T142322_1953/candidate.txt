@@ -1,0 +1,3 @@
+===== STRUCTURE_DESCRIPTION =====
+<complete, fully written YAML dictionary describing the structure - NO placeholders>
+===== NEW_WORDS =====

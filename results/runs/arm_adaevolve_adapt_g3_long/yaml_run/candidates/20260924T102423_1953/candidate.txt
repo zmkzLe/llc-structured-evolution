@@ -1,0 +1,20 @@
+===== STRUCTURE_DESCRIPTION =====
+name: policy_name
+doc: >
+  [Quote the governing telemetry condition here, e.g., "wrong_bypass > 1000"]
+  [Explain the intervention and grammatical primitive used]
+state:
+  # MUST include complete state array
+  - name: example_field
+    scope: per_line
+    kind: counter
+    width: 2
+    init: ZERO
+victim:
+  # MUST include complete victim mapping
+  key: example_field
+  extremum: max
+# ... (include all other necessary sections like on_fill, on_hit, etc.)
+===== NEW_WORDS =====
+
+# ... (a YAML list of the new words the description uses, or nothing)

@@ -1,0 +1,2 @@
+Candidate 91a9f820db1a FAILED at words_refused; it was not scored.
+Reason: murmur_hash: already declared in this run with another definition; a word is never changed, so declare a new name

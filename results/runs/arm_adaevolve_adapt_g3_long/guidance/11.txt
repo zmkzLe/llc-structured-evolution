@@ -1,0 +1,63 @@
+Guidance version 11, written after 112 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 9 scored design(s); best 1.00215 (+0.22% against the seed)
+- name: murmur_hash
+  place: SignatureHash
+  params: {}
+  means: Takes the 64-bit unsigned input x. First, x = x XOR (x >> 33). Second, x = x * 0xff51afd7ed558ccd.
+    Third, x = x XOR (x >> 33). Fourth, x = x * 0xc4ceb9fe1a85ec53. Finally, x = x XOR (x >> 33). All
+    multiplications and shifts are 64-bit unsigned. Returns x.
+# used by 1 scored design(s); best 0.99916 (-0.08% against the seed)
+- name: train_ema
+  place: step
+  params:
+    index: signature
+    scale:
+      int: [1, 4]
+    shift:
+      int: [1, 4]
+    table: table
+    val: state
+  means: 'Reads the entry of the table at the index. Computes s as val multiplied by scale, clamped to
+    the table''s maximum. If the entry is absent, it is set to s. If present, it computes a weight w as
+    (1 left-shifted by shift) minus 1, and a new value as (entry * w + s) right-shifted by shift. If the
+    new value equals the entry, it sets the entry to entry + 1 if entry < s, or to entry - 1 if entry
+    > s. Otherwise, it sets the entry to the new value.
+
+    '
+# used by 1 scored design(s); best 0.99916 (-0.08% against the seed)
+- name: train_up_ema
+  place: step
+  params:
+    index: signature
+    scale:
+      int: [1, 4]
+    shift:
+      int: [1, 4]
+    table: table
+    val: state
+  means: Reads the entry of the table at the index. Computes s as val multiplied by scale, clamped to
+    the table's maximum. If the entry is absent, it is set to s. If present and entry is less than s,
+    it computes a weight w as (1 left-shifted by shift) minus 1, and a new value as (entry * w + s) right-shifted
+    by shift; if the new value equals the entry, it sets the entry to entry + 1; otherwise it sets the
+    entry to the new value. If present and entry is greater than or equal to s, it adds 1 to the entry,
+    clamped to the table's maximum.
+# used by 1 scored design(s); best 0.99738 (-0.26% against the seed)
+- name: table_exceeds_victim_margin
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    index: signature
+    margin:
+      int: [0, 15]
+    table: table
+  means: True when the entry of the table at the index is present and its value divided by div (integer
+    division) is strictly greater than the sum of the absolute value of the victim key of the way the
+    victim search chose and the margin. False on an absent entry. Only inside victim.bypass_when.
+
+Refused among the last 10 candidates, and why: malformed 1 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 9 (Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); Input should be a valid dictionary or instance of StructureDescription (written: None); state Field required (written: {'name': 'your_policy_nam...hat changed and why.\n'}) victim Field required (written: {'name': 'your_policy_nam...hat changed and why.\n'}))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 15 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 8 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+Stop submitting malformed candidates that omit the structure description and new words sections, and stop causing schema rejections by writing placeholders or omitting required fields like state and victim. Changes to victim.bypass_when, on_fill, procedures.access, on_hit, procedures.age_set, new_words, and signatures paid off, whereas modifications to state and samplers lost. The trace with the most headroom is 627.cam4_s-573B at 67.1 percent, where the largest mistake is kept_dead, which also dominates on 654.roms_s-1390B and 657.xz_s-2302B. Conversely, wrong_bypass is the largest mistake on 605.mcf_s-1644B, 619.lbm_s-2677B, and 459.GemsFDTD-1491B. To address kept_dead, the policy should remember which signatures historically see no reuse and decide to demote them faster in procedures.age_set. To fix wrong_bypass, the victim.bypass_when logic must be more conservative about bypassing lines that might be reused soon. A new word could be declared in the condition placement to express a dynamic bypass threshold based on recent hit rates, which the current vocabulary cannot represent, helping balance these bypass decisions.

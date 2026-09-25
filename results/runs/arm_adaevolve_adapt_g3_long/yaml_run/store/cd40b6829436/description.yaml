@@ -1,0 +1,44 @@
+name: precise_hash_mockingjay
+doc: >
+  Demonstrates declaring and invoking a custom SignatureHash in NEW_WORDS to
+  eliminate alias conflicts in PC signatures.
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: murmur_hash
+    low_bits: 11
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+    set: {etr: {const: 0}}
+    stop: true
+  - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+    set: {etr: {const: 8}}
+    stop: true
+  - set: {etr: {table: rdp, index: pc_sig, div: 8}}

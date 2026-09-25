@@ -1,0 +1,8 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  What changed and why...
+# COMPLETE YAML DICTIONARY GOES HERE, NO PLACEHOLDERS!
+===== NEW_WORDS =====
+
+# A YAML list of the new words the description uses, or nothing

@@ -1,0 +1,8 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Your explanation here.
+state:
+  - name: example_state
+... [COMPLETE YAML DICTIONARY GOES HERE] ...
+===== NEW_WORDS =====

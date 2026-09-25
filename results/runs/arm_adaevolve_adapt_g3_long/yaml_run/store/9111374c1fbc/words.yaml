@@ -1,0 +1,21 @@
+- name: train_ema
+  place: step
+  params: {table: table, index: signature, val: state, scale: {int: [1, 4]}, shift: {int: [1, 4]}}
+  means: >
+    Reads the entry of the table at the index. Computes s as val multiplied by
+    scale, clamped to the table's maximum. If the entry is absent, it is set to s.
+    If present, it computes a weight w as (1 left-shifted by shift) minus 1,
+    and a new value as (entry * w + s) right-shifted by shift. If the new value
+    equals the entry, it sets the entry to entry + 1 if entry < s, or to entry - 1
+    if entry > s. Otherwise, it sets the entry to the new value.
+- name: train_up_ema
+  place: step
+  params: {table: table, index: signature, val: state, scale: {int: [1, 4]}, shift: {int: [1, 4]}}
+  means: >
+    Reads the entry of the table at the index. Computes s as val multiplied by
+    scale, clamped to the table's maximum. If the entry is absent, it is set to s.
+    If present and entry is less than s, it computes a weight w as (1 left-shifted
+    by shift) minus 1, and a new value as (entry * w + s) right-shifted by shift;
+    if the new value equals the entry, it sets the entry to entry + 1; otherwise
+    it sets the entry to the new value. If present and entry is greater than or
+    equal to s, it adds 1 to the entry, clamped to the table's maximum.

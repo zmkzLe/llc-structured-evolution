@@ -1,0 +1,149 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_duel_hit
+doc: >
+  Enhances mockingjay_duel by coupling hit-promotion with the dynamic set
+  dueling state. In the baseline duel design, fills adapt between div: 8
+  (Arm A) and div: 6 (Arm B), but hits were statically hardcoded to div: 8.
+  Now, when Arm B is winning (psel > MAX_OVER_2), hits also promote lines
+  using div: 6, keeping insertion and hit aging consistent across phases.
+  Retains MurmurHash3, TRANSLATION bypass protection, and dead fill priority (-11).
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+  - name: psel
+    scope: per_cpu
+    kind: saturating
+    width: 10
+    init: MID
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - {type_not_in: [TRANSLATION], table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    - {type_not_in: [TRANSLATION], table: {table: rdp, index: pc_sig, cmp: gt, threshold: 56}, table_exceeds_victim: {table: rdp, index: pc_sig, div: 8}}
+
+duel:
+  selector: psel
+  arm_a:
+    set: {etr: {table: rdp, index: pc_sig, div: 8}}
+  arm_b:
+    set: {etr: {table: rdp, index: pc_sig, div: 6}}
+  leader_a_category: 1
+  leader_b_category: 0
+  leader_a_delta: 1
+  leader_b_delta: -1
+  follower_uses_b_when: {counter: psel, cmp: gt, threshold: MAX_OVER_2}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: murmur_hash
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  age_set:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - run: age_set
+  - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+    set: {etr: {const: 0}}
+    stop: true
+  - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    set: {etr: {const: 11}}
+    stop: true
+  - when: {counter: {counter: psel, cmp: gt, threshold: MAX_OVER_2}}
+    set: {etr: {table: rdp, index: pc_sig, div: 6}}
+    stop: true
+  - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - run: age_set
+  - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+    set: {etr: {const: 8}}
+    stop: true
+  - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    set: {etr: {const: -11}}
+    stop: true
+  - use_duel: true
+===== NEW_WORDS =====
+
+- name: murmur_hash
+  place: SignatureHash
+  params: {}
+  means: >
+    Takes the 64-bit unsigned input x. First, x = x XOR (x >> 33).
+    Second, x = x * 0xff51afd7ed558ccd. Third, x = x XOR (x >> 33).
+    Fourth, x = x * 0xc4ceb9fe1a85ec53. Finally, x = x XOR (x >> 33).
+    All multiplications and shifts are 64-bit unsigned. Returns x.

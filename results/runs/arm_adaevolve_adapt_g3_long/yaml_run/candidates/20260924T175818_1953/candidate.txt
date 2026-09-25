@@ -1,0 +1,10 @@
+===== STRUCTURE_DESCRIPTION =====
+# PRE-EXECUTION VERIFICATION CHECKLIST:
+# 1. Scope Alignment: [Verify that every field scope aligns with access patterns]
+# 2. Arithmetic Safety: [Verify that signed vs unsigned counters do not cause underflow in add operations]
+# 3. Budget Check: [Verify that every declared table entry fits CACTI bit budgets]
+# 4. Execution Trace: [Trace a simulated cache miss through find_victim, on_fill, and age_set]
+# 5. WRITE Bypass Prevention: [EXPLICITLY inspect and confirm that find_victim can never bypass a WRITE access]
+# 6. New Word Completeness: [Ensure new word definitions have >=8 words of deterministic algorithmic specification]
+<the structure description, YAML>
+===== NEW_WORDS =====

@@ -1,0 +1,22 @@
+Guidance version 3, written after 31 candidates.
+
+New words of scored designs this run, best first, each with the declaration to repeat verbatim to reuse it and how the designs using it scored (the same name with another definition is refused; for another meaning choose a name none of these use):
+# used by 1 scored design(s); best 0.99738 (-0.26% against the seed)
+- name: table_exceeds_victim_margin
+  place: condition
+  params:
+    div:
+      int: [1, 16]
+    index: signature
+    margin:
+      int: [0, 15]
+    table: table
+  means: True when the entry of the table at the index is present and its value divided by div (integer
+    division) is strictly greater than the sum of the absolute value of the victim key of the way the
+    victim search chose and the margin. False on an absent entry. Only inside victim.bypass_when.
+Names also taken (declared by a design not scored yet, or not shown above): murmur_hash
+
+Refused among the last 10 candidates, and why: malformed 2 (candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS). schema_rejected 3 (victim Field required (written: {'name': 'improved_policy...'width': 5, 'init': 0}]}); Input should be a valid dictionary or instance of StructureDescription (written: '<your complete valid YAML dictionary here>'); state Field required (written: {'name': 'your_policy_nam...itectural rationale.\n'}) victim Field required (written: {'name': 'your_policy_nam...itectural rationale.\n'}))
+Refusal kinds seen more than once among the last 30 candidates, a pattern to stop: 9 times (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 9 times (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+
+Stop submitting malformed candidates missing the STRUCTURE_DESCRIPTION and NEW_WORDS sections, and stop causing schema rejections by outputting placeholder text or omitting required fields like state and victim. Changes to on_fill, on_hit, and procedures.age_set paid off, yielding the best score of 1.00146. Modifications to procedures.access and victim.bypass_when also saw some success, but altering the state and adding new_words lost. The trace with the most headroom is 627.cam4_s-573B at 67.1 percent, where the largest mistake is kept_dead, which also dominates on 654.roms_s-1390B and 657.xz_s-2302B. To address kept_dead, the policy should remember which lines see no reuse and decide to demote them faster in procedures.age_set. Conversely, wrong_bypass is the largest mistake on 605.mcf_s-1644B, 619.lbm_s-2677B, and 459.GemsFDTD-1491B. Fixing wrong_bypass requires the victim.bypass_when logic to be more conservative about bypassing lines that might be reused soon. A new word could be declared in the condition or value placement to express a dynamic bypass threshold based on recent hit rates, which the current vocabulary cannot represent, helping balance bypass decisions.

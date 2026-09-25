@@ -1,0 +1,12 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  One line saying what changed and why.
+state:
+  # Define your state fields here. DO NOT omit required fields.
+victim:
+  # Define your victim selection here. DO NOT omit required fields.
+# ... include all other necessary sections (tables, samplers, procedures, on_hit, on_fill, etc.) ...
+===== NEW_WORDS =====
+
+# Define any new words here, or leave empty if none.

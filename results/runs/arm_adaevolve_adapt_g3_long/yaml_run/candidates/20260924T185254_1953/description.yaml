@@ -1,0 +1,15 @@
+name: your_policy_name
+doc: >
+  Explanation of changes...
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+# You MUST write out all other required sections (tables, samplers, on_hit, on_fill, etc.) here.

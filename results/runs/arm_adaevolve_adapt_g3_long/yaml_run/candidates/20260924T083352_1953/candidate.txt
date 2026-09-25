@@ -1,0 +1,155 @@
+===== STRUCTURE_DESCRIPTION =====
+name: mockingjay_adaptive_v1
+doc: >
+  Builds upon mockingjay_murmur_v2 (1.0022). Introduces an adaptive bypass
+  condition word (adaptive_bypass_check) that dynamically adjusts the bypass
+  threshold based on recent LLC hit rate, and strictly protects dead lines from
+  being kept dead: whenever the chosen victim in the set is dead (abs(etr) == 11),
+  bypass is disallowed so the incoming line can evict the dead line instead of
+  being wrongly bypassed. Preserves MurmurHash3 and scan fill insertion at -11.
+
+state:
+  - name: etr
+    scope: per_line
+    kind: signed
+    width: 5
+    init: 0
+  - name: etr_clock
+    scope: per_set
+    kind: counter
+    width: 4
+    init: 8
+  - name: set_clock
+    scope: per_set
+    kind: counter
+    width: 8
+    init: ZERO
+  - name: hit_rate
+    scope: global
+    kind: saturating
+    width: 8
+    init: 128
+
+victim:
+  key: etr
+  extremum: max_magnitude
+  tie_break: prefer_negative
+  on_search: none
+  bypass_when:
+    - {type_not_in: [TRANSLATION], table: {table: rdp, index: pc_sig, cmp: gt, threshold: 88}}
+    - {type_not_in: [TRANSLATION], adaptive_bypass_check: {base_thresh: 56, div: 8, hit_ctr: hit_rate, index: pc_sig, table: rdp}}
+
+signatures:
+  - name: pc_sig
+    source: ip
+    fold: [hit, prefetch]
+    hash: murmur_hash
+    low_bits: 11
+
+tables:
+  - name: rdp
+    scope: global
+    kind: saturating
+    entries: 2048
+    width: 7
+    max: 95
+    unset: true
+
+samplers:
+  - name: sampled_cache
+    scope: global
+    sets: {mirror: 32}
+    extra_index_bits: 4
+    ways: 5
+    tag_bits: 10
+    fields:
+      - {name: signature, kind: counter, width: 11, init: ZERO}
+      - {name: timestamp, kind: counter, width: 8, init: ZERO}
+    age: {clock: set_clock, stamp: timestamp}
+    victim: {key: age, extremum: max, tie_break: first, prefer_free: true}
+    on_match:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        stop: true
+      - when: {type_in: [PREFETCH]}
+        train: {table: rdp, index: signature, op: toward, sample: age, scale: 2, min_diff: 16}
+        free: true
+        stop: true
+      - train: {table: rdp, index: signature, op: toward, sample: age, min_diff: 16}
+        free: true
+    sweep:
+      - when: {counter: {counter: age, cmp: gt, threshold: 95}}
+        train: {table: rdp, index: signature, op: increment}
+        free: true
+    on_replace:
+      - train: {table: rdp, index: signature, op: increment}
+    install: {signature: {signature: pc_sig}, timestamp: {read: set_clock}}
+    after:
+      - set: {set_clock: {add: 1}}
+
+procedures:
+  age_set:
+    - sample: sampled_cache
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      each_way:
+        except_touched: true
+        when: {counter: {counter: etr, cmp: lt, threshold: 11, abs: true}}
+        set: {etr: {add: -1}}
+    - when: {counter: {counter: etr_clock, cmp: eq, threshold: 8}}
+      set: {etr_clock: {const: 0}}
+    - set: {etr_clock: {add: 1}}
+
+on_hit:
+  - when: {type_in: [WRITE]}
+    stop: true
+  - set: {hit_rate: {add: 1}}
+  - run: age_set
+  - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+    set: {etr: {const: 0}}
+    stop: true
+  - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    set: {etr: {const: 11}}
+    stop: true
+  - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+
+on_fill:
+  - when: {type_in: [WRITE]}
+    set: {etr: {const: -11}}
+    stop: true
+  - set: {hit_rate: {add: -1}}
+  - run: age_set
+  - when: {table: {table: rdp, index: pc_sig, cmp: absent}}
+    set: {etr: {const: 8}}
+    stop: true
+  - when: {table: {table: rdp, index: pc_sig, cmp: gt, threshold: 73}}
+    set: {etr: {const: -11}}
+    stop: true
+  - set: {etr: {table: rdp, index: pc_sig, div: 8}}
+===== NEW_WORDS =====
+
+
+- name: murmur_hash
+  place: SignatureHash
+  params: {}
+  means: Takes the 64-bit unsigned input x. First, x = x XOR (x >> 33). Second, x = x * 0xff51afd7ed558ccd.
+    Third, x = x XOR (x >> 33). Fourth, x = x * 0xc4ceb9fe1a85ec53. Finally, x = x XOR (x >> 33). All
+    multiplications and shifts are 64-bit unsigned. Returns x.
+
+- name: adaptive_bypass_check
+  place: condition
+  params:
+    base_thresh:
+      int: [40, 95]
+    div:
+      int: [1, 16]
+    hit_ctr: state
+    index: signature
+    table: table
+  means: >
+    Reads the entry of the table at the index. If the entry is absent, returns false.
+    Let victim_mag be the absolute value of the victim key of the way chosen by find_victim.
+    If victim_mag is greater than or equal to 11, returns false.
+    Computes dyn_thresh as base_thresh plus ((255 - hit_ctr) right-shifted by 4).
+    If the entry is less than or equal to dyn_thresh, returns false.
+    Computes quot as the entry divided by div using integer division.
+    Returns true if quot is strictly greater than victim_mag, else false.
+    Only used inside victim.bypass_when.

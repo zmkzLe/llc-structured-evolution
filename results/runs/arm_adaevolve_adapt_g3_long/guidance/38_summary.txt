@@ -1,0 +1,64 @@
+Run so far: 385 candidates, 62 scored, 323 refused or failed (malformed 79, schema_rejected 228, words_refused 16).
+Refusal kinds seen more than once this run (a pattern, not a one-off): 175 times, schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>'); 72 times, malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS; 9 times, schema_rejected: state Field required (written: {'name': 'your_policy_nam...itectural rationale.\n'}) victim Field required (written: {'name': 'your_policy_nam...itectural rationale.\n'}); 8 times, schema_rejected: victim Field required (written: {'name': 'improved_policy...'width': 5, 'init': 0}]}); 8 times, schema_rejected: state Input should be a valid list (written: '...') victim Field required (written: {'name': 'your_policy_nam...ges.\n', 'state': '...'})
+Every refusal reason this run, one example per kind with its count (kinds are grouped by the message with names and numbers removed; merge any that are the same mistake):
+- 175 x schema_rejected: Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+- 72 x malformed: candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+- 9 x schema_rejected: state Field required (written: {'name': 'your_policy_nam...itectural rationale.\n'}) victim Field required (written: {'name': 'your_policy_nam...itectural rationale.\n'})
+- 8 x schema_rejected: victim Field required (written: {'name': 'improved_policy...'width': 5, 'init': 0}]})
+- 8 x schema_rejected: state Input should be a valid list (written: '...') victim Field required (written: {'name': 'your_policy_nam...ges.\n', 'state': '...'})
+- 7 x malformed: candidate is missing section(s): NEW_WORDS
+- 5 x words_refused: name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: '...') place Field required (written: {'name': '...'}) means Field required (written: {'name': '...'})
+- 4 x words_refused: name String should match pattern '^[a-z][a-z0-9_]{0,30}$' (written: '...') place Input should be 'condition', 'value', 'step', 'Extremum', 'TieBreak', 'SearchSideEffect', 'SignatureSource', 'FoldBit' or 'SignatureHash' (written: '...') para
+- 4 x words_refused: murmur_hash: already declared in this run with another definition; a word is never changed, so declare a new name
+- 3 x schema_rejected: state.0.width Field required (written: {'name': 'example_field'}) state.0.scope Field required (written: {'name': 'example_field'}) victim Field required (written: {'name': 'your_policy_nam...ame': 'example_field'}]})
+- 3 x schema_rejected: state Input should be a valid list (written: None) victim Input should be a valid dictionary or instance of VictimSelector (written: None)
+- 2 x schema_rejected: while scanning a simple key in "<unicode string>", line 4, column 1: <the rest of the structure descr ... ^ could not find expected ':' in "<unicode string>", line 5, column 1: ^
+The seed scored 1.00000.
+Best so far: 7c88b747cc70 at 1.00279, +0.28% over Mockingjay.
+
+Parts of the design changed so far (candidates that changed it, how many beat their closest earlier design, best and mean change of the score):
+- victim.bypass_when: 21 tried, 4 improved, best +0.00146, mean -0.00610
+- on_fill: 17 tried, 4 improved, best +0.00146, mean -0.00712
+- on_hit: 14 tried, 2 improved, best +0.00146, mean -0.00870
+- state: 9 tried, 1 improved, best +0.00063, mean -0.01362
+- procedures.age_set: 7 tried, 1 improved, best +0.00146, mean -0.00197
+- new_words: 6 tried, 1 improved, best +0.00046, mean -0.01891
+- procedures.access: 4 tried, 1 improved, best +0.00146, mean -0.00094
+- signatures: 3 tried, 1 improved, best +0.00046, mean -0.03578
+- duel.arm_a: 3 tried, 1 improved, best +0.00036, mean -0.00407
+- duel.arm_b: 3 tried, 1 improved, best +0.00036, mean -0.00407
+- duel: 1 tried, 1 improved, best +0.00063, mean +0.00063
+- samplers: 5 tried, 0 improved, best -0.00082, mean -0.02242
+- victim.key: 5 tried, 0 improved, best +0.00000, mean -0.02156
+- victim.tie_break: 5 tried, 0 improved, best +0.00000, mean -0.02388
+- tables: 3 tried, 0 improved, best -0.00118, mean -0.03633
+- victim.extremum: 3 tried, 0 improved, best -0.01161, mean -0.03981
+- victim.on_search: 3 tried, 0 improved, best +0.00000, mean -0.03594
+- procedures: 2 tried, 0 improved, best -0.05390, mean -0.05390
+
+The last 10 candidates, oldest first:
+376. scored c91f36498f45 at 0.94351, changed 6 canonical lines in state, victim.key, victim.on_search, victim.tie_break: +0.00000 against its closest earlier design
+377. refused (malformed): candidate is missing section(s): STRUCTURE_DESCRIPTION, NEW_WORDS
+378. scored 1f0b07d99c7f at 1.00242, changed 96 canonical lines in duel.arm_a, duel.arm_b, on_fill, on_hit, victim.bypass_when, new words murmur_hash: +0.00036 against its closest earlier design
+379. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+380. refused (schema_rejected): state Field required (written: {'name': 'your_policy_nam...oning and changes...\n'}) victim Field required (written: {'name': 'your_policy_nam...oning and changes...\n'})
+381. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<complete valid YAML des...ption of the structure>')
+382. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+383. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<complete valid YAML StructureDescription>')
+384. refused (malformed): candidate is missing section(s): NEW_WORDS
+385. refused (schema_rejected): Input should be a valid dictionary or instance of StructureDescription (written: '<the structure description, YAML>')
+
+The best design's traces with the most headroom, and its largest mistake on each:
+- 627.cam4_s-573B: headroom 67.1%, largest mistake kept_dead (49 of 797 sampled fills), IPC over Mockingjay's 0.9986, LLC MPKI 0.2
+- 605.mcf_s-1644B: headroom 44.4%, largest mistake wrong_bypass (211761 of 430772 sampled fills), IPC over Mockingjay's 0.9999, LLC MPKI 137.5
+- 619.lbm_s-2677B: headroom 43.9%, largest mistake wrong_bypass (109426 of 259341 sampled fills), IPC over Mockingjay's 0.9999, LLC MPKI 82.7
+- 459.GemsFDTD-1491B: headroom 33.3%, largest mistake wrong_bypass (28207 of 86883 sampled fills), IPC over Mockingjay's 1.0006, LLC MPKI 27.6
+- 654.roms_s-1390B: headroom 31.9%, largest mistake kept_dead (29464 of 113944 sampled fills), IPC over Mockingjay's 1.0136, LLC MPKI 36.4
+- 657.xz_s-2302B: headroom 31.2%, largest mistake kept_dead (1019 of 3638 sampled fills), IPC over Mockingjay's 1.0101, LLC MPKI 1.3
+
+New words accepted this run, best-scoring first:
+- murmur_hash (SignatureHash): Takes the 64-bit unsigned input x. First, x = x XOR (x >> 33). Second, x = x * 0xff51afd7ed558ccd. Third, x = x XOR (x >> 33). Fourth, x = x * 0xc4ceb9fe1a85ec53. Finally, x = x XOR (x >> 33). All mul [used 48, better 25, worse 18, same 1, failed 4]
+- hit_rate_low (condition): True when the entry of the table at the index is absent, or when it is present and its value is strictly less than the threshold. False otherwise. Nothing is written. [used 1, better 0, worse 1, same 0, failed 0]
+- train_ema (step): Reads the entry of the table at the index. Computes s as val multiplied by scale, clamped to the table's maximum. If the entry is absent, it is set to s. If present, it computes a weight w as (1 left- [used 1, better 0, worse 1, same 0, failed 0]
+- train_up_ema (step): Reads the entry of the table at the index. Computes s as val multiplied by scale, clamped to the table's maximum. If the entry is absent, it is set to s. If present and entry is less than s, it comput [used 1, better 0, worse 1, same 0, failed 0]
+- table_exceeds_victim_margin (condition): True when the entry of the table at the index is present and its value divided by div (integer division) is strictly greater than the sum of the absolute value of the victim key of the way the victim  [used 1, better 0, worse 1, same 0, failed 0]

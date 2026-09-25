@@ -1,0 +1,601 @@
+{
+  "num_islands": 2,
+  "current_island": 0,
+  "iteration_count": 118,
+  "global_best_score": 1.0027878540461173,
+  "decay": 0.9,
+  "intensity_min": 0.15,
+  "intensity_max": 0.5,
+  "migration_interval": 50,
+  "diversity_strategy_type": "code",
+  "use_unified_archive": true,
+  "use_adaptive_search": true,
+  "use_ucb_selection": true,
+  "fixed_intensity": 0.4,
+  "adapter": {
+    "states": [
+      {
+        "accumulated_signal": 0.05904919812735868,
+        "best_score": 1.0027878540461173,
+        "improvement_count": 5,
+        "total_evaluations": 28,
+        "decay": 0.9,
+        "epsilon": 1e-08,
+        "intensity_min": 0.15,
+        "intensity_max": 0.5
+      },
+      {
+        "accumulated_signal": 0.06561017875951919,
+        "best_score": 1.0027878540461173,
+        "improvement_count": 4,
+        "total_evaluations": 27,
+        "decay": 0.9,
+        "epsilon": 1e-08,
+        "intensity_min": 0.15,
+        "intensity_max": 0.5
+      }
+    ],
+    "dimension_visits": [
+      28,
+      27
+    ],
+    "dimension_rewards": [
+      0.05865861429112225,
+      0.0006261101967738096
+    ],
+    "decayed_visits": [
+      9.47665236697264,
+      9.4185026299696
+    ],
+    "global_best_score": 1.0027878540461173,
+    "ucb_exploration": 1.41,
+    "min_visits": 3,
+    "decay": 0.9,
+    "epsilon": 1e-08
+  },
+  "island_config_names": [
+    "balanced",
+    "balanced"
+  ],
+  "islands": [
+    [
+      "498463b8-f63e-47ba-bb28-1b56096870e6",
+      "75ce22e6-f88a-4dda-b1d9-db5d24bbf242",
+      "179737f4-f2f0-4822-8794-0f146440bdaa",
+      "e86563c6-4f1a-496b-ba9f-820bce4b6caf",
+      "7278dfc2-fdc5-4745-b9c7-722ec031e102",
+      "714e9f59-b03a-4a87-9784-eb02f3061235",
+      "737be070-2d6c-411e-8d18-15f58a37d611",
+      "48bf39fd-e7a0-4db1-a517-145772d9ed46",
+      "2c4998c9-0e9e-4082-98f0-579eba8465b5",
+      "a0a1888d-35a8-48f9-a60f-04073d72e8d0",
+      "074764a9-b8ce-45e8-b72b-f79c91428f38",
+      "282a8f39-a372-4bb1-9063-536d18a912d2",
+      "879356cd-276b-4e16-90eb-4a247ab7a3ff",
+      "83f8bf3e-812d-4c4a-aeeb-d70fb0f7d71d",
+      "4c035b32-6d0e-4cc2-a67e-c692c20091d3",
+      "7b987863-087a-4bef-8dd9-d6ed31066b90",
+      "cd0b5d50-c5df-4608-87fa-323776b3ab54",
+      "ba4d9d5b-62f2-4d7b-8a46-48a77b807d66",
+      "a01ba25d-ea33-448e-8ede-33b57887b54d",
+      "6261975e-1ac4-4092-84ec-3223979be0f3",
+      "4317ee00-2325-4b8a-9b2f-e7ae414c4050",
+      "8d27be59-0c56-4551-9756-94af98fa1229",
+      "4f31c237-0410-4215-a944-e0fb858bb833",
+      "4ebbee61-63eb-413f-a70d-45a7e4ad66c4",
+      "337ba52e-87f8-4934-926d-40f9d948dc7e",
+      "312f51ca-865d-4239-b341-01cf5238718e",
+      "016c13c7-a65c-4454-8e95-c0507931f2c8",
+      "3f917a8e-9ed9-4627-99b0-d344478cb28c",
+      "1b938447-4cb8-4c78-9355-4ada2712859e",
+      "339fdcec-5736-48ca-9f67-16366194be30",
+      "dbfe6178-0467-4a3a-b05a-706920e1a55b"
+    ],
+    [
+      "1ae94649-93f0-4595-a276-40200edafa12",
+      "5bbebbe4-348f-459c-aa56-77ba7e9d57c4",
+      "531da78f-d485-4fe8-807f-27415ced25d7",
+      "dd3ec709-b38c-4df8-95b4-ba51f53561cd",
+      "eb389a96-657f-487c-b622-6f0458c53f24",
+      "c10f3e8f-668d-418f-9a7c-072b2763e4fe",
+      "16714591-2c59-4c32-ae56-7daebccf4577",
+      "f1f9450e-72b0-400c-a847-ad9a521aced5",
+      "38867ab8-28dd-4544-837a-28db0119688f",
+      "ec444bac-0a33-4281-92ba-06fc70b5a90c",
+      "689e27d1-e04a-4ee5-9467-974757b0aad9",
+      "83f03df7-0c7b-48c5-8ca8-a022fad61780",
+      "d7f0f726-b791-48ab-a882-b506c5a58522",
+      "ed82b854-daa4-40bc-b01e-b1d1cbf6a2f3",
+      "f2723bb0-f8b9-4dcf-b869-e0e2fe93125e",
+      "c5855948-13ad-47ea-8819-0de32ab25be0",
+      "25722ffc-3a8d-40e0-bae3-62fbe1c31844",
+      "cc0c12d1-f964-4335-9cfa-ea1e0adb174c",
+      "93c44523-93e4-4db0-bc1e-5c48e41b8df4",
+      "96254a9b-23e9-4798-9d9d-03bb08e754ef",
+      "5ff8fcfd-009d-4aa4-8450-ea1641d7d78f",
+      "8abbc8f9-80b4-41af-8081-761d70d46dd0",
+      "206de8ec-e27a-4c2a-a6fe-cdcdc852561d",
+      "9e5380c1-3d6c-4aea-8f4e-26251613df87",
+      "ff074d2d-1f8b-41b4-98ad-a27c4fcbf73b",
+      "45eb8c23-473d-4ea8-bf71-3de8c96f657a",
+      "f7614f7f-0eaa-4762-9060-7a56a335792b",
+      "08d08ee5-1d3a-41da-9616-4adca4d99c17"
+    ]
+  ],
+  "archive_genealogies": [
+    {
+      "parents": {
+        "498463b8-f63e-47ba-bb28-1b56096870e6": [],
+        "75ce22e6-f88a-4dda-b1d9-db5d24bbf242": [
+          "498463b8-f63e-47ba-bb28-1b56096870e6"
+        ],
+        "179737f4-f2f0-4822-8794-0f146440bdaa": [
+          "75ce22e6-f88a-4dda-b1d9-db5d24bbf242"
+        ],
+        "e86563c6-4f1a-496b-ba9f-820bce4b6caf": [
+          "1ae94649-93f0-4595-a276-40200edafa12"
+        ],
+        "7278dfc2-fdc5-4745-b9c7-722ec031e102": [
+          "498463b8-f63e-47ba-bb28-1b56096870e6"
+        ],
+        "714e9f59-b03a-4a87-9784-eb02f3061235": [
+          "1ae94649-93f0-4595-a276-40200edafa12"
+        ],
+        "737be070-2d6c-411e-8d18-15f58a37d611": [
+          "1ae94649-93f0-4595-a276-40200edafa12"
+        ],
+        "48bf39fd-e7a0-4db1-a517-145772d9ed46": [
+          "714e9f59-b03a-4a87-9784-eb02f3061235"
+        ],
+        "2c4998c9-0e9e-4082-98f0-579eba8465b5": [
+          "714e9f59-b03a-4a87-9784-eb02f3061235"
+        ],
+        "a0a1888d-35a8-48f9-a60f-04073d72e8d0": [
+          "5bbebbe4-348f-459c-aa56-77ba7e9d57c4"
+        ],
+        "074764a9-b8ce-45e8-b72b-f79c91428f38": [
+          "f1f9450e-72b0-400c-a847-ad9a521aced5"
+        ],
+        "282a8f39-a372-4bb1-9063-536d18a912d2": [
+          "2c4998c9-0e9e-4082-98f0-579eba8465b5"
+        ],
+        "879356cd-276b-4e16-90eb-4a247ab7a3ff": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "83f8bf3e-812d-4c4a-aeeb-d70fb0f7d71d": [
+          "ec444bac-0a33-4281-92ba-06fc70b5a90c"
+        ],
+        "4c035b32-6d0e-4cc2-a67e-c692c20091d3": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "7b987863-087a-4bef-8dd9-d6ed31066b90": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "cd0b5d50-c5df-4608-87fa-323776b3ab54": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "ba4d9d5b-62f2-4d7b-8a46-48a77b807d66": [
+          "7b987863-087a-4bef-8dd9-d6ed31066b90"
+        ],
+        "a01ba25d-ea33-448e-8ede-33b57887b54d": [
+          "074764a9-b8ce-45e8-b72b-f79c91428f38"
+        ],
+        "6261975e-1ac4-4092-84ec-3223979be0f3": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "4317ee00-2325-4b8a-9b2f-e7ae414c4050": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "8d27be59-0c56-4551-9756-94af98fa1229": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "4f31c237-0410-4215-a944-e0fb858bb833": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "4ebbee61-63eb-413f-a70d-45a7e4ad66c4": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "337ba52e-87f8-4934-926d-40f9d948dc7e": [
+          "25722ffc-3a8d-40e0-bae3-62fbe1c31844"
+        ],
+        "312f51ca-865d-4239-b341-01cf5238718e": [
+          "4ebbee61-63eb-413f-a70d-45a7e4ad66c4"
+        ],
+        "016c13c7-a65c-4454-8e95-c0507931f2c8": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "3f917a8e-9ed9-4627-99b0-d344478cb28c": [
+          "4ebbee61-63eb-413f-a70d-45a7e4ad66c4"
+        ],
+        "1b938447-4cb8-4c78-9355-4ada2712859e": [
+          "4ebbee61-63eb-413f-a70d-45a7e4ad66c4"
+        ],
+        "339fdcec-5736-48ca-9f67-16366194be30": [
+          "4ebbee61-63eb-413f-a70d-45a7e4ad66c4"
+        ],
+        "dbfe6178-0467-4a3a-b05a-706920e1a55b": [
+          "4ebbee61-63eb-413f-a70d-45a7e4ad66c4"
+        ]
+      },
+      "children": {
+        "498463b8-f63e-47ba-bb28-1b56096870e6": [
+          "75ce22e6-f88a-4dda-b1d9-db5d24bbf242",
+          "7278dfc2-fdc5-4745-b9c7-722ec031e102"
+        ],
+        "75ce22e6-f88a-4dda-b1d9-db5d24bbf242": [
+          "179737f4-f2f0-4822-8794-0f146440bdaa"
+        ],
+        "1ae94649-93f0-4595-a276-40200edafa12": [
+          "e86563c6-4f1a-496b-ba9f-820bce4b6caf",
+          "714e9f59-b03a-4a87-9784-eb02f3061235",
+          "737be070-2d6c-411e-8d18-15f58a37d611"
+        ],
+        "714e9f59-b03a-4a87-9784-eb02f3061235": [
+          "48bf39fd-e7a0-4db1-a517-145772d9ed46",
+          "2c4998c9-0e9e-4082-98f0-579eba8465b5"
+        ],
+        "5bbebbe4-348f-459c-aa56-77ba7e9d57c4": [
+          "a0a1888d-35a8-48f9-a60f-04073d72e8d0"
+        ],
+        "f1f9450e-72b0-400c-a847-ad9a521aced5": [
+          "074764a9-b8ce-45e8-b72b-f79c91428f38"
+        ],
+        "2c4998c9-0e9e-4082-98f0-579eba8465b5": [
+          "282a8f39-a372-4bb1-9063-536d18a912d2"
+        ],
+        "38867ab8-28dd-4544-837a-28db0119688f": [
+          "879356cd-276b-4e16-90eb-4a247ab7a3ff",
+          "4c035b32-6d0e-4cc2-a67e-c692c20091d3",
+          "7b987863-087a-4bef-8dd9-d6ed31066b90",
+          "cd0b5d50-c5df-4608-87fa-323776b3ab54",
+          "6261975e-1ac4-4092-84ec-3223979be0f3",
+          "4317ee00-2325-4b8a-9b2f-e7ae414c4050",
+          "8d27be59-0c56-4551-9756-94af98fa1229",
+          "4f31c237-0410-4215-a944-e0fb858bb833",
+          "4ebbee61-63eb-413f-a70d-45a7e4ad66c4",
+          "016c13c7-a65c-4454-8e95-c0507931f2c8"
+        ],
+        "ec444bac-0a33-4281-92ba-06fc70b5a90c": [
+          "83f8bf3e-812d-4c4a-aeeb-d70fb0f7d71d"
+        ],
+        "7b987863-087a-4bef-8dd9-d6ed31066b90": [
+          "ba4d9d5b-62f2-4d7b-8a46-48a77b807d66"
+        ],
+        "074764a9-b8ce-45e8-b72b-f79c91428f38": [
+          "a01ba25d-ea33-448e-8ede-33b57887b54d"
+        ],
+        "25722ffc-3a8d-40e0-bae3-62fbe1c31844": [
+          "337ba52e-87f8-4934-926d-40f9d948dc7e"
+        ],
+        "4ebbee61-63eb-413f-a70d-45a7e4ad66c4": [
+          "312f51ca-865d-4239-b341-01cf5238718e",
+          "3f917a8e-9ed9-4627-99b0-d344478cb28c",
+          "1b938447-4cb8-4c78-9355-4ada2712859e",
+          "339fdcec-5736-48ca-9f67-16366194be30",
+          "dbfe6178-0467-4a3a-b05a-706920e1a55b"
+        ]
+      }
+    },
+    {
+      "parents": {
+        "1ae94649-93f0-4595-a276-40200edafa12": [],
+        "5bbebbe4-348f-459c-aa56-77ba7e9d57c4": [
+          "1ae94649-93f0-4595-a276-40200edafa12"
+        ],
+        "531da78f-d485-4fe8-807f-27415ced25d7": [
+          "1ae94649-93f0-4595-a276-40200edafa12"
+        ],
+        "dd3ec709-b38c-4df8-95b4-ba51f53561cd": [
+          "1ae94649-93f0-4595-a276-40200edafa12"
+        ],
+        "eb389a96-657f-487c-b622-6f0458c53f24": [
+          "498463b8-f63e-47ba-bb28-1b56096870e6"
+        ],
+        "c10f3e8f-668d-418f-9a7c-072b2763e4fe": [
+          "498463b8-f63e-47ba-bb28-1b56096870e6"
+        ],
+        "16714591-2c59-4c32-ae56-7daebccf4577": [
+          "714e9f59-b03a-4a87-9784-eb02f3061235"
+        ],
+        "f1f9450e-72b0-400c-a847-ad9a521aced5": [
+          "eb389a96-657f-487c-b622-6f0458c53f24"
+        ],
+        "38867ab8-28dd-4544-837a-28db0119688f": [
+          "eb389a96-657f-487c-b622-6f0458c53f24"
+        ],
+        "ec444bac-0a33-4281-92ba-06fc70b5a90c": [
+          "498463b8-f63e-47ba-bb28-1b56096870e6"
+        ],
+        "689e27d1-e04a-4ee5-9467-974757b0aad9": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "83f03df7-0c7b-48c5-8ca8-a022fad61780": [
+          "074764a9-b8ce-45e8-b72b-f79c91428f38"
+        ],
+        "d7f0f726-b791-48ab-a882-b506c5a58522": [
+          "714e9f59-b03a-4a87-9784-eb02f3061235"
+        ],
+        "ed82b854-daa4-40bc-b01e-b1d1cbf6a2f3": [
+          "737be070-2d6c-411e-8d18-15f58a37d611"
+        ],
+        "f2723bb0-f8b9-4dcf-b869-e0e2fe93125e": [
+          "48bf39fd-e7a0-4db1-a517-145772d9ed46"
+        ],
+        "c5855948-13ad-47ea-8819-0de32ab25be0": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "25722ffc-3a8d-40e0-bae3-62fbe1c31844": [
+          "dd3ec709-b38c-4df8-95b4-ba51f53561cd"
+        ],
+        "cc0c12d1-f964-4335-9cfa-ea1e0adb174c": [
+          "a01ba25d-ea33-448e-8ede-33b57887b54d"
+        ],
+        "93c44523-93e4-4db0-bc1e-5c48e41b8df4": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "96254a9b-23e9-4798-9d9d-03bb08e754ef": [
+          "7b987863-087a-4bef-8dd9-d6ed31066b90"
+        ],
+        "5ff8fcfd-009d-4aa4-8450-ea1641d7d78f": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "8abbc8f9-80b4-41af-8081-761d70d46dd0": [
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "206de8ec-e27a-4c2a-a6fe-cdcdc852561d": [
+          "4ebbee61-63eb-413f-a70d-45a7e4ad66c4"
+        ],
+        "9e5380c1-3d6c-4aea-8f4e-26251613df87": [
+          "cd0b5d50-c5df-4608-87fa-323776b3ab54"
+        ],
+        "ff074d2d-1f8b-41b4-98ad-a27c4fcbf73b": [
+          "4ebbee61-63eb-413f-a70d-45a7e4ad66c4"
+        ],
+        "45eb8c23-473d-4ea8-bf71-3de8c96f657a": [
+          "879356cd-276b-4e16-90eb-4a247ab7a3ff"
+        ],
+        "f7614f7f-0eaa-4762-9060-7a56a335792b": [
+          "016c13c7-a65c-4454-8e95-c0507931f2c8"
+        ],
+        "08d08ee5-1d3a-41da-9616-4adca4d99c17": [
+          "4ebbee61-63eb-413f-a70d-45a7e4ad66c4"
+        ]
+      },
+      "children": {
+        "1ae94649-93f0-4595-a276-40200edafa12": [
+          "5bbebbe4-348f-459c-aa56-77ba7e9d57c4",
+          "531da78f-d485-4fe8-807f-27415ced25d7",
+          "dd3ec709-b38c-4df8-95b4-ba51f53561cd"
+        ],
+        "498463b8-f63e-47ba-bb28-1b56096870e6": [
+          "eb389a96-657f-487c-b622-6f0458c53f24",
+          "c10f3e8f-668d-418f-9a7c-072b2763e4fe",
+          "ec444bac-0a33-4281-92ba-06fc70b5a90c"
+        ],
+        "714e9f59-b03a-4a87-9784-eb02f3061235": [
+          "16714591-2c59-4c32-ae56-7daebccf4577",
+          "d7f0f726-b791-48ab-a882-b506c5a58522"
+        ],
+        "eb389a96-657f-487c-b622-6f0458c53f24": [
+          "f1f9450e-72b0-400c-a847-ad9a521aced5",
+          "38867ab8-28dd-4544-837a-28db0119688f"
+        ],
+        "38867ab8-28dd-4544-837a-28db0119688f": [
+          "689e27d1-e04a-4ee5-9467-974757b0aad9",
+          "c5855948-13ad-47ea-8819-0de32ab25be0",
+          "93c44523-93e4-4db0-bc1e-5c48e41b8df4",
+          "5ff8fcfd-009d-4aa4-8450-ea1641d7d78f",
+          "8abbc8f9-80b4-41af-8081-761d70d46dd0"
+        ],
+        "074764a9-b8ce-45e8-b72b-f79c91428f38": [
+          "83f03df7-0c7b-48c5-8ca8-a022fad61780"
+        ],
+        "737be070-2d6c-411e-8d18-15f58a37d611": [
+          "ed82b854-daa4-40bc-b01e-b1d1cbf6a2f3"
+        ],
+        "48bf39fd-e7a0-4db1-a517-145772d9ed46": [
+          "f2723bb0-f8b9-4dcf-b869-e0e2fe93125e"
+        ],
+        "dd3ec709-b38c-4df8-95b4-ba51f53561cd": [
+          "25722ffc-3a8d-40e0-bae3-62fbe1c31844"
+        ],
+        "a01ba25d-ea33-448e-8ede-33b57887b54d": [
+          "cc0c12d1-f964-4335-9cfa-ea1e0adb174c"
+        ],
+        "7b987863-087a-4bef-8dd9-d6ed31066b90": [
+          "96254a9b-23e9-4798-9d9d-03bb08e754ef"
+        ],
+        "4ebbee61-63eb-413f-a70d-45a7e4ad66c4": [
+          "206de8ec-e27a-4c2a-a6fe-cdcdc852561d",
+          "ff074d2d-1f8b-41b4-98ad-a27c4fcbf73b",
+          "08d08ee5-1d3a-41da-9616-4adca4d99c17"
+        ],
+        "cd0b5d50-c5df-4608-87fa-323776b3ab54": [
+          "9e5380c1-3d6c-4aea-8f4e-26251613df87"
+        ],
+        "879356cd-276b-4e16-90eb-4a247ab7a3ff": [
+          "45eb8c23-473d-4ea8-bf71-3de8c96f657a"
+        ],
+        "016c13c7-a65c-4454-8e95-c0507931f2c8": [
+          "f7614f7f-0eaa-4762-9060-7a56a335792b"
+        ]
+      }
+    }
+  ],
+  "use_dynamic_islands": true,
+  "max_islands": 5,
+  "last_spawn_iteration": -30,
+  "use_paradigm_breakthrough": true,
+  "paradigm_tracker": {
+    "window_size": 10,
+    "improvement_threshold": 0.12,
+    "max_paradigm_uses": 2,
+    "max_tried_paradigms": 10,
+    "num_paradigms_to_generate": 3,
+    "improvement_history": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "active_paradigms": [
+      {
+        "idea": "Domain-Specific Language Escape Hatch (NEW_WORDS Extension Focus)",
+        "description": "Shift the prompt's core instruction away from modifying the YAML structure and toward exploiting the 'NEW_WORDS' C++ escape hatch. Instruct the LLM that the most significant performance breakthroughs come from inventing novel, complex mathematical operations (e.g., non-linear decay functions, trace-adaptive hashing, or probabilistic state updates) inside the 'means' field of a new word. The LLM should be prompted to leave the baseline YAML structure mostly untouched, instead replacing a simple operation with a call to a highly advanced, custom-designed C++ function defined entirely in the NEW_WORDS section.",
+        "what_to_optimize": "Algorithmic expressiveness and complex logic representation beyond YAML constraints",
+        "cautions": "The 'means' description must be exact, detailing types, widths, and arithmetic order precisely enough for a programmer to implement. Vague descriptions will cause C++ build failures.",
+        "approach_type": "domain-specific-language-extension"
+      },
+      {
+        "idea": "Workload-Adaptive Routing via Trace Analysis",
+        "description": "Alter the prompt to frame the task as a dynamic workload routing problem rather than a search for a single universal policy. Instruct the LLM to deeply analyze the per-trace feedback (e.g., noticing massive 'wrong_bypass' in milc-127B vs low headroom in bwaves) and design a 'Workload Detector' state machine. The LLM must use 'use_duel' or conditional 'when' clauses to dynamically route cache behavior between a conservative policy (for traces prone to regressions) and an aggressive policy (for high-headroom traces) based on real-time cache metrics like MPKI or RDP variance.",
+        "what_to_optimize": "Cross-trace generalization and Pareto frontier advancement",
+        "cautions": "The added state required for workload detection must fit within the strict 48 KB metadata limit. The prompt must remind the LLM to trade off or narrow existing state to pay for the detector.",
+        "approach_type": "adaptive-workload-routing"
+      },
+      {
+        "idea": "Atomic Genetic Mutation Constraints",
+        "description": "Transform the prompt's instruction style from open-ended architectural design to a strict, atomic mutation engine. Provide the LLM with a specific menu of allowed atomic mutations (e.g., '1. Adjust Parameter', '2. Add Bypass Condition', '3. Change Tie-Break Mechanism'). Force the LLM to output a header declaring exactly ONE chosen mutation operator before generating the YAML. The LLM must strictly limit its modifications to the single logical component associated with that operator, minimizing the diff size and preventing chaotic, multi-variable changes.",
+        "what_to_optimize": "Evolutionary search stability and isolated variable testing",
+        "cautions": "The LLM naturally tends to rewrite multiple parts of the code simultaneously. Strong negative constraints (e.g., 'DO NOT change any other block') and threats of immediate failure are required to enforce atomicity.",
+        "approach_type": "atomic-action-space-restriction"
+      }
+    ],
+    "paradigm_usage_counts": {
+      "0": 1,
+      "1": 1,
+      "2": 1
+    },
+    "current_paradigm_index": 0,
+    "tried_paradigms": [
+      {
+        "idea": "Closed-Loop Pre-Emission Simulation and Semantic Verification Prompting",
+        "description": "Implement a self-verification protocol where the prompt instructs the LLM to mentally simulate its proposed replacement policy through a structured audit table before writing the final YAML block. The prompt requires the model to verify four explicit check-points: (1) state width and bit-budget arithmetic across sets and ways to guarantee CACTI budget compliance (<48 KB); (2) WRITE-miss immunity, ensuring no WRITE bypass can ever trigger; (3) semantic completeness of all NEW_WORDS parameters against the fixed schema; and (4) deterministic aging behavior under repeated hits and misses. Instruct the model that any design failing any check must be revised internally before outputting the candidate. This eliminates unscored structural syntax rejects, C++ code-generator drift during repair loops, and fatal ChampSim assertion crashes.",
+        "what_to_optimize": "C++ synthesis pass rate, zero-drop valid candidates, and strict adherence to the 48 KB hardware metadata ceiling",
+        "cautions": "Do not let the self-verification checklist become excessively long, as it can exhaust generation context tokens.",
+        "approach_type": "self-verification",
+        "uses": 2,
+        "starting_score": 1.0027878540461173,
+        "ending_score": 1.0027878540461173,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Pre-Generation Analytical Scratchpad",
+        "description": "Instruct the LLM to output a `<scratchpad>` block before the `===== STRUCTURE_DESCRIPTION =====` marker. Because the evaluator uses a regex to extract the YAML section, any text before the marker is safely ignored by the parser but serves as an in-context reasoning chain. Inside the scratchpad, the LLM must explicitly perform three steps: 1) Calculate the current metadata budget step-by-step to ensure it remains under 48 KB. 2) Analyze the four specific mistake metrics (kept_dead, evicted_sooner, should_bypass, wrong_bypass) across the top 3 worst-performing traces. 3) Formulate a precise hypothesis linking the proposed YAML structural change to the targeted mistake metric. This forces the model to ground its structural changes in arithmetic and empirical feedback rather than guessing.",
+        "what_to_optimize": "Reasoning chain guidance and metadata budget compliance",
+        "cautions": "Ensure the prompt explicitly warns the LLM not to put the scratchpad inside the YAML block or between the marker lines, which would break the YAML parser. The scratchpad must be completely finished before the first marker.",
+        "approach_type": "chain-of-thought-scratchpad",
+        "uses": 2,
+        "starting_score": 1.0027878540461173,
+        "ending_score": 1.0027878540461173,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Cross-Pollination of Seed Paradigms",
+        "description": "Shift the instruction strategy to explicitly frame the provided reference designs (LRU, SRRIP, DRRIP, SHiP) as a menu of 'genetic material' rather than just examples. Instruct the LLM to explicitly identify one specific sub-component from a reference design (e.g., SHiP's PC-signature training or DRRIP's set dueling) and graft it onto the current best Mockingjay baseline. The prompt should require the LLM to state which two paradigms it is blending. By forcing the LLM to combine known-good architectural patterns rather than inventing entirely new logic from scratch, it reduces the search space to highly probable, hardware-valid intersections.",
+        "what_to_optimize": "Structural innovation through proven component recombination",
+        "cautions": "The LLM might blindly copy-paste blocks without resolving namespace collisions or state scope mismatches (e.g., using a per_cpu field in a per_line context). The prompt must explicitly command the LLM to harmonize variable names and scopes when merging.",
+        "approach_type": "few-shot-paradigm-blending",
+        "uses": 2,
+        "starting_score": 1.0027878540461173,
+        "ending_score": 1.0027878540461173,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Multi-Persona Expert Panel Decomposition",
+        "description": "Restructure the prompt to force the LLM to simulate a sequential consultation between three distinct personas before writing the YAML. First, the 'Workload Analyst' interprets the trace metrics, focusing strictly on MPKI, headroom, and memory stall shares to identify which traces are bottlenecking the geometric mean. Second, the 'Hardware Resource Manager' evaluates the proposed state additions against the 48 KB limit, suggesting where to trim bits (e.g., reducing counter widths or signature sizes). Finally, the 'Cache Policy Architect' synthesizes this discussion into the strict YAML vocabulary. This prevents the LLM from rushing straight to code generation and ensures multiobjective constraints are balanced.",
+        "what_to_optimize": "Task decomposition and multiobjective constraint satisfaction",
+        "cautions": "This approach increases the token length of the LLM's response. You must ensure the `A3_CPP_MAX_TOKENS` limit is high enough to accommodate the simulated dialogue without truncating the actual YAML output at the end.",
+        "approach_type": "multi-persona-decomposition",
+        "uses": 2,
+        "starting_score": 1.0027878540461173,
+        "ending_score": 1.0027878540461173,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Diagnostic Trace-Feedback Inversion via Root-Cause Error Mapping",
+        "description": "Restructure the generation prompt into a guided diagnostic reasoning chain that systematically targets the dominant failure mode highlighted in the OPT feedback. Instruct the model to first parse the feedback table and identify the trace with the largest error volume (e.g., 433.milc suffering 14,382 wrong_bypass events). Second, require the model to explicitly quote the evaluator's specific prescriptive guidance for that error class: wrong_bypass requires multi-evidence bypass criteria (e.g., combining PC signatures with access types or set-level reuse confidence rather than relying purely on scalar RDP thresholds). Third, mandate the formulation of a minimal, surgical architectural intervention directly addressing that root cause while maintaining all other proven structures untouched. Finally, have the model emit the complete YAML adhering strictly to the vocabulary constraints. This moves the LLM away from unguided threshold tuning and focuses exploration on the evaluator's highest-headroom failure signals.",
+        "what_to_optimize": "Targeted reduction of dominant decision errors (specifically wrong_bypass and kept_dead) on high-headroom memory-stalled traces.",
+        "cautions": "Ensure the model does not attempt to fix multiple disparate error types at once, which could lead to large canonical diffs exceeding MAX_CHANGE (600 lines) or induce synthesis instability in the downstream C++ writer.",
+        "approach_type": "chain-of-thought",
+        "uses": 2,
+        "starting_score": 1.0027878540461173,
+        "ending_score": 1.0027878540461173,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Few-Shot Minimal-Diff Architectural Patch Demonstrations",
+        "description": "Provide two concrete, end-to-end worked examples within the prompt illustrating how to perform valid, surgical feature augmentations in the domain-specific vocabulary. Example 1 demonstrates adding a multi-condition bypass guard using a declared condition word in NEW_WORDS without disrupting baseline ETR aging. Example 2 illustrates adding a 1-bit line-level reuse confidence flag by subtracting unused state bits from the set clock to guarantee budget preservation. For each example, explicitly depict the input feedback signal, the step-by-step reasoning linking the signal to the design change, and the exact canonical YAML delta. This provides the LLM with concrete templates for syntax, parameter typing in NEW_WORDS, and valid rule placement, drastically lowering C++ translation and syntax validation failure rates.",
+        "what_to_optimize": "Syntactic validity of NEW_WORDS declarations and seamless C++ synthesis compatibility by Gemini Pro.",
+        "cautions": "Do not include complex or speculative hardware examples that might mislead the LLM into copying obsolete or non-functional replacement policies. Keep exemplars minimal, clean, and strictly grounded in the ChampSim vocabulary.",
+        "approach_type": "few-shot",
+        "uses": 2,
+        "starting_score": 1.0027878540461173,
+        "ending_score": 1.0027878540461173,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Hardware State Budget Ledger and Conservation Constraints",
+        "description": "Introduce an explicit format constraint requiring a zero-sum state ledger before any candidate structure is emitted. Direct the prompt to calculate the exact bit-level cost of every existing structure in Mockingjay (e.g., RDP table: 2048 entries * 7 bits = 14,336 bits; line ETR: 4096 * 12 * 5 bits = 245,760 bits). Enforce a rule that whenever a new hardware state element is proposed (such as a hysteresis counter or access-type filter), the model must specify an equal or greater bit-budget reduction from an over-provisioned baseline structure (such as truncating RDP to 1024 entries or compressing ETR to 4 bits). The prompt explicitly forbids declaring more than 47.5 KB total metadata to prevent immediate CACTI budget rejections. This constraint forces the LLM to evaluate architectural trade-offs realistically rather than appending state blindly.",
+        "what_to_optimize": "Zero CACTI budget rejections, strict compliance with the 48 KB hardware limit, and disciplined state compaction.",
+        "cautions": "The state ledger calculations must strictly reflect ChampSim DPC4 geometry (4096 sets, 12 ways, 1 core) and avoid hallucinating phantom storage structures not priced by CACTI.",
+        "approach_type": "format-constraint",
+        "uses": 2,
+        "starting_score": 1.0027878540461173,
+        "ending_score": 1.0027878540461173,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Domain-Heuristic Metric Mapping",
+        "description": "Provide the LLM with a strict, hardcoded mapping between the four specific evaluator mistake metrics (kept_dead, evicted_sooner, should_bypass, wrong_bypass) and the exact structural changes required to fix them. Instead of letting the LLM guess how to improve 'wrong_bypass', the prompt explicitly states: 'If wrong_bypass is the largest mistake, you MUST tighten the bypass_when threshold or add a secondary type_not_in condition. If kept_dead is highest, you MUST increase the penalty in the age_set procedure.' This turns the LLM from a blind searcher into a deterministic feedback-executor.",
+        "what_to_optimize": "Direct alignment between empirical evaluator feedback and structural mutations",
+        "cautions": "The hardcoded mappings must be architecturally sound. If the mapping is wrong, the LLM will deterministically degrade the policy. Ensure the instructions force only ONE metric-driven change per iteration.",
+        "approach_type": "metric-driven-mutation",
+        "uses": 2,
+        "starting_score": 1.0027878540461173,
+        "ending_score": 1.0027878540461173,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Complexity Ablation and State Simplification",
+        "description": "Instruct the LLM to act as an 'Optimization Minimalist'. Since the current best policy is highly complex and close to the metadata budget, instruct the LLM to strictly REMOVE or SIMPLIFY one component (a condition, a table, or a state variable) instead of adding new ones. The prompt should explicitly ask: 'Identify the most over-engineered or marginal rule in the current policy. Your only task is to delete it or replace it with a simpler constant to prevent overfitting and free up metadata budget.'",
+        "what_to_optimize": "Generalization across traces and metadata efficiency (reducing overfitting)",
+        "cautions": "The LLM might accidentally remove core components (like the RDP table or the set dueling logic) which would catastrophically drop the score. It must be guided to target secondary conditions or complex hash folds.",
+        "approach_type": "complexity-ablation",
+        "uses": 2,
+        "starting_score": 1.0027878540461173,
+        "ending_score": 1.0027878540461173,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      },
+      {
+        "idea": "Access-Type Isolation and Specialization",
+        "description": "Direct the LLM to ignore the general reuse prediction logic and focus exclusively on cache pollution caused by specific access types. Instruct it to create strict, specialized rules for PREFETCH, TRANSLATION, and WRITE accesses. The prompt should state: 'Demand LOADs behave differently than TRANSLATION or PREFETCH. Do not change the core predictor. Instead, add specialized type_in and type_not_in filters to on_hit, on_fill, and bypass_when to ensure transient accesses do not evict high-value demand loads.'",
+        "what_to_optimize": "Cache pollution reduction and specialized access-type filtering",
+        "cautions": "Over-filtering or aggressive bypassing of PREFETCH accesses can hurt performance on traces that rely heavily on the prefetcher. The LLM must balance isolation with actual reuse prediction.",
+        "approach_type": "access-type-specialization",
+        "uses": 2,
+        "starting_score": 1.0027878540461173,
+        "ending_score": 1.0027878540461173,
+        "score_improvement": 0.0,
+        "outcome": "FAILED"
+      }
+    ],
+    "best_score_at_paradigm_gen": 1.0027878540461173,
+    "best_score_during_paradigm": 1.0027878540461173
+  }
+}

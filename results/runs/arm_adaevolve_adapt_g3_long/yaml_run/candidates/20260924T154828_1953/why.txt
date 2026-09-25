@@ -1,0 +1,4 @@
+Candidate ? FAILED at schema_rejected; it was not scored.
+Reason: 1 validation error for StructureDescription
+  Value error, duel.arm_b: the gate fires every 32, but counter 'brrip_ctr' is 5 bits and only reaches 31. It would wrap past the trigger and never match, silently disabling the gate -- BRRIP would lose its bimodality while still looking fine. [type=value_error, input_value={'name': 'drrip_iter_demo...': {'const': 'ZERO'}}}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error

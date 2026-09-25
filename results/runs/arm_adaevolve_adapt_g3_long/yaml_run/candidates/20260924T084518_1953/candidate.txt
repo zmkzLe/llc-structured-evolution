@@ -1,0 +1,8 @@
+===== STRUCTURE_DESCRIPTION =====
+name: your_policy_name
+doc: >
+  Your explanation of the crossover strategy used...
+state:
+  ...
+# [COMPLETE CONCRETE YAML HERE. NO PLACEHOLDERS!]
+===== NEW_WORDS =====

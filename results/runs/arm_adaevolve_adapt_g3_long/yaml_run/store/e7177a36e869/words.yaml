@@ -1,0 +1,18 @@
+- name: hit_rate_low
+  place: condition
+  params:
+    table: table
+    index: signature
+    threshold: {int: [0, 7]}
+  means: >
+    True when the entry of the table at the index is absent, or when it is present
+    and its value is strictly less than the threshold. False otherwise. Nothing is written.
+
+- name: murmur_hash
+  place: SignatureHash
+  params: {}
+  means: >
+    Takes the 64-bit unsigned input x. First, x = x XOR (x >> 33).
+    Second, x = x * 0xff51afd7ed558ccd. Third, x = x XOR (x >> 33).
+    Fourth, x = x * 0xc4ceb9fe1a85ec53. Finally, x = x XOR (x >> 33).
+    All multiplications and shifts are 64-bit unsigned. Returns x.

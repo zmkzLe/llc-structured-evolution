@@ -1,0 +1,16 @@
+name: your_policy_name
+doc: >
+  Your explanation of the policy changes here.
+state:
+  - name: example_state
+    scope: per_line
+    kind: counter
+    width: 2
+    init: ZERO
+  # ... other state fields ...
+victim:
+  key: example_state
+  extremum: max
+  tie_break: first
+  on_search: none
+# ... other fields like on_hit, on_fill, signatures, tables, etc. ...
